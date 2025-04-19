@@ -1,0 +1,7 @@
+import axiosInstance from "@api";
+import { ParamsType } from "@types";
+
+// ============= GET SPECIALITY ============
+export async function getPaymentHistory(params:ParamsType) {
+    return (await axiosInstance.get(`api/v1/payment/history`,{params})).data
+}

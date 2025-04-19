@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* HTML: <div class="loader"></div> */
+.loader {
+    width: 50px;
+    --b: 8px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    padding: 1px;
+    background: conic-gradient(#836a6a00 10%, #050556) content-box;
+    -webkit-mask:
+        repeating-conic-gradient(#0000 0deg, #000 1deg 20deg, #0000 21deg 36deg),
+        radial-gradient(farthest-side, #0000 calc(100% - var(--b) - 1px), #000 calc(100% - var(--b)));
+    -webkit-mask-composite: destination-in;
+    mask-composite: intersect;
+    animation: l4 1s infinite steps(10);
+}
+
+@keyframes l4 {
+    to {
+        transform: rotate(1turn)
+    }
+}
+
+/* Change checkbox size */
+.ant-select-tree-checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px; /* Makes it slightly rounded */
+    background-color: white;
+    border: 2px solid 050556; /* Blue outline */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Checked State */
+  .ant-select-tree-checkbox-checked .ant-select-tree-checkbox-inner {
+    background-color: white !important; /* Change the checked color */
+    border-radius: 4px;
+  }
+  
+  /* When hovered */
+  .ant-select-tree-checkbox:hover {
+    border-color: #050556 !important;
+  }
+  
+  /* Custom checkmark icon */
+  .ant-select-tree-checkbox-inner::after {
+    content: "✔"; /* Checkmark */
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%); 
+    color: green;
+  }
+  
