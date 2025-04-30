@@ -147,7 +147,7 @@ const Index = () => {
           pageSize: params.size,
           total: total || 0,
           showSizeChanger: true,
-          pageSizeOptions: ['2', '4', '6', '10']
+          pageSizeOptions: ["10", "20", "50", "100"],
         }}
       />
     </>

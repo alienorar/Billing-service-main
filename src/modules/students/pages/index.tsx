@@ -180,7 +180,7 @@ const Index = () => {
           pageSize: size,
           total: total || 0,
           showSizeChanger: true,
-          pageSizeOptions: ["6", "10", "16", "20"],
+          pageSizeOptions: ["10", "20", "50", "100"],
         }}
         onRow={(record) => ({
           onClick: () => handleView(record.id),
