@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import { Button, Input, Space, Tooltip, Popconfirm } from "antd";
+import { Button, Input, Space, Tooltip, Popconfirm, message } from "antd";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { GlobalTable } from "@components";
 import { AdminType } from "@types";
 import { FiEye } from "react-icons/fi";
 import UploadStudentDataModal from "./modal";
-import { useGetStudents } from "../hooks/queries";
+import { useGetStudents, useSyncGetStudents } from "../hooks/queries";
 
 const Index = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,13 +23,16 @@ const Index = () => {
   const lastName = searchParams.get("lastName") || "";
 
   // Fetch students data
-  const { data: students } = useGetStudents({
+  const { data: students, refetch: refetchStudents } = useGetStudents({
     size,
     page: page - 1,
     phone: phone ? Number(phone) : undefined,
     firstName,
     lastName,
   });
+
+  // Sync students data
+  const { refetch: syncStudents, isFetching: isSyncing } = useSyncGetStudents();
 
   useEffect(() => {
     if (students?.data?.content) {
@@ -64,6 +68,22 @@ const Index = () => {
 
   const showModal = () => setIsModalOpen(true);
   const handleClose = () => setIsModalOpen(false);
+
+  const handleSync = async () => {
+    try {
+      const { data } = await syncStudents();
+      message.success("Students synced successfully!");
+      refetchStudents();
+      
+      // If the sync returns data directly, you can update the table with it
+      if (data) {
+        setTableData(data.content || []);
+        setTotal(data.paging?.totalItems || 0);
+      }
+    } catch (error) {
+      message.error("Failed to sync students");
+    }
+  };
 
   const columns = [
     {
@@ -147,28 +167,39 @@ const Index = () => {
             className="w-[300px]"
           />
           <Button type="primary" size="large" style={{ maxWidth: 160, minWidth: 80, backgroundColor: "green", color: "white", height: 36 }} onClick={handleSearch}>Search</Button>
-
         </div>
 
-        <Popconfirm
-          title="Are you sure you want to upload students?"
-          onConfirm={showModal}
-          okText="Yes"
-          cancelText="No"
-          okButtonProps={{
-            style: {
-              backgroundColor: "green",
-              borderColor: "green",
-              marginLeft: "10px",
-              padding: "6px 16px",
-            },
-          }}
-          cancelButtonProps={{ style: { backgroundColor: "red", borderColor: "red", color: "white", padding: "6px 16px", } }}
-        >
-          <Button type="primary" size="large" style={{ maxWidth: 80, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40, }} className="text-[16px]">
-            SynC
+        <div>
+          <Popconfirm
+            title="Are you sure you want to upload students?"
+            onConfirm={showModal}
+            okText="Yes"
+            cancelText="No"
+            okButtonProps={{
+              style: {
+                backgroundColor: "green",
+                borderColor: "green",
+                marginLeft: "10px",
+                padding: "6px 16px",
+              },
+            }}
+            cancelButtonProps={{ style: { backgroundColor: "red", borderColor: "red", color: "white", padding: "6px 16px", } }}
+          >
+            <Button type="primary" size="large" style={{ maxWidth: 80, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40, }} className="text-[16px] mx-4">
+              Sync Exel
+            </Button>
+          </Popconfirm>
+          <Button 
+            type="primary" 
+            size="large" 
+            style={{ maxWidth: 80, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40 }} 
+            className="text-[16px]"
+            onClick={handleSync}
+            loading={isSyncing}
+          >
+            Sync 
           </Button>
-        </Popconfirm>
+        </div>
       </div>
 
       <GlobalTable
