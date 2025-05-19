@@ -35,7 +35,7 @@ const Index = () => {
       page: current.toString(),
       size: pageSize.toString(),
       phone,
-      studentIdNumber, // Updated to match
+      studentIdNumber, 
     });
   };
 
@@ -44,7 +44,7 @@ const Index = () => {
       page: "1",
       size: size.toString(),
       phone,
-      studentIdNumber, // Updated to match
+      studentIdNumber, 
     });
   };
 
@@ -64,8 +64,8 @@ const Index = () => {
   const columns = [
     {
       title: "Transaction ID",
-      dataIndex: "clickTransId",
-      key: "clickTransId",
+      dataIndex: "studentIdNumber",
+      key: "studentIdNumber",
     },
     {
       title: "Amount",

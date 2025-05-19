@@ -10,6 +10,11 @@ export interface ParamsType {
   firstName?: string;
   lastName?: string;
   studentIdNumber?:string;
+  pinfl?:string;
+  provider?:string;
+  state?:any;
+  from?:string|number;
+  to?:string|number;
 }
 
 export interface PagingType {

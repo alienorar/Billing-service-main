@@ -15,6 +15,7 @@ import {
     Speciality,
     PaymentHistory,
     NotFound,
+    TransactionHistory,
 
 } from '@modules'
 
@@ -31,6 +32,7 @@ const Index = () => {
                         <Route path="students/:id" element={<OneStudent />} />
                         <Route path="speciality" element={<Speciality />} />
                         <Route path="payment-history" element={<PaymentHistory />} />
+                        <Route path="transaction-history" element={<TransactionHistory/>} />
                     </Route>
                 </Route>
                 <Route path="*" element={<NotFound />}></Route>
