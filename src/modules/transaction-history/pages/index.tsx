@@ -177,8 +177,8 @@ const TransactionHistory: React.FC = () => {
         () => [
             {
                 title: "Date",
-                dataIndex: "createdDate",
-                key: "createdDate",
+                dataIndex: "date",
+                key: "date",
                 render: (ts: number): string => dayjs(ts).format("DD-MM-YYYY HH:mm"),
             },
             { title: "Student ID", dataIndex: "studentIdNumber", key: "studentIdNumber" },
