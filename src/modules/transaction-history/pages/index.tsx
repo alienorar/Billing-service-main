@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button, DatePicker, Input, Select, TablePaginationConfig, Tag } from "antd";
 import type { Dayjs } from "dayjs";
-import * as dayjs from "dayjs";
+import  dayjs from "dayjs";
 import { useSearchParams } from "react-router-dom";
 import { GlobalTable } from "@components";
 import { useGetTransactionHistory } from "../hooks/queries";
@@ -58,7 +58,7 @@ const filterEmpty = (obj: Record<string, string | undefined>): Record<string, st
  *************************************/
 const TransactionHistory: React.FC = () => {
     /* ---------- URL params ---------- */
-    const [searchParams, setSearchParams] = useSearchParams();
+const [searchParams, setSearchParams] = useSearchParams();
 
     const page = Number(searchParams.get("page") ?? 1);
     const size = Number(searchParams.get("size") ?? 10);
@@ -135,25 +135,25 @@ const TransactionHistory: React.FC = () => {
         setSearchParams(filterEmpty(merged));
     };
 
-   const handleTableChange = (pagination: TablePaginationConfig) => {
-    const { current = 1, pageSize = 10 } = pagination; // Defaults: page 1, size 10
-    updateParams({ 
-      page: current.toString(), 
-      size: pageSize.toString() 
-    });
-  };
+    const handleTableChange = (pagination: TablePaginationConfig) => {
+        const { current = 1, pageSize = 10 } = pagination; // Defaults: page 1, size 10
+        updateParams({
+            page: current.toString(),
+            size: pageSize.toString()
+        });
+    };
 
-  const handleDateChange: RangePickerTimeProps<Dayjs>['onChange'] =
-  (dates, _dateStrings) => {
-    if (dates && dates[0] && dates[1]) {
-      updateParams({
-        from: dates[0].startOf('day').valueOf().toString(),
-        to:   dates[1].endOf('day').valueOf().toString(),
-      });
-    } else {
-      updateParams({ from: undefined, to: undefined });
-    }
-  };
+    const handleDateChange: RangePickerTimeProps<Dayjs>['onChange'] =
+        (dates, _dateStrings) => {
+            if (dates && dates[0] && dates[1]) {
+                updateParams({
+                    from: dates[0].startOf('day').valueOf().toString(),
+                    to: dates[1].endOf('day').valueOf().toString(),
+                });
+            } else {
+                updateParams({ from: undefined, to: undefined });
+            }
+        };
 
 
     const getStatusTagColor = (s: TransactionState): string => {
