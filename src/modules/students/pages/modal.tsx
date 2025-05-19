@@ -10,11 +10,11 @@ interface UploadStudentDataModalProps {
 
 const UploadStudentDataModal: React.FC<UploadStudentDataModalProps> = ({ open, onClose }) => {
     const [form] = Form.useForm();
-    const [fileList, setFileList] = useState<UploadFile[]>([]); 
-    const { mutate: uploadStudents } = useSyncStudents();
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const { mutate: uploadStudents, isPending: uploadingFile } = useSyncStudents();
 
     const handleUpload = ({ fileList }: { fileList: UploadFile[] }) => {
-        setFileList(fileList); 
+        setFileList(fileList);
     };
 
     const onFinish = async () => {
@@ -23,8 +23,9 @@ const UploadStudentDataModal: React.FC<UploadStudentDataModalProps> = ({ open, o
             return;
         }
         const formData = new FormData();
-        formData.append("file", fileList[0] as any); 
+        formData.append("file", fileList[0].originFileObj as File);;
         uploadStudents(formData);
+        onClose()
     };
 
     return (
@@ -40,6 +41,7 @@ const UploadStudentDataModal: React.FC<UploadStudentDataModalProps> = ({ open, o
                     <Button
                         block
                         htmlType="submit"
+                        loading={uploadingFile}
                         style={{
                             backgroundColor: "#050556",
                             color: "white",

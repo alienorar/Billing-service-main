@@ -35,9 +35,11 @@ const Index = () => {
   const { refetch: syncStudents, isFetching: isSyncing } = useSyncGetStudents();
 
   useEffect(() => {
-    if (students?.data?.data?.content) {
-      setTableData(students.data.data.content);
-      setTotal(students.data.data.paging.totalItems || 0);
+    console.log(students?.data?.content);
+    
+    if (students?.data?.content) {
+      setTableData(students.data.content);
+      setTotal(students.data.paging.totalItems || 0);
     }
   }, [students]);
 
