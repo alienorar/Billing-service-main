@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button, DatePicker, Input, Select, TablePaginationConfig, Tag } from "antd";
 import type { Dayjs } from "dayjs";
-import  dayjs from "dayjs";
+import dayjs from "dayjs";
 import { useSearchParams } from "react-router-dom";
 import { GlobalTable } from "@components";
 import { useGetTransactionHistory } from "../hooks/queries";
@@ -58,7 +58,7 @@ const filterEmpty = (obj: Record<string, string | undefined>): Record<string, st
  *************************************/
 const TransactionHistory: React.FC = () => {
     /* ---------- URL params ---------- */
-const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const page = Number(searchParams.get("page") ?? 1);
     const size = Number(searchParams.get("size") ?? 10);
