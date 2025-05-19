@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, DatePicker, Input, Select, Tag } from "antd";
+import { Button, DatePicker, Input, Select, TablePaginationConfig, Tag } from "antd";
 import type { Dayjs } from "dayjs";
-import dayjs from "dayjs";
+import * as dayjs from "dayjs";
 import { useSearchParams } from "react-router-dom";
 import { GlobalTable } from "@components";
 import { useGetTransactionHistory } from "../hooks/queries";
+import { RangePickerTimeProps } from "antd/es/time-picker";
+
 
 const { RangePicker } = DatePicker;
 
@@ -133,20 +135,26 @@ const TransactionHistory: React.FC = () => {
         setSearchParams(filterEmpty(merged));
     };
 
-    const handleTableChange = (pagination: { current: number; pageSize: number }): void => {
-        updateParams({ page: pagination.current.toString(), size: pagination.pageSize.toString() });
-    };
+   const handleTableChange = (pagination: TablePaginationConfig) => {
+    const { current = 1, pageSize = 10 } = pagination; // Defaults: page 1, size 10
+    updateParams({ 
+      page: current.toString(), 
+      size: pageSize.toString() 
+    });
+  };
 
-    const handleDateChange = (dates: null | [Dayjs, Dayjs]): void => {
-        if (dates && dates[0] && dates[1]) {
-            updateParams({
-                from: dates[0].startOf("day").valueOf().toString(),
-                to: dates[1].endOf("day").valueOf().toString(),
-            });
-        } else {
-            updateParams({ from: undefined, to: undefined });
-        }
-    };
+  const handleDateChange: RangePickerTimeProps<Dayjs>['onChange'] =
+  (dates, _dateStrings) => {
+    if (dates && dates[0] && dates[1]) {
+      updateParams({
+        from: dates[0].startOf('day').valueOf().toString(),
+        to:   dates[1].endOf('day').valueOf().toString(),
+      });
+    } else {
+      updateParams({ from: undefined, to: undefined });
+    }
+  };
+
 
     const getStatusTagColor = (s: TransactionState): string => {
         switch (s) {

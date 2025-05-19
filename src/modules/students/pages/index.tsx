@@ -35,9 +35,9 @@ const Index = () => {
   const { refetch: syncStudents, isFetching: isSyncing } = useSyncGetStudents();
 
   useEffect(() => {
-    if (students?.data?.content) {
-      setTableData(students.data.content);
-      setTotal(students.data.paging.totalItems || 0);
+    if (students?.data?.data?.content) {
+      setTableData(students.data.data.content);
+      setTotal(students.data.data.paging.totalItems || 0);
     }
   }, [students]);
 
@@ -74,12 +74,12 @@ const Index = () => {
       const { data } = await syncStudents();
       message.success("Students synced successfully!");
       refetchStudents();
-      
-      // If the sync returns data directly, you can update the table with it
-      if (data) {
-        setTableData(data.content || []);
-        setTotal(data.paging?.totalItems || 0);
+
+      if (data?.data) {
+        setTableData(data.data.content || []);
+        setTotal(data.data.paging?.totalItems || 0);
       }
+
     } catch (error) {
       message.error("Failed to sync students");
     }
@@ -189,15 +189,15 @@ const Index = () => {
               Sync Exel
             </Button>
           </Popconfirm>
-          <Button 
-            type="primary" 
-            size="large" 
-            style={{ maxWidth: 80, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40 }} 
+          <Button
+            type="primary"
+            size="large"
+            style={{ maxWidth: 80, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40 }}
             className="text-[16px]"
             onClick={handleSync}
             loading={isSyncing}
           >
-            Sync 
+            Sync
           </Button>
         </div>
       </div>

@@ -65,6 +65,7 @@ export interface TablePropsType {
   pagination: false | TablePaginationConfig | undefined;
   handleChange: (pagination: TablePaginationConfig) => void;
   onRow?: TableProps<AnyObject>["onRow"]; 
+  loading?:boolean
 }
 // ==========GLOBAL DELETE TYPE ==========
 export interface ConfirmType {
