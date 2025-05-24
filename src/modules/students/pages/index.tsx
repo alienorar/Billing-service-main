@@ -205,6 +205,7 @@ const Index = () => {
       </div>
 
       <GlobalTable
+      loading={isSyncing}
         data={tableData}
         columns={columns}
         handleChange={handleTableChange}
