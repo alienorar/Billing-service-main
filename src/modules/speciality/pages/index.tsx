@@ -23,7 +23,7 @@ const Index = () => {
     page: 1,
   });
 
-  const { data: speciality } = useGetSpeciality({
+  const { data: speciality,isFetching:isGetingSpeciality } = useGetSpeciality({
     size: params.size,
     page: params.page - 1,
   });
@@ -115,6 +115,7 @@ const Index = () => {
         </Button>
       </div>
       <GlobalTable
+      loading={isGetingSpeciality}
         data={tableData}
         columns={columns}
         handleChange={handleTableChange}
