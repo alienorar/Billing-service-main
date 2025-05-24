@@ -1,12 +1,11 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, Card, Table, Spin, Alert, Typography, message } from "antd";
 import { ArrowLeftOutlined, RedoOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useCheckTransactionHistory } from "../../transaction-history/hooks/queries";
-import { useQueryClient } from "@tanstack/react-query";
-import { useRetryTransactionHistory } from "../hooks/queries";
+// import { useQueryClient } from "@tanstack/react-query";
+import { useRetryTransactionHistory } from "../hooks/mutations";
 
 const { Title } = Typography;
 
@@ -27,33 +26,34 @@ interface RequestData {
 const TransactionDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const { data: apiResponse, isLoading, error } = useCheckTransactionHistory(id || "");
-  const [retryTriggered, setRetryTriggered] = useState(false);
 
-  // Retry query, enabled only when retryTriggered is true
-  const { data: retryResponse, isFetching: isRetrying, error: retryError } = useRetryTransactionHistory(id || "");
+  // Get transaction ID from API response
+  const transactionId = apiResponse?.data?.id;
 
-  // Handle retry response/error
+  // Use the retry mutation hook
+  const {
+    mutate: retryTransaction,
+    isPending: isRetrying,
+    error: retryError,
+    reset: resetMutation,
+  } = useRetryTransactionHistory(transactionId || "");
+
+  // Clear retry error when navigating away (optional)
   useEffect(() => {
-    if (retryTriggered) {
-      if (retryResponse) {
-        console.log("Retry request sent, response:", retryResponse);
-        message.success("Transaction retried successfully");
-        queryClient.invalidateQueries({ queryKey: ["check-transaction-history", id] });
-        setRetryTriggered(false);
-      }
-      if (retryError) {
-        console.error("Retry error:", retryError);
-        message.error(`Failed to retry transaction: ${retryError.message || "Unknown error"}`);
-        setRetryTriggered(false);
-      }
-    }
-  }, [retryResponse, retryError, retryTriggered, id, queryClient]);
+    return () => {
+      resetMutation(); // Reset mutation state when component unmounts
+    };
+  }, [resetMutation]);
 
   const handleRetry = () => {
-    console.log("Retry button clicked, id:", id);
-    setRetryTriggered(true);
+    if (!transactionId) {
+      message.error("Cannot retry: Transaction ID not available");
+      return;
+    }
+    console.log("Retry button clicked, id:", transactionId);
+    retryTransaction(transactionId); // Trigger the mutation
   };
 
   const columns = [
@@ -61,7 +61,7 @@ const TransactionDetails: React.FC = () => {
       title: "Field",
       dataIndex: "key",
       key: "key",
-      render: (text: string) => text.replace(/([A-Z])/g, " $1").replace(/^./, str => str.toUpperCase()), // Format camelCase
+      render: (text: string) => text.replace(/([A-Z])/g, " $1").replace(/^./, str => str.toUpperCase()),
     },
     {
       title: "Value",
@@ -81,7 +81,6 @@ const TransactionDetails: React.FC = () => {
     },
   ];
 
-  // Flatten data into key-value pairs
   const tableData = apiResponse
     ? (() => {
         const { timestamp, success, errorMessage, data } = apiResponse;
@@ -158,8 +157,8 @@ const TransactionDetails: React.FC = () => {
               icon={<RedoOutlined />}
               onClick={handleRetry}
               loading={isRetrying}
-              style={{ backgroundColor: PRIMARY_COLOR, borderColor: PRIMARY_COLOR,color:"white",paddingLeft:"3px",paddingRight:"3px" }}
-              disabled={isLoading || !!error} 
+              style={{ backgroundColor: PRIMARY_COLOR, borderColor: PRIMARY_COLOR }}
+              disabled={isLoading || !!error || !transactionId}
             >
               Retry
             </Button>
