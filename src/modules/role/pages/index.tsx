@@ -25,7 +25,7 @@ const Index = () => {
   });
 
   // Fetch roles with params
-  const { data: roles } = useGetRoles({
+  const { data: roles,isFetching:isGetingRoles } = useGetRoles({
     size: params.size,
     page: params.page - 1,
   });
@@ -139,6 +139,7 @@ const Index = () => {
         </Button>
       </div>
       <GlobalTable
+      loading={isGetingRoles}
         data={tableData}
         columns={columns}
         handleChange={handleTableChange}

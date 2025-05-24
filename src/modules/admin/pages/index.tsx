@@ -41,7 +41,7 @@ const Index = () => {
     }
   }, [roles]);
 
-  const { data: admins } = useGetAdmins({
+  const { data: admins , isFetching:isGetingAdmins} = useGetAdmins({
     size: params.size,
     page: params.page - 1,
     phone: searchParams.phone ? Number(searchParams.phone) : undefined,
@@ -196,6 +196,7 @@ const Index = () => {
         </Button>
       </div>
       <GlobalTable
+      loading={isGetingAdmins}
         data={tableData}
         columns={columns}
         handleChange={handleTableChange}
