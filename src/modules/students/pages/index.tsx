@@ -223,7 +223,7 @@ const Index = () => {
             onClick={handleSync}
             loading={isSyncing}
           >
-            Sync
+            Sync Hemis
           </Button>
         </div>
       </div>
