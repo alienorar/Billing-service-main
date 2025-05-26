@@ -7,6 +7,8 @@ import { AdminType } from "@types";
 import { FiEye } from "react-icons/fi";
 import UploadStudentDataModal from "./modal";
 import { useGetStudents, useSyncGetStudents } from "../hooks/queries";
+import { useQueryClient } from "@tanstack/react-query";
+import { syncStudent } from "../service";
 
 const Index = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,8 +16,9 @@ const Index = () => {
   const [total, setTotal] = useState<number>(0);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const queryClient = useQueryClient();
 
-  // URL dan search parametrlari
+  // URL search parameters
   const page = Number(searchParams.get("page")) || 1;
   const size = Number(searchParams.get("size")) || 10;
   const phone = searchParams.get("phone") || "";
@@ -23,7 +26,7 @@ const Index = () => {
   const lastName = searchParams.get("lastName") || "";
 
   // Fetch students data
-  const { data: students, refetch: refetchStudents } = useGetStudents({
+  const { data: students } = useGetStudents({
     size,
     page: page - 1,
     phone: phone ? Number(phone) : undefined,
@@ -31,17 +34,24 @@ const Index = () => {
     lastName,
   });
 
-  // Sync students data
-  const { refetch: syncStudents, isFetching: isSyncing } = useSyncGetStudents();
+  // Sync students data (disabled by default)
+  const { data: syncData, isFetching: isSyncing } = useSyncGetStudents({
+    enabled: false, // Prevent automatic fetching
+  });
 
   useEffect(() => {
-    console.log(students?.data?.content);
-    
     if (students?.data?.content) {
       setTableData(students.data.content);
       setTotal(students.data.paging.totalItems || 0);
     }
   }, [students]);
+
+  useEffect(() => {
+    if (syncData?.data) {
+      setTableData(syncData.data.content || []);
+      setTotal(syncData.data.paging?.totalItems || 0);
+    }
+  }, [syncData]);
 
   const handleTableChange = (pagination: any) => {
     const { current, pageSize } = pagination;
@@ -73,15 +83,15 @@ const Index = () => {
 
   const handleSync = async () => {
     try {
-      const { data } = await syncStudents();
+      const data = await queryClient.fetchQuery({
+        queryKey: ["students"],
+        queryFn: () => syncStudent(), 
+      });
       message.success("Students synced successfully!");
-      refetchStudents();
-
       if (data?.data) {
         setTableData(data.data.content || []);
         setTotal(data.data.paging?.totalItems || 0);
       }
-
     } catch (error) {
       message.error("Failed to sync students");
     }
@@ -93,7 +103,7 @@ const Index = () => {
       dataIndex: "id",
     },
     {
-      title: "Student ID ",
+      title: "Student ID",
       dataIndex: "studentIdNumber",
     },
     {
@@ -168,7 +178,14 @@ const Index = () => {
             style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
             className="w-[300px]"
           />
-          <Button type="primary" size="large" style={{ maxWidth: 160, minWidth: 80, backgroundColor: "green", color: "white", height: 36 }} onClick={handleSearch}>Search</Button>
+          <Button
+            type="primary"
+            size="large"
+            style={{ maxWidth: 160, minWidth: 80, backgroundColor: "green", color: "white", height: 36 }}
+            onClick={handleSearch}
+          >
+            Search
+          </Button>
         </div>
 
         <div>
@@ -185,9 +202,16 @@ const Index = () => {
                 padding: "6px 16px",
               },
             }}
-            cancelButtonProps={{ style: { backgroundColor: "red", borderColor: "red", color: "white", padding: "6px 16px", } }}
+            cancelButtonProps={{
+              style: { backgroundColor: "red", borderColor: "red", color: "white", padding: "6px 16px" },
+            }}
           >
-            <Button type="primary" size="large" style={{ maxWidth: 80, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40, }} className="text-[16px] mx-4">
+            <Button
+              type="primary"
+              size="large"
+              style={{ maxWidth: 80, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40 }}
+              className="text-[16px] mx-4"
+            >
               Sync Exel
             </Button>
           </Popconfirm>
@@ -205,7 +229,7 @@ const Index = () => {
       </div>
 
       <GlobalTable
-      loading={isSyncing}
+        loading={isSyncing}
         data={tableData}
         columns={columns}
         handleChange={handleTableChange}

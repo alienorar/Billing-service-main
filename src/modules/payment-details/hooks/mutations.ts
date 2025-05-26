@@ -6,7 +6,7 @@ import { openNotification } from "@utils";
 export function useRetryTransactionHistory(id:number|string) {
    const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: (id:number|string) => retryTransactionHistory(id),
+        mutationFn: () => retryTransactionHistory(id),
         onSuccess: (data) => {
             openNotification("success", "Success", data?.data?.message)
             queryClient.invalidateQueries({ queryKey: ["transaction-history"] })
