@@ -31,6 +31,9 @@ const TransactionHistory = loadable(() => import('./transaction-history/pages'),
 const PaymentDetails = loadable(() => import('./payment-details/pages'), {
   fallback: <Loading />
 });
+const StudentStatistics = loadable(() => import('./student-statistics/pages'), {
+  fallback: <Loading />
+});
 
 const NotFound = loadable(() => import('./not-found'), {
   fallback: <Loading />
@@ -46,5 +49,6 @@ export {
   PaymentHistory,
   TransactionHistory,
   PaymentDetails,
+  StudentStatistics,
   NotFound,
 }
