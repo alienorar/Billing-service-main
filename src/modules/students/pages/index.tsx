@@ -36,7 +36,7 @@ const Index = () => {
 
   // Sync students data (disabled by default)
   const { data: syncData, isFetching: isSyncing } = useSyncGetStudents({
-    enabled: false, // Prevent automatic fetching
+    enabled: false, 
   });
 
   useEffect(() => {

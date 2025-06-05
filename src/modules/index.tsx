@@ -34,6 +34,9 @@ const PaymentDetails = loadable(() => import('./payment-details/pages'), {
 const StudentStatistics = loadable(() => import('./student-statistics/pages'), {
   fallback: <Loading />
 });
+const PmGroupController = loadable(() => import('./payment-group-controller/pages'), {
+  fallback: <Loading />
+});
 
 const NotFound = loadable(() => import('./not-found'), {
   fallback: <Loading />
@@ -50,5 +53,6 @@ export {
   TransactionHistory,
   PaymentDetails,
   StudentStatistics,
+  PmGroupController,
   NotFound,
 }
