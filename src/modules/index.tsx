@@ -28,6 +28,18 @@ const PaymentHistory = loadable(() => import('./payment-history/pages'), {
 const TransactionHistory = loadable(() => import('./transaction-history/pages'), {
   fallback: <Loading />
 });
+const PaymentDetails = loadable(() => import('./payment-details/pages'), {
+  fallback: <Loading />
+});
+const StudentStatistics = loadable(() => import('./student-statistics/pages'), {
+  fallback: <Loading />
+});
+const PmGroupController = loadable(() => import('./payment-group-controller/pages'), {
+  fallback: <Loading />
+});
+const OnePaymentGroup = loadable(() => import('./single-payment-group/pages'), {
+  fallback: <Loading />
+});
 
 const NotFound = loadable(() => import('./not-found'), {
   fallback: <Loading />
@@ -42,5 +54,9 @@ export {
   Speciality,
   PaymentHistory,
   TransactionHistory,
+  PaymentDetails,
+  StudentStatistics,
+  PmGroupController,
+  OnePaymentGroup,
   NotFound,
 }

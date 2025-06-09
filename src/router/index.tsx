@@ -16,6 +16,10 @@ import {
     PaymentHistory,
     NotFound,
     TransactionHistory,
+   PaymentDetails,
+   StudentStatistics,
+   PmGroupController,
+   OnePaymentGroup,
 
 } from '@modules'
 
@@ -33,6 +37,10 @@ const Index = () => {
                         <Route path="speciality" element={<Speciality />} />
                         <Route path="payment-history" element={<PaymentHistory />} />
                         <Route path="transaction-history" element={<TransactionHistory/>} />
+                        <Route path="transaction-history/:id" element={<PaymentDetails/>} />
+                        <Route path="pmgroup-controller" element={<PmGroupController/>} />
+                        <Route path="pmgroup-controller/:id" element={<OnePaymentGroup/>} />
+                        <Route path="students-statistics" element={<StudentStatistics/>} />
                     </Route>
                 </Route>
                 <Route path="*" element={<NotFound />}></Route>

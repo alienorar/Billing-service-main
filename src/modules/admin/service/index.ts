@@ -22,6 +22,7 @@ export async function updateAdmins(data:AdminType) {
     return response?.data
 }
 
+//============= DELETE ADMINS ===============
 export async function deleteAdmins(id: number | string) {
     const response = await axiosInstance.delete(`api/v1/admin/user/delete`, {
         params: { id } 

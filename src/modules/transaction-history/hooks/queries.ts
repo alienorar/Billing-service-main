@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { ParamsType } from "@types";
-import { getTransactionHistory } from "../service";
+import { checkTransactionHistory, getTransactionHistory } from "../service";
 
 // ============ GET TRANSACTION HISTORY ===========
 export function useGetTransactionHistory(params:ParamsType) {
@@ -9,3 +9,12 @@ export function useGetTransactionHistory(params:ParamsType) {
         queryFn:()=> getTransactionHistory(params)
     })
 }
+
+// ============ CHECK TRANSACTION HISTORY ===========
+export function useCheckTransactionHistory(id:number|string) {
+    return useQuery({
+        queryKey:["transaction-history",id],
+        queryFn:()=> checkTransactionHistory(id)
+    })
+}
+

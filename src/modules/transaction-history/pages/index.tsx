@@ -1,12 +1,12 @@
+
 import { useEffect, useMemo, useState } from "react";
 import { Button, DatePicker, Input, Select, TablePaginationConfig, Tag } from "antd";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { GlobalTable } from "@components";
 import { useGetTransactionHistory } from "../hooks/queries";
 import { RangePickerTimeProps } from "antd/es/time-picker";
-
 
 const { RangePicker } = DatePicker;
 
@@ -43,6 +43,8 @@ export interface TransactionRecord {
     createdAt: string;
     updatedAt: string;
     createdDate: number;
+    /* New field */
+    existIn1C: boolean;
 }
 
 /*************************************
@@ -59,6 +61,7 @@ const filterEmpty = (obj: Record<string, string | undefined>): Record<string, st
 const TransactionHistory: React.FC = () => {
     /* ---------- URL params ---------- */
     const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
 
     const page = Number(searchParams.get("page") ?? 1);
     const size = Number(searchParams.get("size") ?? 10);
@@ -88,7 +91,7 @@ const TransactionHistory: React.FC = () => {
     });
 
     const [tableData, setTableData] = useState<TransactionRecord[]>([]);
-    const [total, setTotal] = useState<number>(0);
+    const [total, setTotal] = useState<number>(0); // Renamed from setTableData to setTotal
 
     /* ---------- Effects ---------- */
     useEffect(() => {
@@ -116,11 +119,12 @@ const TransactionHistory: React.FC = () => {
                         createdAt: item.createdAt,
                         updatedAt: item.updatedAt,
                         createdDate: dayjs(item.createdAt, "DD-MM-YYYY HH:mm:ss").valueOf(),
+                        existIn1C: item.existIn1C ?? false, // Ensure existIn1C is boolean, default to false
                     } as TransactionRecord;
                 }
             );
             setTableData(normalized);
-            setTotal(transactionHistory.data.paging.totalItems ?? 0);
+            setTotal(transactionHistory.data.paging.totalItems ?? 0); // Updated to use setTotal
         }
     }, [transactionHistory]);
 
@@ -139,22 +143,20 @@ const TransactionHistory: React.FC = () => {
         const { current = 1, pageSize = 10 } = pagination; // Defaults: page 1, size 10
         updateParams({
             page: current.toString(),
-            size: pageSize.toString()
+            size: pageSize.toString(),
         });
     };
 
-    const handleDateChange: RangePickerTimeProps<Dayjs>['onChange'] =
-        (dates, _dateStrings) => {
-            if (dates && dates[0] && dates[1]) {
-                updateParams({
-                    from: dates[0].startOf('day').valueOf().toString(),
-                    to: dates[1].endOf('day').valueOf().toString(),
-                });
-            } else {
-                updateParams({ from: undefined, to: undefined });
-            }
-        };
-
+    const handleDateChange: RangePickerTimeProps<Dayjs>["onChange"] = (dates, _dateStrings) => {
+        if (dates && dates[0] && dates[1]) {
+            updateParams({
+                from: dates[0].startOf("day").valueOf().toString(),
+                to: dates[1].endOf("day").valueOf().toString(),
+            });
+        } else {
+            updateParams({ from: undefined, to: undefined });
+        }
+    };
 
     const getStatusTagColor = (s: TransactionState): string => {
         switch (s) {
@@ -177,11 +179,11 @@ const TransactionHistory: React.FC = () => {
         () => [
             {
                 title: "Date",
-                dataIndex: "date",
+                dataIndex: "createdDate",
                 key: "date",
                 render: (ts: number): string => dayjs(ts).format("DD-MM-YYYY HH:mm"),
             },
-            { title: "Student ID", dataIndex: "studentIdNumber", key: "studentIdNumber" },
+            { title: "Transaction ID", dataIndex: "id", key: "id" },
             {
                 title: "Amount",
                 dataIndex: "amount",
@@ -208,8 +210,23 @@ const TransactionHistory: React.FC = () => {
                 render: (s: TransactionState): JSX.Element => <Tag color={getStatusTagColor(s)}>{s}</Tag>,
             },
             { title: "Provider", dataIndex: "provider", key: "provider" },
+            {
+                title: "Action",
+                key: "action",
+                render: (record: TransactionRecord): JSX.Element | null =>
+                    record.provider !== "BANK" ? (
+                        <Button
+                            type="primary"
+                            size="small"
+                            onClick={() => navigate(`/super-admin-panel/transaction-history/${record.id}`)}
+                            style={{ backgroundColor: "#050556", borderColor: "#050556", color: "white", paddingRight: "2px", paddingLeft: "2px" }}
+                        >
+                            Check
+                        </Button>
+                    ) : null,
+            },
         ],
-        []
+        [navigate]
     );
 
     /* ---------- Options ---------- */
@@ -226,6 +243,7 @@ const TransactionHistory: React.FC = () => {
         { value: "FAILED", label: "Failed" },
         { value: "CANCELLED", label: "Cancelled" },
     ];
+
     /** ------------------- Render ------------------ */
     return (
         <div className="flex flex-col gap-4 px-5 py-4">
@@ -234,35 +252,30 @@ const TransactionHistory: React.FC = () => {
                 <Input
                     placeholder="Phone"
                     style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
-
                     value={phone}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateParams({ phone: e.target.value })}
                 />
                 <Input
                     placeholder="Student ID"
                     style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
-
                     value={studentIdNumber}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateParams({ studentIdNumber: e.target.value })}
                 />
                 <Input
                     placeholder="First Name"
                     style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
-
                     value={firstName}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateParams({ firstName: e.target.value })}
                 />
                 <Input
                     placeholder="Last Name"
                     style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
-
                     value={lastName}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateParams({ lastName: e.target.value })}
                 />
                 <Input
                     placeholder="PINFL"
                     style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
-
                     value={pinfl}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateParams({ pinfl: e.target.value })}
                 />
@@ -278,14 +291,12 @@ const TransactionHistory: React.FC = () => {
                     allowClear
                     placeholder="State"
                     style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
-
                     options={stateOptions}
                     value={state || undefined}
                     onChange={(v) => updateParams({ state: v || undefined })}
                 />
                 <RangePicker
                     style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
-
                     className="w-full"
                     format="DD-MM-YYYY"
                     value={from && to ? [dayjs(Number(from)), dayjs(Number(to))] : undefined}
@@ -315,6 +326,9 @@ const TransactionHistory: React.FC = () => {
                     showSizeChanger: true,
                     pageSizeOptions: ["10", "20", "50", "100"],
                 }}
+                rowClassName={(record: TransactionRecord) =>
+                    record.provider !== "BANK" ? (record.existIn1C ? "bg-green-300" : "bg-red-400") : ""
+                }
             />
         </div>
     );

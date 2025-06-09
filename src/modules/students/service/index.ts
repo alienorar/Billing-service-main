@@ -13,5 +13,5 @@ export async function getStudents(params:ParamsType) {
 
 // ============= SYNC STUDENTS ============
 export async function syncStudent() {
-    return await axiosInstance.post("api/v1/hemis/student/list/sync")
+    return await axiosInstance.get("api/v1/hemis/student/list/sync")
 }
