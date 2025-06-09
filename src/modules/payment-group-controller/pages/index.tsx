@@ -225,7 +225,7 @@ const Index = () => {
             pageSizeOptions: ["10", "20", "50", "100"],
           }}
           className="font-inter"
-          rowClassName={(record: PaymentGroup) => {
+          rowClassName={(_: PaymentGroup) => {
             return "bg-white hover:bg-blue-50";
           }}
         />
