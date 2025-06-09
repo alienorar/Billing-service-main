@@ -65,7 +65,8 @@ export interface TablePropsType {
   pagination: false | TablePaginationConfig | undefined;
   handleChange: (pagination: TablePaginationConfig) => void;
   onRow?: TableProps<AnyObject>["onRow"]; 
-  loading?:boolean
+  loading?:boolean;
+
 }
 // ==========GLOBAL DELETE TYPE ==========
 export interface ConfirmType {
@@ -132,4 +133,13 @@ export interface SpecialityType {
   educationType: string;
   educationLang: string;
   isVisible: boolean;
+}
+
+
+export interface PaymentGroup {
+  id: number | undefined;
+  name: string;
+  duration: number;
+  contractAmounts: Record<string, number>;
+  groupIds: number[];
 }

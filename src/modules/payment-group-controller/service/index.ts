@@ -1,8 +1,13 @@
 import axiosInstance from "@api";
+import { ParamsType } from "@types";
 
 // ============= GET PAYMENT GROUP LIST ============
-export async function getPmtGroupList() {
-    return (await axiosInstance.get("api/payment-group/list")).data
+export async function getPmtGroupList(params:ParamsType) {
+    return (await axiosInstance.get("api/payment-group/list",{params})).data
+}
+// ============= GET AVAILABLE GROUP LIST ============
+export async function getAvailableGroupList() {
+    return (await axiosInstance.get(`api/payment-group/available-groups?specialityId=`)).data
 }
 
 
@@ -13,6 +18,20 @@ export async function createPmtGroupList(data:any){
 
 //============= UPDATE PAYMENT GROUP LIST  ===============
 export async function updatePmtGroupList(data:any) {
-    const response = await axiosInstance.put(`api/v1/admin/user/update`, data);
+    const {id} = data
+    const response = await axiosInstance.put(`api/payment-group/update/${id}`,data);
     return response?.data
+}
+
+
+//============= DELETE PAYMENT GROUP LIST  ===============
+export async function deletePmtGroupList(id: number | string) {
+    const response = await axiosInstance.delete(`api/payment-group/delete/${id}`);
+    return response?.data;
+}
+
+//============= GET SINGLE PAYMENT GROUP LIST  ===============
+export async function getOnePmtGroup(id: number | string) {
+    const response = await axiosInstance.get(`api/payment-group/one/${id}`);
+    return response?.data;
 }

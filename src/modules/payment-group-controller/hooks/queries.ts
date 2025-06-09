@@ -1,10 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
-import { getPmtGroupList } from "../service";
+import { getAvailableGroupList,  getPmtGroupList } from "../service";
+import { ParamsType } from "@types";
 
 // ============= GET PAYMENT GROUP LIST ============
-export function useGetPmtGroupList() {
+export function useGetPmtGroupList(params:ParamsType) {
+    return useQuery({
+        queryKey: ["payment-group",params],
+        queryFn: () => getPmtGroupList(params)
+    })
+}
+// ============= GET GROUP LIST ============
+export function useGetAvailabletGroupList() {
     return useQuery({
         queryKey: ["payment-group"],
-        queryFn: () => getPmtGroupList()
+        queryFn: () => getAvailableGroupList()
     })
 }
