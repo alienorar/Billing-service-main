@@ -1,9 +1,9 @@
 import { Modal, Form, Input, Button, InputNumber, Select } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useCreatePmtGroupList, useUpdatePmtGroupList } from "../hooks/mutations";
-import { useGetAvailabletGroupList } from "../hooks/queries"; // New hook for fetching groups
+import { useGetAvailabletGroupList } from "../hooks/queries";
 import { PaymentGroup } from "@types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const { Option } = Select;
 
@@ -20,11 +20,11 @@ interface Group {
 
 const PmtGroupModal = ({ open, handleClose, update }: PmtGroupModalProps) => {
   const [form] = useForm();
+  const [specialityId, setSpecialityId] = useState();
+
   const { mutate: createMutate, isPending: isCreating } = useCreatePmtGroupList();
   const { mutate: updateMutate, isPending: isUpdating } = useUpdatePmtGroupList();
-  const { data: groupList, isLoading: isGroupsLoading } = useGetAvailabletGroupList(); // Fetch groups
-
-console.log(groupList?.data,"dhejkhdk3")
+  const { data: groupList, isLoading: isGroupsLoading } = useGetAvailabletGroupList(specialityId);
 
   // Set form values for edit mode
   useEffect(() => {
@@ -32,25 +32,39 @@ console.log(groupList?.data,"dhejkhdk3")
       form.setFieldsValue({
         name: update.name,
         duration: update.duration,
-        contractAmounts: Object.entries(update.contractAmounts).map(([year, amount]) => ({
-          year,
+        contractAmounts: Object.entries(update.contractAmounts).map(([key, amount]) => ({
+          key,
           amount,
         })),
-        groupIds: update.groupIds, // Initialize groupIds for editing
+        groupIds: update.groupIds,
       });
     } else {
       form.resetFields();
     }
   }, [update, form]);
 
+  // Handle duration change to dynamically adjust contract amounts
+  const handleDurationChange = (duration: number | null) => {
+    if (duration && duration > 0) {
+      const currentContractAmounts = form.getFieldValue("contractAmounts") || [];
+      const newContractAmounts = Array.from({ length: duration }, (_, index) => {
+        const key = `${index + 1}`;
+        return currentContractAmounts[index] || { key, amount: undefined };
+      });
+      form.setFieldsValue({ contractAmounts: newContractAmounts });
+    } else {
+      form.setFieldsValue({ contractAmounts: [] });
+    }
+  };
+
   const onFinish = async (values: any) => {
     const basePayload = {
       name: values.name,
       duration: values.duration,
       contractAmounts: values.contractAmounts.reduce(
-        (acc: Record<string, number>, { year, amount }: { year: string; amount: number }) => ({
+        (acc: Record<string, number>, { key, amount }: { key: string; amount: number }) => ({
           ...acc,
-          [year]: amount,
+          [key]: amount,
         }),
         {}
       ),
@@ -60,7 +74,7 @@ console.log(groupList?.data,"dhejkhdk3")
     if (update?.id) {
       const payload: PaymentGroup = {
         ...basePayload,
-        id: update.id, 
+        id: update.id,
       };
       updateMutate(payload, {
         onSuccess: () => {
@@ -69,7 +83,7 @@ console.log(groupList?.data,"dhejkhdk3")
         },
       });
     } else {
-      const payload = basePayload; 
+      const payload = basePayload;
       createMutate(payload, {
         onSuccess: () => {
           form.resetFields();
@@ -107,13 +121,14 @@ console.log(groupList?.data,"dhejkhdk3")
             min={1}
             style={{ width: "100%", padding: "6px", borderRadius: "6px" }}
             placeholder="Enter duration"
+            onChange={handleDurationChange}
           />
         </Form.Item>
 
         <Form.Item
           label="Groups"
           name="groupIds"
-          rules={[{ required: true, message: "Select at least one group!" }]}
+          rules={[{ required: false, message: "Select at least one group!" }]}
         >
           <Select
             mode="multiple"
@@ -131,22 +146,26 @@ console.log(groupList?.data,"dhejkhdk3")
         </Form.Item>
 
         <Form.Item
-          label="Contract Amounts (Year: Amount)"
+          label="Contract Amounts (Ordinal: Amount)"
           name="contractAmounts"
           rules={[{ required: true, message: "Enter at least one contract amount!" }]}
         >
           <Form.List name="contractAmounts">
-            {(fields, { add, remove }) => (
+            {(fields) => (
               <>
                 {fields.map(({ key, name, ...restField }) => (
                   <div key={key} style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
                     <Form.Item
                       {...restField}
-                      name={[name, "year"]}
-                      rules={[{ required: true, message: "Enter year!" }]}
+                      name={[name, "key"]}
+                      rules={[{ required: true, message: "Enter ordinal!" }]}
                       style={{ flex: 1 }}
                     >
-                      <Input placeholder="Year (e.g., 2023)" />
+                      <Input
+                        placeholder="Ordinal (e.g., 1)"
+                        disabled
+                        value={`${name + 1}`}
+                      />
                     </Form.Item>
                     <Form.Item
                       {...restField}
@@ -156,14 +175,8 @@ console.log(groupList?.data,"dhejkhdk3")
                     >
                       <InputNumber min={0} placeholder="Amount (UZS)" style={{ width: "100%" }} />
                     </Form.Item>
-                    <Button onClick={() => remove(name)} danger>
-                      Remove
-                    </Button>
                   </div>
                 ))}
-                <Button type="dashed" onClick={() => add()} block>
-                  Add Contract Amount
-                </Button>
               </>
             )}
           </Form.List>
