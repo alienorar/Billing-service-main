@@ -9,7 +9,9 @@ export const adminRights = [
     { path: '/super-admin-panel/speciality', label: 'Speciality', icon: <FaSlack style={{ fontSize: "22px" }} /> },
     { path: '/super-admin-panel/payment-history', label: 'Payment history', icon: <FaRegCreditCard style={{ fontSize: "22px" }} /> },
     { path: '/super-admin-panel/transaction-history', label: 'Transaction history', icon: <FaHourglassEnd style={{ fontSize: "22px" }} /> },
-    { path: '/super-admin-panel/students-statistics', label: 'Statistics', icon: <FaSignal style={{ fontSize: "22px" }} /> },
+    { path: '/super-admin-panel/students-statistics', label: 'All statistics', icon: <FaSignal style={{ fontSize: "22px" }} /> },
+    { path: '/super-admin-panel/group-statistics', label: 'Group statistics', icon: <FaSignal style={{ fontSize: "22px" }} /> },
     { path: '/super-admin-panel/pmgroup-controller', label: 'Payment Group ', icon: <FaUsersViewfinder style={{ fontSize: "22px" }} /> },
+    { path: '/super-admin-panel/group-list', label: 'Group List ', icon: <FaUsersViewfinder style={{ fontSize: "22px" }} /> },
 ];
 

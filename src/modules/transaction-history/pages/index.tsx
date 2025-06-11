@@ -32,7 +32,7 @@ export interface TransactionRecord {
     docNumber: string;
     status: TransactionState;
     provider: string;
-    
+
     phone: string;
     firstName: string;
     lastName: string;
@@ -91,7 +91,7 @@ const TransactionHistory: React.FC = () => {
     });
 
     const [tableData, setTableData] = useState<TransactionRecord[]>([]);
-    const [total, setTotal] = useState<number>(0); // Renamed from setTableData to setTotal
+    const [total, setTotal] = useState<number>(0);
 
     /* ---------- Effects ---------- */
     useEffect(() => {
@@ -119,12 +119,12 @@ const TransactionHistory: React.FC = () => {
                         createdAt: item.createdAt,
                         updatedAt: item.updatedAt,
                         createdDate: dayjs(item.createdAt, "DD-MM-YYYY HH:mm:ss").valueOf(),
-                        existIn1C: item.existIn1C ?? false, // Ensure existIn1C is boolean, default to false
+                        existIn1C: item.existIn1C ?? false,
                     } as TransactionRecord;
                 }
             );
             setTableData(normalized);
-            setTotal(transactionHistory.data.paging.totalItems ?? 0); // Updated to use setTotal
+            setTotal(transactionHistory.data.paging.totalItems ?? 0);
         }
     }, [transactionHistory]);
 
@@ -140,7 +140,7 @@ const TransactionHistory: React.FC = () => {
     };
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
-        const { current = 1, pageSize = 10 } = pagination; // Defaults: page 1, size 10
+        const { current = 1, pageSize = 10 } = pagination;
         updateParams({
             page: current.toString(),
             size: pageSize.toString(),

@@ -1,57 +1,56 @@
 import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route,
-  RouterProvider,
-} from 'react-router-dom';
-
-import App from '../App.tsx'; // Root App
+    createBrowserRouter,
+    createRoutesFromElements,
+    Route,
+    RouterProvider,
+} from "react-router-dom";
+import App from '../App.tsx';
 import {
-  SignIn,
-  AdminPanel,
-  AdminPage,
-  Role,
-  Students,
-  OneStudent,
-  Speciality,
-  PaymentHistory,
-  NotFound,
-  TransactionHistory,
-  PaymentDetails,
-  StudentStatistics,
-  PmGroupController,
-  OnePaymentGroup,
-} from '@modules';
-import { AuthProvider } from '../utils/auth-context/index.tsx';
+    SignIn,
+    AdminPanel,
+    AdminPage,
+    Role,
+    Students,
+    OneStudent,
+    Speciality,
+    PaymentHistory,
+    NotFound,
+    TransactionHistory,
+    PaymentDetails,
+    StudentStatistics,
+    PmGroupController,
+    OnePaymentGroup,
+    GroupStatistics,
+    GroupList,
+
+} from '@modules'
 
 const Index = () => {
-  const router = createBrowserRouter(
-    createRoutesFromElements(
-      <Route path="/" element={<App />}>
-        <Route index element={<SignIn />} />
-        <Route path="super-admin-panel" element={<AdminPanel />}>
-            <Route index element={<Role />} />
-            <Route path="admin-page" element={<AdminPage />} />
-            <Route path="students" element={<Students />} />
-            <Route path="students/:id" element={<OneStudent />} />
-            <Route path="speciality" element={<Speciality />} />
-            <Route path="payment-history" element={<PaymentHistory />} />
-            <Route path="transaction-history" element={<TransactionHistory />} />
-            <Route path="transaction-history/:id" element={<PaymentDetails />} />
-            <Route path="pmgroup-controller" element={<PmGroupController />} />
-            <Route path="pmgroup-controller/:id" element={<OnePaymentGroup />} />
-            <Route path="students-statistics" element={<StudentStatistics />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Route>
+    const router = createBrowserRouter(
+        createRoutesFromElements(
+            <Route>
+                <Route path="/" element={<App />}>
+                    <Route path="/" element={<SignIn />} />
+                    <Route path="super-admin-panel" element={<AdminPanel />}>
+                        <Route index element={<Role />} />
+                        <Route path="admin-page" element={<AdminPage />} />
+                        <Route path="students" element={<Students />} />
+                        <Route path="students/:id" element={<OneStudent />} />
+                        <Route path="speciality" element={<Speciality />} />
+                        <Route path="payment-history" element={<PaymentHistory />} />
+                        <Route path="transaction-history" element={<TransactionHistory />} />
+                        <Route path="transaction-history/:id" element={<PaymentDetails />} />
+                        <Route path="pmgroup-controller" element={<PmGroupController />} />
+                        <Route path="pmgroup-controller/:id" element={<OnePaymentGroup />} />
+                        <Route path="students-statistics" element={<StudentStatistics />} />
+                        <Route path="group-statistics" element={<GroupStatistics />} />
+                        <Route path="group-list" element={<GroupList />} />
+                    </Route>
+                </Route>
+                <Route path="*" element={<NotFound />}></Route>
+            </Route>
+        )
     )
-  );
-
-  return (
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
-  );
-};
-
+    return <RouterProvider router={router} />;
+}
 export default Index;
