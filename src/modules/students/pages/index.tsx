@@ -218,8 +218,8 @@ const Index = () => {
           <Button
             type="primary"
             size="large"
-            style={{ maxWidth: 80, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40 }}
-            className="text-[16px]"
+            style={{ maxWidth: 96, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40 ,paddingRight:"2px",paddingLeft:"2px"}}
+            className="text-[16px] "
             onClick={handleSync}
             loading={isSyncing}
           >
