@@ -68,12 +68,8 @@ const Index = () => {
 
   const columns = [
     { title: "ID", dataIndex: "id" },
-    { title: "Speciality Code", dataIndex: "specialityCode" },
-    { title: "Speciality Name", dataIndex: "specialityName",width:340 },
-    { title: "Contract Cost", dataIndex: "contractCost", render: (cost:string|number) => cost || "N/A" },
-    { title: "Contract Cost (In Letters)", dataIndex: "contractCostInLetters", render: (costInLetters:string) => costInLetters || "N/A" },
-    { title: "Duration", dataIndex: "duration", render: (duration:string|number) => duration || "N/A" },
-    { title: "Education Form", dataIndex: "educationForm" },
+    { title: "Speciality Code", dataIndex: "code" },
+    { title: "Speciality Name", dataIndex: "name",width:340 },
     { title: "Education Type", dataIndex: "educationType" },
     { title: "Education Language", dataIndex: "educationLang" },
     {
