@@ -32,7 +32,7 @@ export interface TransactionRecord {
     docNumber: string;
     status: TransactionState;
     provider: string;
-    /* Flattened student fields */
+    
     phone: string;
     firstName: string;
     lastName: string;
@@ -231,6 +231,7 @@ const TransactionHistory: React.FC = () => {
 
     /* ---------- Options ---------- */
     const providerOptions = [
+        { value: "", label: "All" },
         { value: "PAYME", label: "Payme" },
         { value: "CLICK", label: "Click" },
         { value: "UPAY", label: "Upay" },

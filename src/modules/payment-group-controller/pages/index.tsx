@@ -10,6 +10,7 @@ import PmtGroupModal from "./modal";
 import "antd/dist/reset.css";
 import { useDeletePmtGroupList } from "../hooks/mutations";
 import { FiEye } from "react-icons/fi";
+import { openNotification } from "@utils";
 
 const Index = () => {
   const [tableData, setTableData] = useState<PaymentGroup[]>([]);
@@ -82,18 +83,10 @@ const Index = () => {
   // Delete handler
   const deleteData = (id: number) => {
     if (id == null) {
-      message.error("Invalid payment group ID");
+      openNotification("error","Error","Invalid payment group ID");
       return;
     }
-    deletePmtGroup(id, {
-      onSuccess: () => {
-        message.success("Payment group deleted successfully");
-      },
-      onError: (error) => {
-        message.error("Failed to delete payment group");
-        console.error("Delete failed:", error);
-      },
-    });
+    deletePmtGroup(id);
   };
 
   const handleView = (id: number | undefined) => {
@@ -222,7 +215,7 @@ const Index = () => {
             pageSize: size,
             total,
             showSizeChanger: true,
-            pageSizeOptions: ["10", "20", "50", "100"],
+            pageSizeOptions: ["2", "10", "50", "100"],
           }}
           className="font-inter"
           rowClassName={(_: PaymentGroup) => {

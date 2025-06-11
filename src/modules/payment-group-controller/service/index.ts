@@ -6,8 +6,8 @@ export async function getPmtGroupList(params:ParamsType) {
     return (await axiosInstance.get("api/payment-group/list",{params})).data
 }
 // ============= GET AVAILABLE GROUP LIST ============
-export async function getAvailableGroupList() {
-    return (await axiosInstance.get(`api/payment-group/available-groups?specialityId=`)).data
+export async function getAvailableGroupList(params:ParamsType) {
+    return (await axiosInstance.get(`api/payment-group/available-groups?`,{params})).data
 }
 
 
@@ -23,7 +23,6 @@ export async function updatePmtGroupList(data:any) {
     return response?.data
 }
 
-
 //============= DELETE PAYMENT GROUP LIST  ===============
 export async function deletePmtGroupList(id: number | string) {
     const response = await axiosInstance.delete(`api/payment-group/delete/${id}`);
@@ -34,4 +33,9 @@ export async function deletePmtGroupList(id: number | string) {
 export async function getOnePmtGroup(id: number | string) {
     const response = await axiosInstance.get(`api/payment-group/one/${id}`);
     return response?.data;
+}
+
+// ============= GET SPECIALITY ============
+export async function getSpecialityForGroups() {
+    return (await axiosInstance.get(`api/v1/speciality/form/list/all`))
 }
