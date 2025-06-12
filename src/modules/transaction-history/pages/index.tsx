@@ -14,9 +14,7 @@ const { RangePicker } = DatePicker;
  * Types
  *************************************/
 export type TransactionState =
-    | "PAID"
     | "PENDING"
-    | "FAILED"
     | "CANCELLED"
     | "SUCCESS"
     | string;
@@ -160,13 +158,10 @@ const TransactionHistory: React.FC = () => {
 
     const getStatusTagColor = (s: TransactionState): string => {
         switch (s) {
-            case "PAID":
             case "SUCCESS":
                 return "green";
             case "PENDING":
                 return "orange";
-            case "FAILED":
-                return "red";
             case "CANCELLED":
                 return "volcano";
             default:
@@ -241,7 +236,6 @@ const TransactionHistory: React.FC = () => {
     const stateOptions = [
         { value: "SUCCESS", label: "Success" },
         { value: "PENDING", label: "Pending" },
-        { value: "FAILED", label: "Failed" },
         { value: "CANCELLED", label: "Cancelled" },
     ];
 

@@ -1,11 +1,10 @@
-import { Modal, Form, Input, Button, InputNumber, Select } from "antd";
+import { Modal, Form, Input, Button, InputNumber, TreeSelect, Spin, Alert } from "antd";
 import { useForm } from "antd/es/form/Form";
+import { useEffect, useState } from "react";
 import { useCreatePmtGroupList, useUpdatePmtGroupList } from "../hooks/mutations";
 import { useGetAvailabletGroupList } from "../hooks/queries";
-import { PaymentGroup } from "@types";
-import { useEffect } from "react";
-
-const { Option } = Select;
+import { PaymentGroup, Speciality, AvailableGroup, PmtGroupFormValues, ContractAmountForm } from "@types";
+import { DataNode } from "antd/es/tree";
 
 interface PmtGroupModalProps {
   open: boolean;
@@ -13,44 +12,58 @@ interface PmtGroupModalProps {
   update?: PaymentGroup | null;
 }
 
-interface Group {
-  id: number;
-  name: string;
-}
-
-const PmtGroupModal = ({ open, handleClose, update }: PmtGroupModalProps) => {
-  const [form] = useForm();
-  // const [specialityId, setSpecialityId] = useState();
-
+const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open, handleClose, update }) => {
+  const [form] = useForm<PmtGroupFormValues>();
   const { mutate: createMutate, isPending: isCreating } = useCreatePmtGroupList();
   const { mutate: updateMutate, isPending: isUpdating } = useUpdatePmtGroupList();
-  const { data: groupList, isLoading: isGroupsLoading } = useGetAvailabletGroupList();
+  const { data: groupList, isLoading: isGroupsLoading, isError, error: errorInfo } =
+    useGetAvailabletGroupList();
+  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
+  const [selectedGroupIds, setSelectedGroupIds] = useState<number[]>([]);
 
-
-  // Set form values for edit mode
+  // Set form values for edit and create modes
   useEffect(() => {
     if (update?.id) {
+      const contractAmounts = update.contractAmounts
+        ? Object.entries(update.contractAmounts).map(([key, amount]) => ({
+            key,
+            amount,
+          }))
+        : [];
+      const groupIds = update.groupIds ?? [];
       form.setFieldsValue({
         name: update.name,
         duration: update.duration,
-        contractAmounts: Object.entries(update.contractAmounts).map(([key, amount]) => ({
-          key,
-          amount,
-        })),
-        groupIds: update.groupIds,
+        contractAmounts,
+        groupIds,
       });
+      setSelectedGroupIds(groupIds);
+      if (update.duration > 0 && contractAmounts.length === 0) {
+        handleDurationChange(update.duration);
+      }
+      setExpandedKeys([]);
     } else {
+      // Create mode
       form.resetFields();
+      form.setFieldsValue({
+        name: "",
+        duration: 1,
+        contractAmounts: [{ key: "1", amount: 0 }],
+        groupIds: [],
+      });
+      setSelectedGroupIds([]);
+      handleDurationChange(1);
+      setExpandedKeys([]);
     }
   }, [update, form]);
 
-  // Handle duration change to dynamically adjust contract amounts
-  const handleDurationChange = (duration: number | null) => {
-    if (duration && duration > 0) {
-      const currentContractAmounts = form.getFieldValue("contractAmounts") || [];
+  // Handle duration change
+  const handleDurationChange = (duration: number | null): void => {
+    if (typeof duration === "number" && duration > 0) {
+      const currentContractAmounts: ContractAmountForm[] = form.getFieldValue("contractAmounts") ?? [];
       const newContractAmounts = Array.from({ length: duration }, (_, index) => {
         const key = `${index + 1}`;
-        return currentContractAmounts[index] || { key, amount: undefined };
+        return currentContractAmounts[index] ?? { key, amount: 0 };
       });
       form.setFieldsValue({ contractAmounts: newContractAmounts });
     } else {
@@ -58,25 +71,53 @@ const PmtGroupModal = ({ open, handleClose, update }: PmtGroupModalProps) => {
     }
   };
 
-  const onFinish = async (values: any) => {
-    const basePayload = {
+  // Prepare TreeSelect data with unique keys
+  const treeData: DataNode[] = Array.isArray(groupList?.data)
+    ? groupList.data.map((speciality: Speciality) => ({
+        title: speciality.name,
+        value: `speciality-${speciality.id}`,
+        key: `speciality-${speciality.id}`,
+        selectable: false,
+        children: (speciality.groups ?? []).map((group: AvailableGroup) => ({
+          title: group.name,
+          value: group.id,
+          key: group.id,
+        })),
+      }))
+    : [];
+
+  // Handle TreeSelect expand/collapse
+  const handleTreeExpand = (keys: React.Key[]): void => {
+    setExpandedKeys(keys);
+  };
+
+  // Handle TreeSelect change with proper filtering
+  const handleTreeSelectChange = (values: React.Key[]): void => {
+    const groupIds = values
+      .filter((value) => typeof value === 'number')
+      .map(Number);
+    
+    setSelectedGroupIds(groupIds);
+    form.setFieldsValue({ groupIds });
+  };
+
+  // Handle form submission
+  const handleFinish = async (values: PmtGroupFormValues): Promise<void> => {
+    const basePayload: Omit<PaymentGroup, "id"> = {
       name: values.name,
       duration: values.duration,
       contractAmounts: values.contractAmounts.reduce(
-        (acc: Record<string, number>, { key, amount }: { key: string; amount: number }) => ({
+        (acc: Record<string, number>, { key, amount }) => ({
           ...acc,
           [key]: amount,
         }),
         {}
       ),
-      groupIds: values.groupIds || [],
+      groupIds: selectedGroupIds,
     };
 
     if (update?.id) {
-      const payload: PaymentGroup = {
-        ...basePayload,
-        id: update.id,
-      };
+      const payload: PaymentGroup = { ...basePayload, id: update.id };
       updateMutate(payload, {
         onSuccess: () => {
           form.resetFields();
@@ -84,8 +125,7 @@ const PmtGroupModal = ({ open, handleClose, update }: PmtGroupModalProps) => {
         },
       });
     } else {
-      const payload = basePayload;
-      createMutate(payload, {
+      createMutate(basePayload, {
         onSuccess: () => {
           form.resetFields();
           handleClose();
@@ -94,113 +134,118 @@ const PmtGroupModal = ({ open, handleClose, update }: PmtGroupModalProps) => {
     }
   };
 
+  if (isError) {
+    return (
+      <Alert
+        message="Error"
+        description={`Failed to load groups: ${errorInfo instanceof Error ? errorInfo.message : "Unknown error"}`}
+        type="error"
+        showIcon
+        style={{ margin: "20px" }}
+      />
+    );
+  }
+
   return (
     <Modal
       title={update?.id ? "Edit Payment Group" : "Add New Payment Group"}
       open={open}
       onCancel={handleClose}
       footer={null}
+      destroyOnClose
     >
-      <Form form={form} name="pmt_group_form" layout="vertical" onFinish={onFinish}>
-        <Form.Item
-          label="Name"
-          name="name"
-          rules={[{ required: true, message: "Enter payment group name!" }]}
-        >
-          <Input
-            style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
-            placeholder="Enter name"
-          />
-        </Form.Item>
-
-        <Form.Item
-          label="Duration (in months)"
-          name="duration"
-          rules={[{ required: true, message: "Enter duration!" }]}
-        >
-          <InputNumber
-            min={1}
-            style={{ width: "100%", padding: "6px", borderRadius: "6px" }}
-            placeholder="Enter duration"
-            onChange={handleDurationChange}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label="Groups"
-          name="groupIds"
-          rules={[{ required: false, message: "Select at least one group!" }]}
-        >
-          <Select
-            mode="multiple"
-            placeholder="Select groups"
-            loading={isGroupsLoading}
-            allowClear
-            style={{ width: "100%" }}
+      {isGroupsLoading ? (
+        <Spin style={{ display: "block", margin: "20px auto" }} />
+      ) : (
+        <Form form={form} name="pmt_group_form" layout="vertical" onFinish={handleFinish}>
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={[{ required: true, message: "Enter payment group name!" }]}
           >
-            {groupList?.data?.map((group: Group) => (
-              <Option key={group.id} value={group.id}>
-                {group.name}
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
+            <Input
+              style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
+              placeholder="Enter name"
+            />
+          </Form.Item>
 
-        <Form.Item
-          label="Contract Amounts (Ordinal: Amount)"
-          name="contractAmounts"
-          rules={[{ required: true, message: "Enter at least one contract amount!" }]}
-        >
-          <Form.List name="contractAmounts">
-            {(fields) => (
-              <>
-                {fields.map(({ key, name, ...restField }) => (
-                  <div key={key} style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "key"]}
-                      rules={[{ required: true, message: "Enter ordinal!" }]}
-                      style={{ flex: 1 }}
-                    >
-                      <Input
-                        placeholder="Ordinal (e.g., 1)"
-                        disabled
-                        value={`${name + 1}`}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "amount"]}
-                      rules={[{ required: true, message: "Enter amount!" }]}
-                      style={{ flex: 1 }}
-                    >
-                      <InputNumber min={0} placeholder="Amount (UZS)" style={{ width: "100%" }} />
-                    </Form.Item>
-                  </div>
-                ))}
-              </>
-            )}
-          </Form.List>
-        </Form.Item>
-
-        <Form.Item>
-          <Button
-            block
-            htmlType="submit"
-            loading={isCreating || isUpdating}
-            style={{
-              backgroundColor: "#050556",
-              color: "white",
-              height: "40px",
-              fontSize: "18px",
-              marginTop: "10px",
-              borderRadius: "6px",
-            }}
+          <Form.Item
+            label="Duration (in years)"
+            name="duration"
+            rules={[{ required: true, message: "Enter duration!" }]}
           >
-            {update?.id ? "Update Payment Group" : "Create Payment Group"}
-          </Button>
-        </Form.Item>
-      </Form>
+            <InputNumber
+              min={1}
+              style={{ width: "100%", borderRadius: "6px" }}
+              placeholder="Enter duration"
+              onChange={handleDurationChange}
+            />
+          </Form.Item>
+
+          <Form.Item label="Groups" name="groupIds">
+            <TreeSelect
+              treeData={treeData}
+              treeCheckable
+              showCheckedStrategy={TreeSelect.SHOW_PARENT}
+              placeholder="Select groups"
+              style={{ width: "100%", borderRadius: "6px" }}
+              treeExpandedKeys={expandedKeys}
+              onTreeExpand={handleTreeExpand}
+              onChange={handleTreeSelectChange}
+              value={selectedGroupIds}
+              allowClear
+              treeDefaultExpandAll
+              maxTagCount="responsive"
+            />
+          </Form.Item>
+
+          <Form.Item label="Contract Amounts (Ordinal: Amount)" name="contractAmounts">
+            <Form.List name="contractAmounts">
+              {(fields) => (
+                <>
+                  {fields.map(({ key, name, ...restField }) => (
+                    <div key={key} style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "key"]}
+                        initialValue={`${name + 1}`}
+                        style={{ flex: 1 }}
+                      >
+                        <Input placeholder="Default" disabled />
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "amount"]}
+                        rules={[{ required: true, message: "Enter amount!" }]}
+                        style={{ flex: 1 }}
+                      >
+                        <InputNumber min={0} placeholder="Amount (UZS)" style={{ width: "100%" }} />
+                      </Form.Item>
+                    </div>
+                  ))}
+                </>
+              )}
+            </Form.List>
+          </Form.Item>
+
+          <Form.Item>
+            <Button
+              block
+              htmlType="submit"
+              loading={isCreating || isUpdating}
+              style={{
+                backgroundColor: "#050556",
+                color: "white",
+                height: "40px",
+                fontSize: "18px",
+                borderRadius: "6px",
+              }}
+            >
+              {update?.id ? "Update Payment Group" : "Create Payment Group"}
+            </Button>
+          </Form.Item>
+        </Form>
+      )}
     </Modal>
   );
 };

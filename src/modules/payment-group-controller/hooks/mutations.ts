@@ -41,8 +41,9 @@ export function useCreatePmtGroupList() {
             openNotification("success", "Success", "Payment group successfully deleted");
             queryClient.invalidateQueries({ queryKey: ["payment-group"] });
         },
-        onError: (error) => {
-            openNotification("error", "Error", error?.message)
+        onError: (data) => {
+            openNotification("error", "Error",data?.message)
+            // console.log(erro)
         }
     })
 }

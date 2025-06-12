@@ -8,7 +8,7 @@ import { useGetPaymentHistory } from "../hooks/queries";
 /*******************************
  * Types
  *******************************/
-export type PaymentState = "PAID" | "PENDING" | "FAILED" | "CANCELLED" | string;
+export type PaymentState = "PAID" | "PENDING" | string;
 
 export interface PaymentRecord {
   id: number;
@@ -109,8 +109,6 @@ const PaymentHistory: React.FC = () => {
         return "orange";
       case "FAILED":
         return "red";
-      case "CANCELLED":
-        return "volcano";
       default:
         return "blue";
     }
@@ -189,10 +187,11 @@ const PaymentHistory: React.FC = () => {
 
 
   const stateOptions = [
+    { value: "", label: "All" },
     { value: "PAID", label: "Paid" },
     { value: "PENDING", label: "Pending" },
-    { value: "FAILED", label: "Failed" },
-    { value: "CANCELLED", label: "Cancelled" },
+    { value: "PENDING_CANCELED", label: "Pending Cancelled" },
+    { value: "PAID_CANCELED", label: "Paid Cancelled" },
   ];
 
   return (

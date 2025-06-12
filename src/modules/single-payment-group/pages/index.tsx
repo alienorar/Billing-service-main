@@ -75,14 +75,14 @@ const Index = () => {
                   color="blue"
                   className="text-xs font-medium px-2 py-1 rounded-full"
                 >
-                  Year {year}: {amount.toLocaleString()} UZS
+                  Year {year}: {amount?.toLocaleString()} UZS
                 </Tag>
               ))}
             </div>
           </Descriptions.Item>
           <Descriptions.Item label="Group IDs">
             <div className="flex flex-wrap gap-2">
-              {paymentGroup.groupIds.map((groupId) => (
+              {paymentGroup?.groupIds?.map((groupId) => (
                 <Tag key={groupId} color="green" className="text-xs font-medium px-2 py-1 rounded-full">
                   {groupId}
                 </Tag>
