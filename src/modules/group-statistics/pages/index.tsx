@@ -14,17 +14,11 @@ interface GroupStatisticsRecord {
     allStudentPaid: number | null;
 }
 
-/*************************************
- * Utils
- *************************************/
 const filterEmpty = (obj: Record<string, string | undefined>): Record<string, string> =>
     Object.fromEntries(
         Object.entries(obj).filter(([, v]) => v !== "" && v !== undefined)
     ) as Record<string, string>;
 
-/*************************************
- * Component
- *************************************/
 const Index: React.FC = () => {
     /* ---------- URL params ---------- */
     const [searchParams, setSearchParams] = useSearchParams();
@@ -80,6 +74,11 @@ const Index: React.FC = () => {
         });
     };
 
+    /* ---------- Row Click Handler ---------- */
+    const handleRowClick = (record: GroupStatisticsRecord) => {
+        navigate(`/super-admin-panel/group-statistics/${record.id}`);
+    };
+
     /* ---------- Columns ---------- */
     const columns = useMemo(
         () => [
@@ -95,6 +94,11 @@ const Index: React.FC = () => {
                 key: "name",
                 sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
                     a.name.localeCompare(b.name),
+                render: (text: string, record: GroupStatisticsRecord) => (
+                    <a onClick={() => handleRowClick(record)} style={{ color: "#050556" }}>
+                        {text}
+                    </a>
+                ), // Fallback: clickable name
             },
             {
                 title: "Speciality",
@@ -134,18 +138,11 @@ const Index: React.FC = () => {
                     (a.allStudentPaid || 0) - (b.allStudentPaid || 0),
             },
         ],
-        [navigate]
+        []
     );
 
-    
-
-   
     return (
         <div className="flex flex-col gap-4 px-5 py-4">
-            {/* Filters */}
-
-
-            {/* Table */}
             <GlobalTable
                 loading={isFetching}
                 data={tableData}
@@ -158,6 +155,9 @@ const Index: React.FC = () => {
                     showSizeChanger: true,
                     pageSizeOptions: ["10", "20", "50", "100"],
                 }}
+                onRow={(record: GroupStatisticsRecord) => ({
+                    onClick: () => handleRowClick(record), // Row click navigation
+                })}
             />
         </div>
     );

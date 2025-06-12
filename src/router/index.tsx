@@ -22,6 +22,7 @@ import {
     OnePaymentGroup,
     GroupStatistics,
     GroupList,
+    GroupStudents,
 
 } from '@modules'
 
@@ -44,6 +45,7 @@ const Index = () => {
                         <Route path="pmgroup-controller/:id" element={<OnePaymentGroup />} />
                         <Route path="students-statistics" element={<StudentStatistics />} />
                         <Route path="group-statistics" element={<GroupStatistics />} />
+                        <Route path="group-statistics/:id" element={<GroupStudents />} />
                         <Route path="group-list" element={<GroupList />} />
                     </Route>
                 </Route>

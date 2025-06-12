@@ -46,6 +46,9 @@ const GroupStatistics = loadable(() => import('./group-statistics/pages'), {
 const GroupList = loadable(() => import('./group-list/pages'), {
   fallback: <Loading />
 });
+const GroupStudents = loadable(() => import('./group-students/pages'), {
+  fallback: <Loading />
+});
 
 const NotFound = loadable(() => import('./not-found'), {
   fallback: <Loading />
@@ -66,5 +69,6 @@ export {
   OnePaymentGroup,
   GroupStatistics,
   GroupList,
+  GroupStudents,
   NotFound,
 }

@@ -18,7 +18,7 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open, handleClose, update
   const { mutate: updateMutate, isPending: isUpdating } = useUpdatePmtGroupList();
   const { data: groupList, isLoading: isGroupsLoading, isError, error: errorInfo } =
     useGetAvailabletGroupList();
-  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
+  const [expandedKeys, setExpandedKeys] = useState<(string | number)[]>([]);
   const [selectedGroupIds, setSelectedGroupIds] = useState<number[]>([]);
 
   // Set form values for edit and create modes
@@ -87,14 +87,14 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open, handleClose, update
     : [];
 
   // Handle TreeSelect expand/collapse
-  const handleTreeExpand = (keys: React.Key[]): void => {
+  const handleTreeExpand = (keys: (string | number)[]): void => {
     setExpandedKeys(keys);
   };
 
   // Handle TreeSelect change with proper filtering
-  const handleTreeSelectChange = (values: React.Key[]): void => {
+  const handleTreeSelectChange = (values: (string | number)[]): void => {
     const groupIds = values
-      .filter((value) => typeof value === 'number')
+      .filter((value): value is number => typeof value === "number")
       .map(Number);
     
     setSelectedGroupIds(groupIds);
@@ -186,7 +186,7 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open, handleClose, update
             <TreeSelect
               treeData={treeData}
               treeCheckable
-              showCheckedStrategy={TreeSelect.SHOW_PARENT}
+              showCheckedStrategy={TreeSelect.SHOW_CHILD}
               placeholder="Select groups"
               style={{ width: "100%", borderRadius: "6px" }}
               treeExpandedKeys={expandedKeys}
