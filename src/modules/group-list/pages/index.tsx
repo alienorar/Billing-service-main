@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, Input, Select, TablePaginationConfig, Tag } from "antd";
+import { Button, Input, Select, Space, TablePaginationConfig, Tag, Tooltip } from "antd";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { GlobalTable } from "@components"; // Assuming this is your custom Table component
 import { useGetStudentById } from "../hooks/queries";
+import { GroupListUpdate } from "@types";
+import { EditOutlined } from "@ant-design/icons";
+import GroupModal from "./modal";
 
 // Define the interface for group data
 interface GroupRecord {
@@ -39,21 +42,19 @@ interface GroupResponse {
   };
 }
 
-/*************************************
- * Utils
- *************************************/
+
 const filterEmpty = (obj: Record<string, string | undefined>): Record<string, string> =>
   Object.fromEntries(
     Object.entries(obj).filter(([, v]) => v !== "" && v !== undefined)
   ) as Record<string, string>;
 
-/*************************************
- * Component
- *************************************/
+
 const GroupList: React.FC = () => {
   /* ---------- URL params ---------- */
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [update, setUpdate] = useState<GroupListUpdate | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const page = Number(searchParams.get("page") ?? 1);
   const size = Number(searchParams.get("size") ?? 10);
@@ -116,6 +117,23 @@ const GroupList: React.FC = () => {
       size: pageSize.toString(),
     });
   };
+
+
+  // Modal handlers
+  const showModal = () => setIsModalOpen(true);
+  const handleClose = () => {
+    setIsModalOpen(false);
+    setUpdate(null);
+  };
+
+  // Edit handler
+  const editData = (item: GroupListUpdate) => {
+    setUpdate(item);
+    showModal();
+  };
+
+
+
 
   /* ---------- Columns ---------- */
   const columns = useMemo(
@@ -194,15 +212,14 @@ const GroupList: React.FC = () => {
       {
         title: "Action",
         key: "action",
-        render: (_: unknown, record: GroupRecord) => (
-          <Button
-            type="primary"
-            size="small"
-            onClick={() => navigate(`/group-list/${record.id}`)}
-            style={{ backgroundColor: "#050556", borderColor: "#050556", color: "white" }}
-          >
-            View
-          </Button>
+        render: (_: any, record: any) => (
+          <Space size="middle">
+            <Tooltip title="Edit">
+              <Button onClick={() => editData(record)}>
+                <EditOutlined />
+              </Button>
+            </Tooltip>
+          </Space>
         ),
       },
     ],
@@ -228,64 +245,71 @@ const GroupList: React.FC = () => {
 
   /* ---------- Render ---------- */
   return (
-    <div className="flex flex-col gap-4 px-5 py-4">
-      {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4 items-end">
-        <Input
-          placeholder="Group Name"
-          style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
-          value={name}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateParams({ name: e.target.value })}
-        />
-        <Select
-          allowClear
-          placeholder="Education Language"
-          style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
-          options={educationLangOptions}
-          value={educationLang || undefined}
-          onChange={(value: string | undefined) => updateParams({ educationLang: value || undefined })}
-        />
-        <Select
-          allowClear
-          placeholder="Education Form"
-          style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
-          options={educationFormOptions}
-          value={educationForm || undefined}
-          onChange={(value: string | undefined) => updateParams({ educationForm: value || undefined })}
-        />
-        <Select
-          allowClear
-          placeholder="Active Status"
-          style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
-          options={activeOptions}
-          value={active || undefined}
-          onChange={(value: string | undefined) => updateParams({ active: value || undefined })}
-        />
-        <Button
-          type="primary"
-          loading={isFetching}
-          className="bg-green-700 text-white w-full md:w-auto"
-          onClick={() => updateParams({})}
-        >
-          Search
-        </Button>
-      </div>
+    <>
+      <GroupModal
+        open={isModalOpen}
+        handleClose={handleClose}
+        update={update} />
+      <div className="flex flex-col gap-4 px-5 py-4">
+        {/* Filters */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4 items-end">
+          <Input
+            placeholder="Group Name"
+            style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
+            value={name}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateParams({ name: e.target.value })}
+          />
+          <Select
+            allowClear
+            placeholder="Education Language"
+            style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
+            options={educationLangOptions}
+            value={educationLang || undefined}
+            onChange={(value: string | undefined) => updateParams({ educationLang: value || undefined })}
+          />
+          <Select
+            allowClear
+            placeholder="Education Form"
+            style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
+            options={educationFormOptions}
+            value={educationForm || undefined}
+            onChange={(value: string | undefined) => updateParams({ educationForm: value || undefined })}
+          />
+          <Select
+            allowClear
+            placeholder="Active Status"
+            style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
+            options={activeOptions}
+            value={active || undefined}
+            onChange={(value: string | undefined) => updateParams({ active: value || undefined })}
+          />
+          <Button
+            type="primary"
+            loading={isFetching}
+            className="bg-green-700 text-white w-full md:w-auto"
+            onClick={() => updateParams({})}
+          >
+            Search
+          </Button>
+        </div>
 
-      {/* Table */}
-      <GlobalTable
-        loading={isFetching}
-        data={tableData}
-        columns={columns}
-        handleChange={handleTableChange}
-        pagination={{
-          current: page,
-          pageSize: size,
-          total,
-          showSizeChanger: true,
-          pageSizeOptions: ["10", "20", "50", "100"],
-        }}
-      />
-    </div>
+        {/* Table */}
+        <GlobalTable
+          loading={isFetching}
+          data={tableData}
+          columns={columns}
+          handleChange={handleTableChange}
+          pagination={{
+            current: page,
+            pageSize: size,
+            total,
+            showSizeChanger: true,
+            pageSizeOptions: ["10", "20", "50", "100"],
+          }}
+        />
+      </div>
+    </>
+
   );
 };
 

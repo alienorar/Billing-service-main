@@ -143,3 +143,9 @@ export interface PaymentGroup {
   contractAmounts: Record<string, number>;
   groupIds: number[];
 }
+
+export interface GroupListUpdate {
+  groupId?: number|string|undefined;
+  paymentGroupId?: number|string|undefined;
+  id?:number|string|undefined
+}
