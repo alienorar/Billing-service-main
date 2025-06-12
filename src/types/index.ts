@@ -137,7 +137,7 @@ export interface SpecialityType {
 
 
 export interface PaymentGroup {
-  id: number | undefined;
+  id: number ;
   name: string;
   duration: number;
   contractAmounts: Record<string, number>;
@@ -145,7 +145,7 @@ export interface PaymentGroup {
 }
 
 export interface GroupListUpdate {
-  groupId?: number|string|undefined;
-  paymentGroupId?: number|string|undefined;
-  id?:number|string|undefined
+  groupId?: number|string;
+  paymentGroupId?: number|string;
+  id?:number|string
 }

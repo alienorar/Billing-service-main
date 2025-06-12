@@ -25,8 +25,7 @@ const Index = () => {
   const page = Number(searchParams.get("page")) || 1;
   const size = Number(searchParams.get("size")) || 10;
 
-  // Temporary search state
-  // const [tempSearchParams, setTempSearchParams] = useState({ name });
+ 
 
   // Fetch payment groups with parameters
   const { data: pmGroupList, isFetching, error } = useGetPmtGroupList({
@@ -58,14 +57,6 @@ const Index = () => {
     });
   };
 
-  // Handle search
-  // const handleSearch = () => {
-  //   setSearchParams({
-  //     page: "1",
-  //     size: size.toString(),
-
-  //   });
-  // };
 
   // Modal handlers
   const showModal = () => setIsModalOpen(true);

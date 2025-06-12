@@ -3,7 +3,7 @@ import { useForm } from "antd/es/form/Form";
 import { useCreatePmtGroupList, useUpdatePmtGroupList } from "../hooks/mutations";
 import { useGetAvailabletGroupList } from "../hooks/queries";
 import { PaymentGroup } from "@types";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 const { Option } = Select;
 
@@ -20,11 +20,12 @@ interface Group {
 
 const PmtGroupModal = ({ open, handleClose, update }: PmtGroupModalProps) => {
   const [form] = useForm();
-  const [specialityId, setSpecialityId] = useState();
+  // const [specialityId, setSpecialityId] = useState();
 
   const { mutate: createMutate, isPending: isCreating } = useCreatePmtGroupList();
   const { mutate: updateMutate, isPending: isUpdating } = useUpdatePmtGroupList();
-  const { data: groupList, isLoading: isGroupsLoading } = useGetAvailabletGroupList(specialityId);
+  const { data: groupList, isLoading: isGroupsLoading } = useGetAvailabletGroupList();
+
 
   // Set form values for edit mode
   useEffect(() => {

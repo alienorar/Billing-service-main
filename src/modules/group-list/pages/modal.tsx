@@ -16,7 +16,7 @@ const GroupModal: React.FC<GroupModalProps> = ({ open, handleClose, update }) =>
   const { data: paymentGroupsData, isLoading: isLoadingPaymentGroups } = useGetPmtGroupList();
 
   // Extract payment group options
-  const paymentGroupOptions = paymentGroupsData?.data.content.map((group: PaymentGroup) => ({
+  const paymentGroupOptions = paymentGroupsData?.data?.content?.map((group: PaymentGroup) => ({
     value: group.id,
     label: `${group.name}`,
   })) || [];

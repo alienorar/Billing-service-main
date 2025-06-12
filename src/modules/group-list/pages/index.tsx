@@ -32,16 +32,6 @@ interface QueryParams {
   active?: string;
 }
 
-// Define the interface for the API response
-interface GroupResponse {
-  data: {
-    content: GroupRecord[];
-    paging: {
-      totalItems: number;
-    };
-  };
-}
-
 
 const filterEmpty = (obj: Record<string, string | undefined>): Record<string, string> =>
   Object.fromEntries(
