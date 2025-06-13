@@ -60,7 +60,6 @@ const Index = () => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen font-inter">
-
       {/* Payment Group Details */}
       <Card title={<Title level={3}>Payment Group Details</Title>} className="max-w-2xl mx-auto shadow-lg">
         <Descriptions bordered column={1} className="bg-white">
@@ -82,9 +81,9 @@ const Index = () => {
           </Descriptions.Item>
           <Descriptions.Item label="Group IDs">
             <div className="flex flex-wrap gap-2">
-              {paymentGroup?.groupIds?.map((groupId) => (
-                <Tag key={groupId} color="green" className="text-xs font-medium px-2 py-1 rounded-full">
-                  {groupId}
+              {paymentGroup?.groupIds?.map((group) => (
+                <Tag key={group.id} color="green" className="text-xs font-medium px-2 py-1 rounded-full">
+                  {`${group.id} - ${group.name}`} {/* Display both id and name */}
                 </Tag>
               ))}
             </div>

@@ -134,23 +134,23 @@ const Index = () => {
       dataIndex: "studentIdNumber",
     },
     {
-      title: "Full Name",
+      title: "To'liq ism",
       dataIndex: "fullName",
     },
     {
-      title: "Education Form",
+      title: "Ta'lim shakli",
       dataIndex: "educationForm",
     },
     {
-      title: "Education Type",
+      title: "Ta'lim turi",
       dataIndex: "educationType",
     },
     {
-      title: "Group",
+      title: "Guruh",
       dataIndex: "group",
     },
     {
-      title: "Speciality",
+      title: "Mutaxasislik",
       dataIndex: "speciality",
     },
 
@@ -174,7 +174,7 @@ const Index = () => {
       <div className="flex flex-col gap-4 px-5 py-4">
         <div className="flex items-center justify-between">
           <Input
-            placeholder="Search by phone"
+            placeholder="Tel"
             value={phone}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setSearchParams({
@@ -191,7 +191,7 @@ const Index = () => {
             className="w-[300px]"
           />
           <Input
-            placeholder="Search by first name"
+            placeholder="Ism"
             value={firstName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setSearchParams({
@@ -208,7 +208,7 @@ const Index = () => {
             className="w-[300px]"
           />
           <Input
-            placeholder="Search by last name"
+            placeholder="Familiya"
             value={lastName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setSearchParams({
@@ -226,7 +226,7 @@ const Index = () => {
           />
           <Select
             allowClear
-            placeholder="Education Form"
+            placeholder="Ta'lim shakli"
             style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
             options={educationFormOptions}
             value={educationForm || ""}
@@ -243,7 +243,7 @@ const Index = () => {
             })}
           />
           <Select
-            placeholder="Education Type"
+            placeholder="Ta'lim turi"
             style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
             options={educationTypeOptions}
             value={educationType || ""}
@@ -261,16 +261,16 @@ const Index = () => {
           <Button
             type="primary"
             size="large"
-            style={{ maxWidth: 160, minWidth: 80, backgroundColor: "green", color: "white", height: 36 }}
+            style={{ maxWidth: 220, minWidth: 80, backgroundColor: "green", color: "white", height: 36 }}
             onClick={handleSearch}
           >
-            Search
+            Qidirish
           </Button>
         </div>
 
         <div>
           <Popconfirm
-            title="Are you sure you want to upload students?"
+            title="Aniq ishonchingiz komilmi , o'ylab ko'ring yana-a?"
             onConfirm={showModal}
             okText="Yes"
             cancelText="No"
@@ -289,21 +289,21 @@ const Index = () => {
             <Button
               type="primary"
               size="large"
-              style={{ maxWidth: 80, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40 }}
+              style={{ maxWidth: 220, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40 }}
               className="text-[16px] mx-4"
             >
-              Sync Exel
+            Exel bilan yangilash
             </Button>
           </Popconfirm>
           <Button
             type="primary"
             size="large"
-            style={{ maxWidth: 96, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40, paddingRight: "2px", paddingLeft: "2px" }}
+            style={{ maxWidth: 206, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40, paddingRight: "2px", paddingLeft: "2px" }}
             className="text-[16px] "
             onClick={handleSync}
             loading={isSyncing}
           >
-            Sync Hemis
+             Hemis orqali yangilash
           </Button>
         </div>
       </div>

@@ -55,9 +55,9 @@ const Index = () => {
 
   const columns = [
     { title: "ID", dataIndex: "id" },
-    { title: "Speciality Code", dataIndex: "code" },
-    { title: "Speciality Name", dataIndex: "name", width: 340 },
-    { title: "Education Type", dataIndex: "educationType" },
+    { title: "Mutaxasislik kodi", dataIndex: "code" },
+    { title: "Mutaxasislik nomi", dataIndex: "name", width: 340 },
+    { title: "Ta'lim shakli", dataIndex: "educationType" },
     {
       title: "Visible",
       dataIndex: "isVisible",

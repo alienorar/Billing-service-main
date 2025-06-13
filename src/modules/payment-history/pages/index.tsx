@@ -124,18 +124,18 @@ const PaymentHistory: React.FC = () => {
         width: 80,
       },
       {
-        title: "Transaction ID",
+        title: "Tranzaksiya ID",
         dataIndex: "clickTransId",
         key: "clickTransId",
       },
       {
-        title: "Amount",
+        title: "Miqdori",
         dataIndex: "amount",
         key: "amount",
         render: (amount: number) => `${amount.toLocaleString()} UZS`,
       },
       {
-        title: "Amount (with commission)",
+        title: "Komissiya bilan miqdori",
         dataIndex: "amountWithCommission",
         key: "amountWithCommission",
         render: (amount: number) => `${amount.toLocaleString()} UZS`,
@@ -156,12 +156,12 @@ const PaymentHistory: React.FC = () => {
         key: "phone"
       },
       {
-        title: "Group",
+        title: "Guruhi",
         dataIndex: "group",
         key: "group"
       },
       {
-        title: "Speciality",
+        title: "Mutaxasisligi",
         dataIndex: "speciality",
         key: "speciality"
       },
@@ -172,7 +172,7 @@ const PaymentHistory: React.FC = () => {
         render: (state: PaymentState) => <Tag color={getStatusTagColor(state)}>{state}</Tag>,
       },
       {
-        title: "Provider",
+        title: "To'lov uslubi",
         dataIndex: "provider",
         key: "provider"
       },
@@ -213,14 +213,14 @@ const PaymentHistory: React.FC = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateParams({ studentIdNumber: e.target.value })}
         />
         <Input
-          placeholder="First Name"
+          placeholder="Ism"
           style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
 
           value={firstName}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateParams({ firstName: e.target.value })}
         />
         <Input
-          placeholder="Last Name"
+          placeholder="Familiya"
           style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
 
           value={lastName}
@@ -249,7 +249,7 @@ const PaymentHistory: React.FC = () => {
           className="bg-green-700 text-white w-full md:w-auto"
           onClick={() => updateParams({})}
         >
-          Search
+      Qidirish
         </Button>
       </div>
 

@@ -97,7 +97,7 @@ const Index = () => {
       dataIndex: "id",
     },
     {
-      title: "Username",
+      title: "Foydalanuvchi nomi",
       dataIndex: "username",
     },
     {
@@ -105,11 +105,11 @@ const Index = () => {
       dataIndex: "phone",
     },
     {
-      title: "First Name",
+      title: "Ismi",
       dataIndex: "firstName",
     },
     {
-      title: "Last Name",
+      title: "Familiya",
       dataIndex: "lastName",
     },
     {
@@ -125,7 +125,7 @@ const Index = () => {
 
           <Tooltip title="delete">
             <Popconfirm
-              title="Are you sure you want to upload students?"
+              title="Bu adminni o'chirishga ishonchingiz komilmi ?!"
               onConfirm={() => deleteData(record.id)}
               okText="Yes"
               cancelText="No"

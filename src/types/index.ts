@@ -143,7 +143,7 @@ export interface PaymentGroup {
   name?: string;
   duration?: number|any;
   contractAmounts?: string|number|any;
-  groupIds?: number[];
+  groupIds:any[];
 }
 
 export interface GroupListUpdate {
@@ -185,7 +185,8 @@ export interface PaymentGroup {
   name?: string;
   duration?: number | any;
   contractAmounts?: any;
-  groupIds?: number[];
+ groupIds:any[];
+  groups?: number[];
 }
 
 export interface ContractAmountForm {
@@ -197,5 +198,5 @@ export interface PmtGroupFormValues {
   name: string;
   duration: number;
   contractAmounts: ContractAmountForm[];
-  groupIds: number[];
+  groupIds: any[];
 }

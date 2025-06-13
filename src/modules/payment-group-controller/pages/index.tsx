@@ -98,14 +98,14 @@ const Index = () => {
         className: "text-center font-semibold text-gray-700",
       },
       {
-        title: "Name",
+        title: "Nomi",
         dataIndex: "name",
         key: "name",
         width: 200,
         className: "text-gray-800",
       },
       {
-        title: "Duration",
+        title: "Muddati",
         dataIndex: "duration",
         key: "duration",
         width: 120,
@@ -113,7 +113,7 @@ const Index = () => {
         className: "text-center text-gray-700",
       },
       {
-        title: "Contract Amounts",
+        title: "Kontrakt miqdori",
         dataIndex: "contractAmounts",
         key: "contractAmounts",
         render: (contractAmounts: Record<string, number> = {}) => (
@@ -142,7 +142,7 @@ const Index = () => {
             </Tooltip>
             <Tooltip title="Delete">
               <Popconfirm
-                title="Are you sure you want to delete this payment group?"
+                title="Bu guruhni o'chirishga ishonchingiz komilmi?"
                 onConfirm={() => deleteData(record.id)}
                 okText="Yes"
                 cancelText="No"
@@ -192,7 +192,7 @@ const Index = () => {
           onClick={showModal}
           style={{ maxWidth: 80, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40 }}
         >
-          Create
+         Yaratish
         </Button>
       </div>
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">

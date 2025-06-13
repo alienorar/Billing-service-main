@@ -31,7 +31,7 @@ const StudentDetails: React.FC = () => {
   const student = studentResponse?.data;
   const studentIdNumber = student?.studentIdNumber;
   const pinfl = student?.pinfl;
-  const { data: trInfoResponse, isLoading: isTrLoading, error: trError } = useGetStudentsTrInfo({ studentIdNumber,pinfl });
+  const { data: trInfoResponse, isLoading: isTrLoading, error: trError } = useGetStudentsTrInfo({ studentIdNumber, pinfl });
 
   if (isStudentLoading || isTrLoading) {
     return <Spin size="large" style={{ display: "block", margin: "50px auto" }} />;
@@ -112,27 +112,27 @@ const StudentDetails: React.FC = () => {
         <Descriptions.Item label="PINFL">
           <Text strong style={{ color: "#050556" }}>{student.pinfl}</Text>
         </Descriptions.Item>
-        <Descriptions.Item label="Phone">{student.phone || "N/A"}</Descriptions.Item>
-        <Descriptions.Item label="Birth Date">
+        <Descriptions.Item label="Tel">{student.phone || "N/A"}</Descriptions.Item>
+        <Descriptions.Item label="To'g'ilgan sana">
           {new Date(student.birthDate * 1000).toLocaleDateString()}
         </Descriptions.Item>
-        <Descriptions.Item label="Gender">
+        <Descriptions.Item label="Jins">
           <Text strong style={{ color: "#050556" }}>{student.genderName}</Text>
         </Descriptions.Item>
         <Descriptions.Item label="Status">
           <Text>{student.studentStatusName}</Text>
         </Descriptions.Item>
-        <Descriptions.Item label="Education Level">{student.levelName}</Descriptions.Item>
-        <Descriptions.Item label="Specialty">{student.specialtyName}</Descriptions.Item>
-        <Descriptions.Item label="Group">{student.groupName}</Descriptions.Item>
-        <Descriptions.Item label="Education Type">{student.educationTypeName}</Descriptions.Item>
-        <Descriptions.Item label="Country">{student.countryName}</Descriptions.Item>
-        <Descriptions.Item label="Region">{student.provinceName}</Descriptions.Item>
-        <Descriptions.Item label="District">{student.districtName}</Descriptions.Item>
+        <Descriptions.Item label="Ta'lim darajasi">{student.levelName}</Descriptions.Item>
+        <Descriptions.Item label="Mutaxasisligi">{student.specialtyName}</Descriptions.Item>
+        <Descriptions.Item label="Guruhi">{student.groupName}</Descriptions.Item>
+        <Descriptions.Item label="Ta'lim shakli">{student.educationTypeName}</Descriptions.Item>
+        <Descriptions.Item label="Mamlakat">{student.countryName}</Descriptions.Item>
+        <Descriptions.Item label="Viloyat">{student.provinceName}</Descriptions.Item>
+        <Descriptions.Item label="Tuman">{student.districtName}</Descriptions.Item>
       </Descriptions>
 
       <Title level={4} style={{ color: "#050556", marginBottom: 16 }}>
-        Transaction History
+        Tranzaksiyalar tarixi
       </Title>
       {trInfo?.transactions?.length ? (
         <>
@@ -144,11 +144,11 @@ const StudentDetails: React.FC = () => {
             style={{ marginBottom: 16 }}
           />
           <Text strong style={{ fontSize: 16 }}>
-            Total Paid: {trInfo.total.toLocaleString()} UZS
+            Jami to'langan: {trInfo.total.toLocaleString()} UZS
           </Text>
         </>
       ) : (
-        <Text>No transactions found.</Text>
+        <Text>Tranzaksiyalar topilmadi</Text>
       )}
     </Card>
   );

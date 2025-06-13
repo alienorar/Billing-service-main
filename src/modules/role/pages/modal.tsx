@@ -1,33 +1,40 @@
-import { Modal, Form, Input, Button, TreeSelect } from "antd";
-import { useEffect } from "react";
-import { useCreateRoles, useUpdateRoles } from "../hooks/mutations";
-import { RoleModalType, RoleType } from "@types";
+"use client"
 
+import { Modal, Form, Input, Button, TreeSelect } from "antd"
+import { useEffect } from "react"
+import { useCreateRoles, useUpdateRoles } from "../hooks/mutations"
+import type { RoleModalType, RoleType } from "@types"
 
 interface Permission {
-  id: number;
-  name: string;
-  children?: Permission[];
+  id: number
+  name: string
+  children?: Permission[]
 }
 
 const RolesModal = ({ open, handleClose, update, permessionL }: RoleModalType) => {
-  const [form] = Form.useForm();
-  const { mutate: createMutate, isPending: isCreating } = useCreateRoles();
-  const { mutate: updateMutate, isPending: isUpdating } = useUpdateRoles();
+  const [form] = Form.useForm()
+  const { mutate: createMutate, isPending: isCreating } = useCreateRoles()
+  const { mutate: updateMutate, isPending: isUpdating } = useUpdateRoles()
 
   useEffect(() => {
-    if (update?.id) {
+    if (!open) {
+      form.resetFields()
+    }
+  }, [open, form])
+
+  useEffect(() => {
+    if (open && update?.id) {
       form.setFieldsValue({
         id: update.id,
         name: update.name,
         displayName: update.displayName,
         defaultUrl: update.defaultUrl,
-        permissions: update.userPermissions?.map(perm => perm.id) || [],
-      });
-    } else {
-      form.resetFields();
+        permissions: update.userPermissions?.map((perm) => perm.id) || [],
+      })
+    } else if (open && !update?.id) {
+      form.resetFields()
     }
-  }, [update, form]);
+  }, [update, form, open])
 
   const onFinish = async (value: RoleType) => {
     const payload: RoleType = {
@@ -36,58 +43,35 @@ const RolesModal = ({ open, handleClose, update, permessionL }: RoleModalType) =
       displayName: value?.displayName,
       defaultUrl: value?.defaultUrl,
       permissions: value?.permissions || [],
-    };
+    }
 
     if (update?.id) {
-      updateMutate(payload, { onSuccess: handleClose });
+      updateMutate(payload, { onSuccess: handleClose })
     } else {
-      createMutate(payload, { onSuccess: handleClose });
+      createMutate(payload, { onSuccess: handleClose })
     }
-  };
+  }
 
   return (
-    <Modal
-      title={update?.id ? "Edit Role" : "Add New Role"}
-      open={open}
-      onCancel={handleClose}
-      footer={null}
-    >
-      <Form
-        form={form}
-        name="roles_form"
-        layout="vertical"
-        onFinish={onFinish}
-      >
+    <Modal title={update?.id ? "Edit Role" : "Add New Role"} open={open} onCancel={handleClose} footer={null}>
+      <Form form={form} name="roles_form" layout="vertical" onFinish={onFinish}>
         {update?.id && (
           <Form.Item label="Role ID" name="id">
             <Input disabled style={{ padding: "10px", border: "1px solid #d9d9d9", borderRadius: "6px" }} />
           </Form.Item>
         )}
 
-        <Form.Item
-          label="Role Name"
-          name="name"
-          rules={[{ required: true, message: "Enter role name!" }]}
-        >
+        <Form.Item label="Role Name" name="name" rules={[{ required: true, message: "Enter role name!" }]}>
           <Input style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }} />
         </Form.Item>
 
-        <Form.Item
-          label="Display Name"
-          name="displayName"
-          rules={[{ required: true, message: "Enter display name!" }]}
-        >
+        <Form.Item label="Display Name" name="displayName" rules={[{ required: true, message: "Enter display name!" }]}>
           <Input style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }} />
         </Form.Item>
 
-        <Form.Item
-          label="Default URL"
-          name="defaultUrl"
-          rules={[{ required: true, message: "Enter default URL!" }]}
-        >
+        <Form.Item label="Default URL" name="defaultUrl" rules={[{ required: true, message: "Enter default URL!" }]}>
           <Input style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }} />
         </Form.Item>
-
 
         <Form.Item label="Permissions" name="permissions">
           <TreeSelect
@@ -128,8 +112,7 @@ const RolesModal = ({ open, handleClose, update, permessionL }: RoleModalType) =
         </Form.Item>
       </Form>
     </Modal>
+  )
+}
 
-  );
-};
-
-export default RolesModal;
+export default RolesModal

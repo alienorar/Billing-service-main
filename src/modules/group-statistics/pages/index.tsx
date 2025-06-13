@@ -89,7 +89,7 @@ const Index: React.FC = () => {
                 sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) => a.id - b.id,
             },
             {
-                title: "Name",
+                title: "Nomi",
                 dataIndex: "name",
                 key: "name",
                 sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
@@ -101,28 +101,28 @@ const Index: React.FC = () => {
                 ), // Fallback: clickable name
             },
             {
-                title: "Speciality",
+                title: "Mutaxasisligi",
                 dataIndex: "speciality",
                 key: "speciality",
                 sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
                     a.speciality.localeCompare(b.speciality),
             },
             {
-                title: "Student Count",
+                title: "Studentlar soni",
                 dataIndex: "studentCount",
                 key: "studentCount",
                 sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
                     a.studentCount - b.studentCount,
             },
             {
-                title: "Contract Student Count",
+                title: "Kontrakt studentlar soni",
                 dataIndex: "contractStudentCount",
                 key: "contractStudentCount",
                 sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
                     a.contractStudentCount - b.contractStudentCount,
             },
             {
-                title: "All Student Debts",
+                title: "Qarzdor studentlar soni",
                 dataIndex: "allStudentDebts",
                 key: "allStudentDebts",
                 render: (value: number | null) => (value ? value.toLocaleString() : "-"),
@@ -130,7 +130,7 @@ const Index: React.FC = () => {
                     (a.allStudentDebts || 0) - (b.allStudentDebts || 0),
             },
             {
-                title: "All Student Paid",
+                title: "Qarzdorligi yo'q studentlar soni",
                 dataIndex: "allStudentPaid",
                 key: "allStudentPaid",
                 render: (value: number | null) => (value ? value.toLocaleString() : "-"),
