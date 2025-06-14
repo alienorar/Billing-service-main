@@ -141,7 +141,7 @@ const GroupList: React.FC = () => {
         sorter: (a: GroupRecord, b: GroupRecord) => a.hemisId - b.hemisId,
       },
       {
-        title: "Name",
+        title: "Nomi",
         dataIndex: "name",
         key: "name",
         sorter: (a: GroupRecord, b: GroupRecord) => a.name.localeCompare(b.name),

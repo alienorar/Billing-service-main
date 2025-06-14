@@ -73,7 +73,7 @@ const Index = () => {
   return (
     <div className="p-6 bg-gray-100 min-h-screen font-inter">
       <div className="max-w-2xl mx-auto mb-4">
-        <Button type="default" icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)}>
+        <Button type="default" className="text-green-500 font-medium" icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)}>
           Ortga
         </Button>
       </div>
