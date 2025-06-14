@@ -157,7 +157,7 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open: modalOpen, handleCl
 
     return (
         <Modal
-            title={update?.id ? "Edit Payment Group" : "Add New Payment Group"}
+            title={update?.id ? "To'lov guruhini yangilash" : "To'lov guruhini yaratish"}
             open={modalOpen}
             onCancel={handleClose}
             footer={null}
@@ -168,24 +168,24 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open: modalOpen, handleCl
             ) : (
                 <Form form={form} layout="vertical" onFinish={handleFinish}>
                     {/* NAME */}
-                    <Form.Item label="Name" name="name" rules={[{ required: true, message: "Enter payment group name!" }]}>
-                        <Input placeholder="Enter name" />
+                    <Form.Item label="Nomi" name="name" rules={[{ required: true, message: "To'lov guruhini nomini kiriting" }]}>
+                        <Input placeholder="To'lov guruhini nomini kiriting" />
                     </Form.Item>
 
                     {/* DURATION */}
-                    <Form.Item label="Duration (years)" name="duration" rules={[{ required: true, message: "Enter duration!" }]}>
+                    <Form.Item label="Muddati (yilda)" name="duration" rules={[{ required: true, message: "Muddatni kiriting!" }]}>
                         <InputNumber min={1} style={{ width: "100%" }} onChange={handleDurationChange} />
                     </Form.Item>
 
                     {/* GROUPS TREE */}
-                    <Form.Item label="Groups" name="groupIds">
+                    <Form.Item label="Guruhlar" name="groupIds">
                         <TreeSelect<number[]>
                             treeData={treeData}
                             multiple
                             treeCheckable
-                            showCheckedStrategy={TreeSelect.SHOW_CHILD} // only children in value
+                            showCheckedStrategy={TreeSelect.SHOW_CHILD} 
                             value={selectedGroupIds}
-                            placeholder="Select groups"
+                            placeholder="Guruhlarni tanlang"
                             style={{ width: "100%" }}
                             treeDefaultExpandAll
                             treeExpandedKeys={expandedKeys}
@@ -207,7 +207,7 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open: modalOpen, handleCl
                     </Form.Item>
 
                     {/* CONTRACT AMOUNTS */}
-                    <Form.Item label="Contract Amounts (Ordinal : Amount)" name="contractAmounts">
+                    <Form.Item label="Kontrakt to'lov miqdori" name="contractAmounts">
                         <Form.List name="contractAmounts">
                             {(fields) => (
                                 <>
@@ -219,10 +219,10 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open: modalOpen, handleCl
                                             <Form.Item
                                                 {...rest}
                                                 name={[name, "amount"]}
-                                                rules={[{ required: true, message: "Enter amount!" }]}
+                                                rules={[{ required: true, message: "Kontrakt miqdorini kiriting!" }]}
                                                 style={{ flex: 2 }}
                                             >
-                                                <InputNumber min={0} style={{ width: "100%" }} placeholder="Amount (UZS)" />
+                                                <InputNumber min={0} style={{ width: "100%" }} placeholder="Miqdori (UZS)" />
                                             </Form.Item>
                                         </div>
                                     ))}
@@ -247,7 +247,7 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open: modalOpen, handleCl
                                 borderRadius: "6px",
                             }}
                         >
-                            {update?.id ? "Update Payment Group" : "Create Payment Group"}
+                            {update?.id ? "To'lov guruhini yangilash" : "To'lov guruhini yaratish"}
                         </Button>
                     </Form.Item>
                 </Form>

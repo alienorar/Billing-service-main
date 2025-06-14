@@ -30,7 +30,7 @@ const Index = () => {
   // Fetch payment groups with parameters
   const { data: pmGroupList, isFetching, error } = useGetPmtGroupList({
     size,
-    page: page - 1, // Adjust for 0-based API
+    page: page - 1, 
 
   });
 
@@ -123,7 +123,7 @@ const Index = () => {
                 key={year}
                 className="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-full sm:px-1.5 sm:py-0.5 sm:text-xs"
               >
-                Year {year}: {amount.toLocaleString()} UZS
+                Yil {year}: {amount.toLocaleString()} UZS
               </span>
             ))}
           </div>

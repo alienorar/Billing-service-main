@@ -1,6 +1,7 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetStudentById, useGetStudentsTrInfo } from "../hooks/queries";
-import { Card, Descriptions, Image, Spin, Alert, Typography, Table } from "antd";
+import { Card, Descriptions, Image, Spin, Alert, Typography, Table, Button } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 
@@ -26,6 +27,7 @@ interface StudentDetails {
 }
 
 const StudentDetails: React.FC = () => {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { data: studentResponse, isLoading: isStudentLoading, error: studentError } = useGetStudentById(id);
   const student = studentResponse?.data;
@@ -78,79 +80,87 @@ const StudentDetails: React.FC = () => {
   ];
 
   return (
-    <Card
-      style={{
-        maxWidth: 1400,
-        margin: "50px auto",
-        padding: 20,
-        borderRadius: 10,
-        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 20 }}>
-        <Image
-          width={100}
-          height={120}
-          src={student.image}
-          style={{ borderRadius: "50%", border: "2px solid #050556" }}
-          fallback="https://via.placeholder.com/100"
-        />
-        <div>
-          <Title level={3} style={{ color: "#050556", margin: 0 }}>
-            {student.fullName}
-          </Title>
-          <Text type="secondary" style={{ fontSize: 16 }}>
-            {student.universityName}
-          </Text>
-        </div>
+    <div className="flex flex-col justify-center items-center py-10" >
+      <div className="max-w-2xl flex justify-end items-end w-full">
+        <Button className="text-green-500 font-medium" type="default" icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)}>
+          Ortga
+        </Button>
       </div>
-
-      <Descriptions bordered column={2} size="middle" style={{ marginBottom: 20 }}>
-        <Descriptions.Item label="Student ID">
-          <Text strong style={{ color: "#050556" }}>{student.studentIdNumber}</Text>
-        </Descriptions.Item>
-        <Descriptions.Item label="PINFL">
-          <Text strong style={{ color: "#050556" }}>{student.pinfl}</Text>
-        </Descriptions.Item>
-        <Descriptions.Item label="Tel">{student.phone || "N/A"}</Descriptions.Item>
-        <Descriptions.Item label="To'g'ilgan sana">
-          {new Date(student.birthDate * 1000).toLocaleDateString()}
-        </Descriptions.Item>
-        <Descriptions.Item label="Jins">
-          <Text strong style={{ color: "#050556" }}>{student.genderName}</Text>
-        </Descriptions.Item>
-        <Descriptions.Item label="Status">
-          <Text>{student.studentStatusName}</Text>
-        </Descriptions.Item>
-        <Descriptions.Item label="Ta'lim darajasi">{student.levelName}</Descriptions.Item>
-        <Descriptions.Item label="Mutaxasisligi">{student.specialtyName}</Descriptions.Item>
-        <Descriptions.Item label="Guruhi">{student.groupName}</Descriptions.Item>
-        <Descriptions.Item label="Ta'lim shakli">{student.educationTypeName}</Descriptions.Item>
-        <Descriptions.Item label="Mamlakat">{student.countryName}</Descriptions.Item>
-        <Descriptions.Item label="Viloyat">{student.provinceName}</Descriptions.Item>
-        <Descriptions.Item label="Tuman">{student.districtName}</Descriptions.Item>
-      </Descriptions>
-
-      <Title level={4} style={{ color: "#050556", marginBottom: 16 }}>
-        Tranzaksiyalar tarixi
-      </Title>
-      {trInfo?.transactions?.length ? (
-        <>
-          <Table
-            columns={columns}
-            dataSource={trInfo.transactions}
-            rowKey="date"
-            pagination={false}
-            style={{ marginBottom: 16 }}
+      <Card
+        style={{
+          maxWidth: 1400,
+          margin: "20px auto",
+          padding: 20,
+          borderRadius: 10,
+          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 20 }}>
+          <Image
+            width={100}
+            height={120}
+            src={student.image}
+            style={{ borderRadius: "50%", border: "2px solid #050556" }}
+            fallback="https://via.placeholder.com/100"
           />
-          <Text strong style={{ fontSize: 16 }}>
-            Jami to'langan: {trInfo.total.toLocaleString()} UZS
-          </Text>
-        </>
-      ) : (
-        <Text>Tranzaksiyalar topilmadi</Text>
-      )}
-    </Card>
+          <div>
+            <Title level={3} style={{ color: "#050556", margin: 0 }}>
+              {student.fullName}
+            </Title>
+            <Text type="secondary" style={{ fontSize: 16 }}>
+              {student.universityName}
+            </Text>
+          </div>
+        </div>
+
+        <Descriptions bordered column={2} size="middle" style={{ marginBottom: 20 }}>
+          <Descriptions.Item label="Student ID">
+            <Text strong style={{ color: "#050556" }}>{student.studentIdNumber}</Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="PINFL">
+            <Text strong style={{ color: "#050556" }}>{student.pinfl}</Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Tel">{student.phone || "N/A"}</Descriptions.Item>
+          <Descriptions.Item label="To'g'ilgan sana">
+            {new Date(student.birthDate * 1000).toLocaleDateString()}
+          </Descriptions.Item>
+          <Descriptions.Item label="Jins">
+            <Text strong style={{ color: "#050556" }}>{student.genderName}</Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Status">
+            <Text>{student.studentStatusName}</Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Ta'lim darajasi">{student.levelName}</Descriptions.Item>
+          <Descriptions.Item label="Mutaxasisligi">{student.specialtyName}</Descriptions.Item>
+          <Descriptions.Item label="Guruhi">{student.groupName}</Descriptions.Item>
+          <Descriptions.Item label="Ta'lim shakli">{student.educationTypeName}</Descriptions.Item>
+          <Descriptions.Item label="Mamlakat">{student.countryName}</Descriptions.Item>
+          <Descriptions.Item label="Viloyat">{student.provinceName}</Descriptions.Item>
+          <Descriptions.Item label="Tuman">{student.districtName}</Descriptions.Item>
+        </Descriptions>
+
+        <Title level={4} style={{ color: "#050556", marginBottom: 16 }}>
+          Tranzaksiyalar tarixi
+        </Title>
+        {trInfo?.transactions?.length ? (
+          <>
+            <Table
+              columns={columns}
+              dataSource={trInfo.transactions}
+              rowKey="date"
+              pagination={false}
+              style={{ marginBottom: 16 }}
+            />
+            <Text strong style={{ fontSize: 16 }}>
+              Jami to'langan: {trInfo.total.toLocaleString()} UZS
+            </Text>
+          </>
+        ) : (
+          <Text>Tranzaksiyalar topilmadi</Text>
+        )}
+      </Card>
+    </div>
+
   );
 };
 

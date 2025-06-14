@@ -171,32 +171,32 @@ const GroupList: React.FC = () => {
         sorter: (a: GroupRecord, b: GroupRecord) => a.curriculum - b.curriculum,
       },
       {
-        title: "Active",
+        title: "Aktiv",
         dataIndex: "active",
         key: "active",
         render: (active: boolean) => (
-          <Tag color={active ? "green" : "red"}>{active ? "Active" : "Inactive"}</Tag>
+          <Tag color={active ? "green" : "red"}>{active ? "Aktiv" : "Aktiv emas"}</Tag>
         ),
         sorter: (a: GroupRecord, b: GroupRecord) => Number(a.active) - Number(b.active),
       },
       {
-        title: "Speciality Form ID",
+        title: "Mutaxasislik ID",
         dataIndex: "specialityFormId",
         key: "specialityFormId",
         sorter: (a: GroupRecord, b: GroupRecord) => a.specialityFormId - b.specialityFormId,
       },
       {
-        title: "Payment Group ID",
+        title: "To'lov guruhi ID ",
         dataIndex: "paymentGroupId",
         key: "paymentGroupId",
-        render: (value: number | null) => (value ? value : "N/A"),
+        render: (value: number | null) => (value ? value : "-"),
         sorter: (a: GroupRecord, b: GroupRecord) => (a.paymentGroupId || 0) - (b.paymentGroupId || 0),
       },
       {
-        title: "Level",
+        title: "Kurs",
         dataIndex: "level",
         key: "level",
-        render: (value: number | null) => (value ? value : "N/A"),
+        render: (value: number | null) => (value ? value : "-"),
         sorter: (a: GroupRecord, b: GroupRecord) => (a.level || 0) - (b.level || 0),
       },
       {
@@ -229,8 +229,8 @@ const GroupList: React.FC = () => {
 
   const activeOptions: { value: string; label: string }[] = [
     { value: "", label: "All" },
-    { value: "true", label: "Active" },
-    { value: "false", label: "Inactive" },
+    { value: "true", label: "Aktiv" },
+    { value: "false", label: "Aktiv emas" },
   ];
 
   /* ---------- Render ---------- */
@@ -244,14 +244,14 @@ const GroupList: React.FC = () => {
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4 items-end">
           <Input
-            placeholder="Group Name"
+            placeholder="Guruh nomi"
             style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
             value={name}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateParams({ name: e.target.value })}
           />
           <Select
             allowClear
-            placeholder="Education Language"
+            placeholder="Ta'lim tili"
             style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
             options={educationLangOptions}
             value={educationLang || undefined}
@@ -259,7 +259,7 @@ const GroupList: React.FC = () => {
           />
           <Select
             allowClear
-            placeholder="Education Form"
+            placeholder="Ta'lim shakli"
             style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
             options={educationFormOptions}
             value={educationForm || undefined}
@@ -267,7 +267,7 @@ const GroupList: React.FC = () => {
           />
           <Select
             allowClear
-            placeholder="Active Status"
+            placeholder="Aktivligi"
             style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
             options={activeOptions}
             value={active || undefined}
@@ -279,7 +279,7 @@ const GroupList: React.FC = () => {
             className="bg-green-700 text-white w-full md:w-auto"
             onClick={() => updateParams({})}
           >
-            Search
+           Qidirish
           </Button>
         </div>
 

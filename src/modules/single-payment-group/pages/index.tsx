@@ -1,14 +1,16 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useGetOneGroup } from "../hooks/queries";
 import { PaymentGroup } from "@types";
-import { Card, Descriptions, Tag, Spin, Alert, Typography } from "antd";
+import { Card, Descriptions, Tag, Spin, Alert, Typography, Button } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import "antd/dist/reset.css";
 
 const { Title } = Typography;
 
 const Index = () => {
-  const { id } = useParams<{ id: string }>(); // Explicitly type id as string
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { data: response, isLoading, error } = useGetOneGroup(id);
 
   // Extract payment group data
@@ -39,6 +41,11 @@ const Index = () => {
           showIcon
           className="max-w-2xl mx-auto"
         />
+        <div className="max-w-2xl mx-auto mt-4">
+          <Button type="default" icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)} >
+            Ortga
+          </Button>
+        </div>
       </div>
     );
   }
@@ -54,18 +61,29 @@ const Index = () => {
           showIcon
           className="max-w-2xl mx-auto"
         />
+        <div className="max-w-2xl mx-auto mt-4">
+          <Button type="default" icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)}>
+            Ortga
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen font-inter">
+      <div className="max-w-2xl mx-auto mb-4">
+        <Button type="default" icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)}>
+          Ortga
+        </Button>
+      </div>
+
       {/* Payment Group Details */}
-      <Card title={<Title level={3}>Payment Group Details</Title>} className="max-w-2xl mx-auto shadow-lg">
+      <Card title={<Title level={3}>To'lov guruhi ma'lumotlari</Title>} className="max-w-2xl mx-auto shadow-lg">
         <Descriptions bordered column={1} className="bg-white">
           <Descriptions.Item label="ID">{paymentGroup.id}</Descriptions.Item>
           <Descriptions.Item label="Name">{paymentGroup.name}</Descriptions.Item>
-          <Descriptions.Item label="Duration">{paymentGroup.duration} years</Descriptions.Item>
+          <Descriptions.Item label="Duration">{paymentGroup.duration} yil</Descriptions.Item>
           <Descriptions.Item label="Contract Amounts">
             <div className="flex flex-wrap gap-2">
               {Object.entries(paymentGroup.contractAmounts).map(([year, amount]) => (
@@ -74,7 +92,7 @@ const Index = () => {
                   color="blue"
                   className="text-xs font-medium px-2 py-1 rounded-full"
                 >
-                  Year {year}: {amount?.toLocaleString()} UZS
+                  Yil {year}: {amount?.toLocaleString()} UZS
                 </Tag>
               ))}
             </div>
@@ -83,7 +101,7 @@ const Index = () => {
             <div className="flex flex-wrap gap-2">
               {paymentGroup?.groupIds?.map((group) => (
                 <Tag key={group.id} color="green" className="text-xs font-medium px-2 py-1 rounded-full">
-                  {`${group.id} - ${group.name}`} {/* Display both id and name */}
+                  {`${group.id} - ${group.name}`}
                 </Tag>
               ))}
             </div>

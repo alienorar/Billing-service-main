@@ -178,7 +178,7 @@ const TransactionHistory: React.FC = () => {
                 key: "date",
                 render: (ts: number): string => dayjs(ts).format("DD-MM-YYYY HH:mm"),
             },
-            { title: "Transaction ID", dataIndex: "id", key: "id" },
+            { title: "Tranzaksiya ID", dataIndex: "id", key: "id" },
             {
                 title: "Miqdor",
                 dataIndex: "amount",

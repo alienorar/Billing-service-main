@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { TablePaginationConfig, Spin, Alert } from "antd";
-import { useParams, useSearchParams } from "react-router-dom";
+import { TablePaginationConfig, Spin, Alert, Button } from "antd";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { GlobalTable } from "@components";
 import { useGetStudents } from "../hooks/queries";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
 interface StudentRecord {
     id: number;
@@ -25,6 +26,8 @@ const filterEmpty = (obj: Record<string, string | undefined>): Record<string, st
     ) as Record<string, string>;
 
 const GroupSinglePage: React.FC = () => {
+    const navigate = useNavigate();
+
     const { id } = useParams<{ id: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -50,7 +53,7 @@ const GroupSinglePage: React.FC = () => {
     const { data: studentsByGroupId, isLoading, isError, error } = useGetStudents({
         page: page - 1,
         size,
-        groupId, 
+        groupId,
     });
 
     const [tableData, setTableData] = useState<StudentRecord[]>([]);
@@ -149,7 +152,13 @@ const GroupSinglePage: React.FC = () => {
 
     return (
         <div className="flex flex-col gap-4 px-5 py-4">
-            <h1>Students in Group ID: {id}</h1>
+            <div className="flex gap-7 px-6 items-center justify-between">
+                <h1 className="text-green-500">Studentlar guruhi IDsi: {id}</h1>
+                <Button className="text-green-500" type="default" icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)}>
+                    Ortga
+                </Button>
+            </div>
+
             {isLoading ? (
                 <Spin style={{ display: "block", margin: "20px auto" }} />
             ) : (
