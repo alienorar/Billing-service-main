@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { Button, Popconfirm, Space, Tooltip,} from "antd";
+import { Button, Popconfirm, Space, Tooltip, } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { TablePaginationConfig } from "antd";
@@ -18,26 +18,30 @@ const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [update, setUpdate] = useState<PaymentGroup | null>(null);
+  // const [selectedGroups, setSelectedGroups] = useState([])
   const { mutate: deletePmtGroup, isPending: isDeleting } = useDeletePmtGroupList();
+  // const { data: groupList } = useGetAvailabletGroupList()
+
+  // console.log(groupList," selectedGroupList")
   const navigate = useNavigate();
 
   // URL search parameters
   const page = Number(searchParams.get("page")) || 1;
   const size = Number(searchParams.get("size")) || 10;
 
- 
+
 
   // Fetch payment groups with parameters
-  const { data: pmGroupList, isFetching, error } = useGetPmtGroupList({
+  const { data: pmGroupList, isFetching,  } = useGetPmtGroupList({
     size,
-    page: page - 1, 
+    page: page - 1,
 
   });
 
   // Update table data and log response
   useEffect(() => {
-    console.log("Payment Groups Response:", pmGroupList);
-    console.log("API Error:", error);
+    // console.log("Payment Groups Response:", pmGroupList);
+    // console.log("API Error:", error);
     if (pmGroupList?.data?.content) {
       setTableData(pmGroupList.data.content);
       setTotal(pmGroupList.data.paging?.totalItems || 0);
@@ -46,6 +50,10 @@ const Index = () => {
       setTotal(0);
     }
   }, [pmGroupList]);
+
+
+  
+
 
   // Handle table pagination and size change
   const handleTableChange = (pagination: TablePaginationConfig) => {
@@ -74,7 +82,7 @@ const Index = () => {
   // Delete handler
   const deleteData = (id: number) => {
     if (id == null) {
-      openNotification("error","Error","Invalid payment group ID");
+      openNotification("error", "Error", "Invalid payment group ID");
       return;
     }
     deletePmtGroup(id);
@@ -185,14 +193,14 @@ const Index = () => {
 
       <PmtGroupModal open={isModalOpen} handleClose={handleClose} update={update} />
       <div className="flex flex-col gap-4 mb-6">
-    
+
         <Button
           type="primary"
           size="large"
           onClick={showModal}
           style={{ maxWidth: 80, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40 }}
         >
-         Yaratish
+          Yaratish
         </Button>
       </div>
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
