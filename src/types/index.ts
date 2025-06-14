@@ -15,6 +15,8 @@ export interface ParamsType {
   state?:any;
   from?:string|number;
   to?:string|number;
+  educationForm?:any;
+   educationType?:any
 }
 
 export interface PagingType {
@@ -137,9 +139,64 @@ export interface SpecialityType {
 
 
 export interface PaymentGroup {
-  id: number | undefined;
+  id?: number ;
+  name?: string;
+  duration?: number|any;
+  contractAmounts?: string|number|any;
+  groupIds:any[];
+}
+
+export interface GroupListUpdate {
+  groupId?: number|string;
+  paymentGroupId?: number|string;
+  id?:number|string
+}
+
+
+export interface AvailableGroup {
+  id: number;
+  hemisId: number;
+  name: string;
+  educationLang: string;
+  educationForm: string;
+  educationType: string;
+  curriculum: number;
+  active: boolean;
+  specialityFormId: number;
+  paymentGroupId: number | null;
+  level: number | null;
+}
+
+export interface Speciality {
+  id: number;
   name: string;
   duration: number;
-  contractAmounts: Record<string, number>;
-  groupIds: number[];
+  educationForm: string;
+  educationType: string;
+  groups: AvailableGroup[];
+}
+
+export interface AvailableGroupListResponse {
+  data: Speciality[];
+}
+
+export interface PaymentGroup {
+  id?: number;
+  name?: string;
+  duration?: number | any;
+  contractAmounts?: any;
+ groupIds:any[];
+  groups?: number[];
+}
+
+export interface ContractAmountForm {
+  key: string;
+  amount: number|any;
+}
+
+export interface PmtGroupFormValues {
+  name: string;
+  duration: number;
+  contractAmounts: ContractAmountForm[];
+  groupIds: any[];
 }

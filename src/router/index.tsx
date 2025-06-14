@@ -16,10 +16,13 @@ import {
     PaymentHistory,
     NotFound,
     TransactionHistory,
-   PaymentDetails,
-   StudentStatistics,
-   PmGroupController,
-   OnePaymentGroup,
+    PaymentDetails,
+    StudentStatistics,
+    PmGroupController,
+    OnePaymentGroup,
+    GroupStatistics,
+    GroupList,
+    GroupStudents,
 
 } from '@modules'
 
@@ -36,11 +39,14 @@ const Index = () => {
                         <Route path="students/:id" element={<OneStudent />} />
                         <Route path="speciality" element={<Speciality />} />
                         <Route path="payment-history" element={<PaymentHistory />} />
-                        <Route path="transaction-history" element={<TransactionHistory/>} />
-                        <Route path="transaction-history/:id" element={<PaymentDetails/>} />
-                        <Route path="pmgroup-controller" element={<PmGroupController/>} />
-                        <Route path="pmgroup-controller/:id" element={<OnePaymentGroup/>} />
-                        <Route path="students-statistics" element={<StudentStatistics/>} />
+                        <Route path="transaction-history" element={<TransactionHistory />} />
+                        <Route path="transaction-history/:id" element={<PaymentDetails />} />
+                        <Route path="pmgroup-controller" element={<PmGroupController />} />
+                        <Route path="pmgroup-controller/:id" element={<OnePaymentGroup />} />
+                        <Route path="students-statistics" element={<StudentStatistics />} />
+                        <Route path="group-statistics" element={<GroupStatistics />} />
+                        <Route path="group-statistics/:id" element={<GroupStudents />} />
+                        <Route path="group-list" element={<GroupList />} />
                     </Route>
                 </Route>
                 <Route path="*" element={<NotFound />}></Route>
@@ -50,4 +56,3 @@ const Index = () => {
     return <RouterProvider router={router} />;
 }
 export default Index;
-

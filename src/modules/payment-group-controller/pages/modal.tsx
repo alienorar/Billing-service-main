@@ -1,207 +1,240 @@
-import { Modal, Form, Input, Button, InputNumber, Select } from "antd";
-import { useForm } from "antd/es/form/Form";
-import { useCreatePmtGroupList, useUpdatePmtGroupList } from "../hooks/mutations";
-import { useGetAvailabletGroupList } from "../hooks/queries";
-import { PaymentGroup } from "@types";
-import { useEffect, useState } from "react";
+"use client"
 
-const { Option } = Select;
+import type React from "react"
+import { Modal, Form, Input, Button, InputNumber, TreeSelect, Spin, Alert } from "antd"
+import { useForm } from "antd/es/form/Form"
+import { useEffect, useState } from "react"
+import { useCreatePmtGroupList, useUpdatePmtGroupList } from "../hooks/mutations"
+import { useGetAvailabletGroupList } from "../hooks/queries"
+import type { PaymentGroup, Speciality, AvailableGroup, PmtGroupFormValues, ContractAmountForm } from "@types"
+import type { DataNode } from "antd/es/tree"
 
 interface PmtGroupModalProps {
-  open: boolean;
-  handleClose: () => void;
-  update?: PaymentGroup | null;
+  open: boolean
+  handleClose: () => void
+  update?: PaymentGroup | null
 }
 
-interface Group {
-  id: number;
-  name: string;
+interface GroupObject {
+  id: number
+  name: string
 }
 
-const PmtGroupModal = ({ open, handleClose, update }: PmtGroupModalProps) => {
-  const [form] = useForm();
-  const [specialityId, setSpecialityId] = useState();
+const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open: modalOpen, handleClose, update }) => {
+  const [form] = useForm<PmtGroupFormValues>()
+  const { mutate: createMutate, isPending: isCreating } = useCreatePmtGroupList()
+  const { mutate: updateMutate, isPending: isUpdating } = useUpdatePmtGroupList()
+  const { data: groupList, isLoading: isGroupsLoading, isError, error: errorInfo } = useGetAvailabletGroupList()
 
-  const { mutate: createMutate, isPending: isCreating } = useCreatePmtGroupList();
-  const { mutate: updateMutate, isPending: isUpdating } = useUpdatePmtGroupList();
-  const { data: groupList, isLoading: isGroupsLoading } = useGetAvailabletGroupList(specialityId);
+  const [expandedKeys, setExpandedKeys] = useState<(string | number)[]>([])
+  const [selectedGroupIds, setSelectedGroupIds] = useState<any[]>([])
 
-  // Set form values for edit mode
+  // ───────────────────────────── EFFECTS ──────────────────────────────
   useEffect(() => {
-    if (update?.id) {
+    if (update?.id && groupList?.data) {
+      // ==== EDIT MODE ====
+      const contractAmounts = update.contractAmounts
+        ? Object.entries(update.contractAmounts).map(([key, amount]) => ({ key, amount }))
+        : []
+
+      const groupIds = update.groupIds?.map((g: GroupObject) => (typeof g === "object" ? g.name : g)) ?? []
+
       form.setFieldsValue({
         name: update.name,
         duration: update.duration,
-        contractAmounts: Object.entries(update.contractAmounts).map(([key, amount]) => ({
-          key,
-          amount,
+        contractAmounts,
+        groupIds,
+      })
+      setSelectedGroupIds(groupIds)
+
+      // Auto‑generate contractAmounts if duration changed but no amounts yet
+      if (update.duration > 0 && contractAmounts.length === 0) handleDurationChange(update.duration)
+      setExpandedKeys([])
+    } else {
+      // ==== CREATE MODE ====
+      form.resetFields()
+      form.setFieldsValue({
+        name: "",
+        duration: 1,
+        contractAmounts: [{ key: "1", amount: 0 }],
+        groupIds: [],
+      })
+      setSelectedGroupIds([])
+      handleDurationChange(1)
+      setExpandedKeys([])
+    }
+  }, [update, form, groupList])
+
+  // ──────────────────────────── HELPERS ───────────────────────────────
+  const handleDurationChange = (duration: number | null): void => {
+    if (typeof duration === "number" && duration > 0) {
+      const current: ContractAmountForm[] = form.getFieldValue("contractAmounts") ?? []
+      const newContractAmounts = Array.from({ length: duration }, (_, i) => {
+        const key = `${i + 1}`
+        return current[i] ?? { key, amount: 0 }
+      })
+      form.setFieldsValue({ contractAmounts: newContractAmounts })
+    } else {
+      form.setFieldsValue({ contractAmounts: [] })
+    }
+  }
+
+  // Build treeData once groups are loaded
+  const treeData: DataNode[] = Array.isArray(groupList?.data)
+    ? groupList.data.map((s: Speciality) => ({
+        title: `${s.name} — [${(s.educationForm || "N/A").toUpperCase()} / ${(s.educationType || "N/A").toUpperCase()}]`,
+        value: `speciality-${s.id}`,
+        key: `speciality-${s.id}`,
+        selectable: false,
+        children: (s.groups ?? []).map((g: AvailableGroup) => ({
+          title: g.name,
+          value: g.id, // leaf node gets number value
+          key: g.id,
         })),
-        groupIds: update.groupIds,
-      });
-    } else {
-      form.resetFields();
-    }
-  }, [update, form]);
+      }))
+    : []
 
-  // Handle duration change to dynamically adjust contract amounts
-  const handleDurationChange = (duration: number | null) => {
-    if (duration && duration > 0) {
-      const currentContractAmounts = form.getFieldValue("contractAmounts") || [];
-      const newContractAmounts = Array.from({ length: duration }, (_, index) => {
-        const key = `${index + 1}`;
-        return currentContractAmounts[index] || { key, amount: undefined };
-      });
-      form.setFieldsValue({ contractAmounts: newContractAmounts });
-    } else {
-      form.setFieldsValue({ contractAmounts: [] });
-    }
-  };
-
-  const onFinish = async (values: any) => {
-    const basePayload = {
+  // ───────────────────────────── SUBMIT ───────────────────────────────
+  const handleFinish = async (values: PmtGroupFormValues): Promise<void> => {
+    const basePayload: Omit<PaymentGroup, "id"> = {
       name: values.name,
       duration: values.duration,
-      contractAmounts: values.contractAmounts.reduce(
-        (acc: Record<string, number>, { key, amount }: { key: string; amount: number }) => ({
-          ...acc,
-          [key]: amount,
-        }),
-        {}
-      ),
-      groupIds: values.groupIds || [],
-    };
+      contractAmounts: values.contractAmounts.reduce<Record<string, number>>((acc, cur) => {
+        acc[cur.key] = cur.amount
+        return acc
+      }, {}),
+      groupIds: selectedGroupIds,
+    }
 
     if (update?.id) {
-      const payload: PaymentGroup = {
-        ...basePayload,
-        id: update.id,
-      };
-      updateMutate(payload, {
+      updateMutate({ ...basePayload, id: update.id } as PaymentGroup, {
         onSuccess: () => {
-          form.resetFields();
-          handleClose();
+          form.resetFields()
+          handleClose()
         },
-      });
+      })
     } else {
-      const payload = basePayload;
-      createMutate(payload, {
+      createMutate(basePayload, {
         onSuccess: () => {
-          form.resetFields();
-          handleClose();
+          form.resetFields()
+          handleClose()
         },
-      });
+      })
     }
-  };
+  }
+
+  // ───────────────────────────── RENDER ───────────────────────────────
+  if (isError) {
+    return (
+      <Alert
+        message="Error"
+        description={`Failed to load groups: ${errorInfo instanceof Error ? errorInfo.message : "Unknown error"}`}
+        type="error"
+        showIcon
+        style={{ margin: 20 }}
+      />
+    )
+  }
 
   return (
     <Modal
-      title={update?.id ? "Edit Payment Group" : "Add New Payment Group"}
-      open={open}
+      title={update?.id ? "To'lov guruhini yangilash" : "To'lov guruhini yaratish"}
+      open={modalOpen}
       onCancel={handleClose}
       footer={null}
+      destroyOnClose
     >
-      <Form form={form} name="pmt_group_form" layout="vertical" onFinish={onFinish}>
-        <Form.Item
-          label="Name"
-          name="name"
-          rules={[{ required: true, message: "Enter payment group name!" }]}
-        >
-          <Input
-            style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
-            placeholder="Enter name"
-          />
-        </Form.Item>
+      {isGroupsLoading ? (
+        <Spin style={{ display: "block", margin: "20px auto" }} />
+      ) : (
+        <Form form={form} layout="vertical" onFinish={handleFinish}>
+          {/* NAME */}
+          <Form.Item label="Nomi" name="name" rules={[{ required: true, message: "To'lov guruhini nomini kiriting" }]}>
+            <Input placeholder="To'lov guruhini nomini kiriting" />
+          </Form.Item>
 
-        <Form.Item
-          label="Duration (in months)"
-          name="duration"
-          rules={[{ required: true, message: "Enter duration!" }]}
-        >
-          <InputNumber
-            min={1}
-            style={{ width: "100%", padding: "6px", borderRadius: "6px" }}
-            placeholder="Enter duration"
-            onChange={handleDurationChange}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label="Groups"
-          name="groupIds"
-          rules={[{ required: false, message: "Select at least one group!" }]}
-        >
-          <Select
-            mode="multiple"
-            placeholder="Select groups"
-            loading={isGroupsLoading}
-            allowClear
-            style={{ width: "100%" }}
+          {/* DURATION */}
+          <Form.Item
+            label="Muddati (yilda)"
+            name="duration"
+            rules={[{ required: true, message: "Muddatni kiriting!" }]}
           >
-            {groupList?.data?.map((group: Group) => (
-              <Option key={group.id} value={group.id}>
-                {group.name}
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
+            <InputNumber min={1} style={{ width: "100%" }} onChange={handleDurationChange} />
+          </Form.Item>
 
-        <Form.Item
-          label="Contract Amounts (Ordinal: Amount)"
-          name="contractAmounts"
-          rules={[{ required: true, message: "Enter at least one contract amount!" }]}
-        >
-          <Form.List name="contractAmounts">
-            {(fields) => (
-              <>
-                {fields.map(({ key, name, ...restField }) => (
-                  <div key={key} style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "key"]}
-                      rules={[{ required: true, message: "Enter ordinal!" }]}
-                      style={{ flex: 1 }}
-                    >
-                      <Input
-                        placeholder="Ordinal (e.g., 1)"
-                        disabled
-                        value={`${name + 1}`}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "amount"]}
-                      rules={[{ required: true, message: "Enter amount!" }]}
-                      style={{ flex: 1 }}
-                    >
-                      <InputNumber min={0} placeholder="Amount (UZS)" style={{ width: "100%" }} />
-                    </Form.Item>
-                  </div>
-                ))}
-              </>
-            )}
-          </Form.List>
-        </Form.Item>
+          <Form.Item label="Guruhlar" name="groupIds">
+            <TreeSelect<number[]>
+              treeData={treeData}
+              multiple
+              treeCheckable
+              showCheckedStrategy={TreeSelect.SHOW_CHILD}
+              value={selectedGroupIds}
+              placeholder="Guruhlarni tanlang"
+              style={{ width: "100%" }}
+              treeDefaultExpandAll
+              treeExpandedKeys={expandedKeys}
+              onTreeExpand={setExpandedKeys as (keys: (string | number)[]) => void}
+              allowClear
+              autoClearSearchValue={false}
+              showSearch
+              dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+              filterTreeNode={(input, node) => (node.title as string).toLowerCase().includes(input.toLowerCase())}
+              onChange={(val) => {
+                const numericIds = (val ?? []).filter((v): v is number => typeof v === "number")
+                setSelectedGroupIds(numericIds)
+                form.setFieldsValue({ groupIds: numericIds })
+              }}
+            />
+          </Form.Item>
 
-        <Form.Item>
-          <Button
-            block
-            htmlType="submit"
-            loading={isCreating || isUpdating}
-            style={{
-              backgroundColor: "#050556",
-              color: "white",
-              height: "40px",
-              fontSize: "18px",
-              marginTop: "10px",
-              borderRadius: "6px",
-            }}
-          >
-            {update?.id ? "Update Payment Group" : "Create Payment Group"}
-          </Button>
-        </Form.Item>
-      </Form>
+          {/* CONTRACT AMOUNTS */}
+          <Form.Item label="Kontrakt to'lov miqdori" name="contractAmounts">
+            <Form.List name="contractAmounts">
+              {(fields) => (
+                <>
+                  {fields.map(({ key, name, ...rest }) => (
+                    <div key={key} style={{ display: "flex", gap: 8, marginBottom: 2 }}>
+                      <Form.Item {...rest} name={[name, "key"]} initialValue={`${name + 1}`} style={{ flex: 1 }}>
+                        <Input disabled />
+                      </Form.Item>
+                      <Form.Item
+                        {...rest}
+                        name={[name, "amount"]}
+                        rules={[{ required: true, message: "Kontrakt miqdorini kiriting!" }]}
+                        style={{ flex: 2 }}
+                      >
+                        <InputNumber min={0} style={{ width: "100%" }} placeholder="Miqdori (UZS)" />
+                      </Form.Item>
+                    </div>
+                  ))}
+                </>
+              )}
+            </Form.List>
+          </Form.Item>
+
+          {/* SUBMIT BUTTON */}
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              loading={isCreating || isUpdating}
+              style={{
+                backgroundColor: "#050556",
+                color: "white",
+                height: "40px",
+                fontSize: "18px",
+                marginTop: "10px",
+                borderRadius: "6px",
+              }}
+            >
+              {update?.id ? "To'lov guruhini yangilash" : "To'lov guruhini yaratish"}
+            </Button>
+          </Form.Item>
+        </Form>
+      )}
     </Modal>
-  );
-};
+  )
+}
 
-export default PmtGroupModal;
+export default PmtGroupModal

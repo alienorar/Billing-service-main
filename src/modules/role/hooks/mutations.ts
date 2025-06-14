@@ -21,21 +21,21 @@ export function useCreateRoles() {
 
 // ============ UPDATE ROLES ===========
 export function useUpdateRoles() {
-    const queryClient = useQueryClient()
-    return useMutation({
-        mutationFn: (data: RoleType) => updateRoles(data),
-        onSuccess: (data) => {
-            openNotification("success", "Success", data?.data?.message)
-        },
-        onSettled: (_, error) => {
-            if (error) {
-                openNotification("error", "Error", error?.message)
-            } else {
-                queryClient.invalidateQueries({ queryKey: ["roles"] })
-            }
-        }
-    })
-
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: RoleType) => updateRoles(data),
+    onSuccess: (data, variables) => {
+      openNotification("success", "Success", data?.data?.message)
+      // Invalidate the specific role that was updated
+      queryClient.invalidateQueries({ queryKey: ["role", variables.id] })
+      // Invalidate the roles list
+      queryClient.invalidateQueries({ queryKey: ["roles"] })
+    },
+    onError: (error) => {
+      openNotification("error", "Error", error?.message)
+    },
+  })
 }
+
 
 

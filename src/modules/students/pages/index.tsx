@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import { Button, Input, Space, Tooltip, Popconfirm, message } from "antd";
+import { Button, Input, Space, Tooltip, Popconfirm, message, Select } from "antd";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { GlobalTable } from "@components";
 import { AdminType } from "@types";
@@ -24,6 +24,23 @@ const Index = () => {
   const phone = searchParams.get("phone") || "";
   const firstName = searchParams.get("firstName") || "";
   const lastName = searchParams.get("lastName") || "";
+  const educationForm = searchParams.get("educationForm") || "";
+  const educationType = searchParams.get("educationType") || "";
+
+
+
+  const educationFormOptions: { value: string; label: string }[] = [
+    { value: "", label: "All" },
+    { value: "SIRTQI", label: "Sirtqi" },
+    { value: "KUNDUZGI", label: "Kunduzgi" },
+    { value: "KECHKI", label: "Kechki" },
+    { value: "MASOFAVIY", label: "Masofaviy" },
+  ];
+  const educationTypeOptions: { value: string; label: string }[] = [
+    { value: "", label: "All" },
+    { value: "BAKALAVR", label: "Bakalavr" },
+    { value: "MAGISTR", label: "Magistr" },
+  ];
 
   // Fetch students data
   const { data: students } = useGetStudents({
@@ -32,11 +49,14 @@ const Index = () => {
     phone: phone ? Number(phone) : undefined,
     firstName,
     lastName,
+    educationForm,
+    educationType
+
   });
 
   // Sync students data (disabled by default)
   const { data: syncData, isFetching: isSyncing } = useSyncGetStudents({
-    enabled: false, 
+    enabled: false,
   });
 
   useEffect(() => {
@@ -61,6 +81,8 @@ const Index = () => {
       phone,
       firstName,
       lastName,
+      educationForm,
+      educationType
     });
   };
 
@@ -71,6 +93,8 @@ const Index = () => {
       phone,
       firstName,
       lastName,
+      educationForm,
+      educationType
     });
   };
 
@@ -81,11 +105,12 @@ const Index = () => {
   const showModal = () => setIsModalOpen(true);
   const handleClose = () => setIsModalOpen(false);
 
+
   const handleSync = async () => {
     try {
       const data = await queryClient.fetchQuery({
         queryKey: ["students"],
-        queryFn: () => syncStudent(), 
+        queryFn: () => syncStudent(),
       });
       message.success("Students synced successfully!");
       if (data?.data) {
@@ -97,6 +122,8 @@ const Index = () => {
     }
   };
 
+
+
   const columns = [
     {
       title: "ID",
@@ -107,13 +134,26 @@ const Index = () => {
       dataIndex: "studentIdNumber",
     },
     {
-      title: "Phone",
-      dataIndex: "phone",
-    },
-    {
-      title: "Full Name",
+      title: "To'liq ism",
       dataIndex: "fullName",
     },
+    {
+      title: "Ta'lim shakli",
+      dataIndex: "educationForm",
+    },
+    {
+      title: "Ta'lim turi",
+      dataIndex: "educationType",
+    },
+    {
+      title: "Guruh",
+      dataIndex: "group",
+    },
+    {
+      title: "Mutaxasislik",
+      dataIndex: "speciality",
+    },
+
     {
       title: "Action",
       key: "action",
@@ -134,7 +174,7 @@ const Index = () => {
       <div className="flex flex-col gap-4 px-5 py-4">
         <div className="flex items-center justify-between">
           <Input
-            placeholder="Search by phone"
+            placeholder="Tel"
             value={phone}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setSearchParams({
@@ -143,13 +183,15 @@ const Index = () => {
                 phone: e.target.value,
                 firstName,
                 lastName,
+                educationForm,
+                educationType
               })
             }
             style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
             className="w-[300px]"
           />
           <Input
-            placeholder="Search by first name"
+            placeholder="Ism"
             value={firstName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setSearchParams({
@@ -158,13 +200,15 @@ const Index = () => {
                 phone,
                 firstName: e.target.value,
                 lastName,
+                educationForm,
+                educationType
               })
             }
             style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
             className="w-[300px]"
           />
           <Input
-            placeholder="Search by last name"
+            placeholder="Familiya"
             value={lastName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setSearchParams({
@@ -173,24 +217,60 @@ const Index = () => {
                 phone,
                 firstName,
                 lastName: e.target.value,
+                educationForm,
+                educationType
               })
             }
             style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
             className="w-[300px]"
           />
+          <Select
+            allowClear
+            placeholder="Ta'lim shakli"
+            style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
+            options={educationFormOptions}
+            value={educationForm || ""}
+            className="w-[200px]"
+
+            onChange={(value: string | undefined) => setSearchParams({
+              page: "1",
+              size: size.toString(),
+              phone,
+              firstName,
+              lastName,
+              educationType,
+              educationForm: value || ""
+            })}
+          />
+          <Select
+            placeholder="Ta'lim turi"
+            style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
+            options={educationTypeOptions}
+            value={educationType || ""}
+            className="w-[200px]"
+            onChange={(value: string | undefined) => setSearchParams({
+              page: "1",
+              size: size.toString(),
+              phone,
+              firstName,
+              lastName,
+              educationForm,
+              educationType: value || ""
+            })}
+          />
           <Button
             type="primary"
             size="large"
-            style={{ maxWidth: 160, minWidth: 80, backgroundColor: "green", color: "white", height: 36 }}
+            style={{ maxWidth: 220, minWidth: 80, backgroundColor: "green", color: "white", height: 36 }}
             onClick={handleSearch}
           >
-            Search
+            Qidirish
           </Button>
         </div>
 
         <div>
           <Popconfirm
-            title="Are you sure you want to upload students?"
+            title="Aniq ishonchingiz komilmi , o'ylab ko'ring yana-a?"
             onConfirm={showModal}
             okText="Yes"
             cancelText="No"
@@ -209,21 +289,21 @@ const Index = () => {
             <Button
               type="primary"
               size="large"
-              style={{ maxWidth: 80, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40 }}
+              style={{ maxWidth: 220, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40 }}
               className="text-[16px] mx-4"
             >
-              Sync Exel
+            Exel bilan yangilash
             </Button>
           </Popconfirm>
           <Button
             type="primary"
             size="large"
-            style={{ maxWidth: 96, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40 ,paddingRight:"2px",paddingLeft:"2px"}}
+            style={{ maxWidth: 206, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40, paddingRight: "2px", paddingLeft: "2px" }}
             className="text-[16px] "
             onClick={handleSync}
             loading={isSyncing}
           >
-            Sync Hemis
+             Hemis orqali yangilash
           </Button>
         </div>
       </div>

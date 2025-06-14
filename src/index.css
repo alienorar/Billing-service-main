@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 /* HTML: <div class="loader"></div> */
 .loader {
     width: 50px;

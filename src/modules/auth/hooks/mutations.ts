@@ -14,6 +14,7 @@ export function useSignInMutation() {
             openNotification('success', "Success", response?.data?.message);
             const access_token = response?.data?.data?.access?.accessToken;
             setAccessToken(access_token);
+            console.log(access_token,"fbdkjhfkjsew")
             navigate("/super-admin-panel");
         },
         onError: (error: any) => {

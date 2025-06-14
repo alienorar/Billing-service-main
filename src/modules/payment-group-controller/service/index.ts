@@ -6,8 +6,8 @@ export async function getPmtGroupList(params:ParamsType) {
     return (await axiosInstance.get("api/payment-group/list",{params})).data
 }
 // ============= GET AVAILABLE GROUP LIST ============
-export async function getAvailableGroupList(params:ParamsType) {
-    return (await axiosInstance.get(`api/payment-group/available-groups?`,{params})).data
+export async function getAvailableGroupList() {
+    return (await axiosInstance.get(`api/v1/groups/available-groups`,)).data
 }
 
 

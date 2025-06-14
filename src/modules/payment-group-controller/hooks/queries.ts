@@ -10,10 +10,10 @@ export function useGetPmtGroupList(params:ParamsType) {
     })
 }
 // ============= GET GROUP LIST ============
-export function useGetAvailabletGroupList(params:ParamsType) {
+export function useGetAvailabletGroupList() {
     return useQuery({
         queryKey: ["payment-group"],
-        queryFn: () => getAvailableGroupList(params)
+        queryFn: () => getAvailableGroupList()
     })
 }
 

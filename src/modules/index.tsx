@@ -40,6 +40,15 @@ const PmGroupController = loadable(() => import('./payment-group-controller/page
 const OnePaymentGroup = loadable(() => import('./single-payment-group/pages'), {
   fallback: <Loading />
 });
+const GroupStatistics = loadable(() => import('./group-statistics/pages'), {
+  fallback: <Loading />
+});
+const GroupList = loadable(() => import('./group-list/pages'), {
+  fallback: <Loading />
+});
+const GroupStudents = loadable(() => import('./group-students/pages'), {
+  fallback: <Loading />
+});
 
 const NotFound = loadable(() => import('./not-found'), {
   fallback: <Loading />
@@ -58,5 +67,8 @@ export {
   StudentStatistics,
   PmGroupController,
   OnePaymentGroup,
+  GroupStatistics,
+  GroupList,
+  GroupStudents,
   NotFound,
 }

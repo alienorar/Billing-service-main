@@ -97,7 +97,7 @@ const Index = () => {
       dataIndex: "id",
     },
     {
-      title: "Username",
+      title: "Foydalanuvchi nomi",
       dataIndex: "username",
     },
     {
@@ -105,11 +105,11 @@ const Index = () => {
       dataIndex: "phone",
     },
     {
-      title: "First Name",
+      title: "Ismi",
       dataIndex: "firstName",
     },
     {
-      title: "Last Name",
+      title: "Familiya",
       dataIndex: "lastName",
     },
     {
@@ -125,7 +125,7 @@ const Index = () => {
 
           <Tooltip title="delete">
             <Popconfirm
-              title="Are you sure you want to upload students?"
+              title="Bu adminni o'chirishga ishonchingiz komilmi ?!"
               onConfirm={() => deleteData(record.id)}
               okText="Yes"
               cancelText="No"
@@ -163,7 +163,7 @@ const Index = () => {
       <div className="flex flex-col gap-4 px-5 py-4">
         <div className="flex items-center justify-between ">
           <Input
-            placeholder="Search by phone"
+            placeholder="Tel raqam orqali qidirish"
             value={tempSearchParams.phone}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTempSearchParams({ ...tempSearchParams, phone: e.target.value })}
             className="w-[300px]"
@@ -172,7 +172,7 @@ const Index = () => {
           />
 
           <Input
-            placeholder="Search by first name"
+            placeholder="Ism orqali qidirish"
             value={tempSearchParams.firstName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTempSearchParams({ ...tempSearchParams, firstName: e.target.value })}
             className="w-[300px]"
@@ -181,7 +181,7 @@ const Index = () => {
           />
 
           <Input
-            placeholder="Search by last name"
+            placeholder="Familiya orqali qidirish"
             value={tempSearchParams.lastName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTempSearchParams({ ...tempSearchParams, lastName: e.target.value })}
             className="w-[300px]"

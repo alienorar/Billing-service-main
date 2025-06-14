@@ -14,9 +14,7 @@ const { RangePicker } = DatePicker;
  * Types
  *************************************/
 export type TransactionState =
-    | "PAID"
     | "PENDING"
-    | "FAILED"
     | "CANCELLED"
     | "SUCCESS"
     | string;
@@ -32,7 +30,7 @@ export interface TransactionRecord {
     docNumber: string;
     status: TransactionState;
     provider: string;
-    
+
     phone: string;
     firstName: string;
     lastName: string;
@@ -91,7 +89,7 @@ const TransactionHistory: React.FC = () => {
     });
 
     const [tableData, setTableData] = useState<TransactionRecord[]>([]);
-    const [total, setTotal] = useState<number>(0); // Renamed from setTableData to setTotal
+    const [total, setTotal] = useState<number>(0);
 
     /* ---------- Effects ---------- */
     useEffect(() => {
@@ -119,12 +117,12 @@ const TransactionHistory: React.FC = () => {
                         createdAt: item.createdAt,
                         updatedAt: item.updatedAt,
                         createdDate: dayjs(item.createdAt, "DD-MM-YYYY HH:mm:ss").valueOf(),
-                        existIn1C: item.existIn1C ?? false, // Ensure existIn1C is boolean, default to false
+                        existIn1C: item.existIn1C ?? false,
                     } as TransactionRecord;
                 }
             );
             setTableData(normalized);
-            setTotal(transactionHistory.data.paging.totalItems ?? 0); // Updated to use setTotal
+            setTotal(transactionHistory.data.paging.totalItems ?? 0);
         }
     }, [transactionHistory]);
 
@@ -140,7 +138,7 @@ const TransactionHistory: React.FC = () => {
     };
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
-        const { current = 1, pageSize = 10 } = pagination; // Defaults: page 1, size 10
+        const { current = 1, pageSize = 10 } = pagination;
         updateParams({
             page: current.toString(),
             size: pageSize.toString(),
@@ -160,13 +158,10 @@ const TransactionHistory: React.FC = () => {
 
     const getStatusTagColor = (s: TransactionState): string => {
         switch (s) {
-            case "PAID":
             case "SUCCESS":
                 return "green";
             case "PENDING":
                 return "orange";
-            case "FAILED":
-                return "red";
             case "CANCELLED":
                 return "volcano";
             default:
@@ -178,14 +173,14 @@ const TransactionHistory: React.FC = () => {
     const columns = useMemo(
         () => [
             {
-                title: "Date",
+                title: "Sana",
                 dataIndex: "createdDate",
                 key: "date",
                 render: (ts: number): string => dayjs(ts).format("DD-MM-YYYY HH:mm"),
             },
-            { title: "Transaction ID", dataIndex: "id", key: "id" },
+            { title: "Tranzaksiya ID", dataIndex: "id", key: "id" },
             {
-                title: "Amount",
+                title: "Miqdor",
                 dataIndex: "amount",
                 key: "amount",
                 render: (amount: number): string => `${amount.toLocaleString()} UZS`,
@@ -201,15 +196,15 @@ const TransactionHistory: React.FC = () => {
                 ),
             },
             { title: "Phone", dataIndex: "phone", key: "phone" },
-            { title: "Group", dataIndex: "group", key: "group" },
-            { title: "Speciality", dataIndex: "speciality", key: "speciality" },
+            { title: "Guruhi", dataIndex: "group", key: "group" },
+            { title: "Mutaxasisligi", dataIndex: "speciality", key: "speciality" },
             {
                 title: "Status",
                 dataIndex: "status",
                 key: "status",
                 render: (s: TransactionState): JSX.Element => <Tag color={getStatusTagColor(s)}>{s}</Tag>,
             },
-            { title: "Provider", dataIndex: "provider", key: "provider" },
+            { title: "To'lov uslubi", dataIndex: "provider", key: "provider" },
             {
                 title: "Action",
                 key: "action",
@@ -221,7 +216,7 @@ const TransactionHistory: React.FC = () => {
                             onClick={() => navigate(`/super-admin-panel/transaction-history/${record.id}`)}
                             style={{ backgroundColor: "#050556", borderColor: "#050556", color: "white", paddingRight: "2px", paddingLeft: "2px" }}
                         >
-                            Check
+                            Tekshirish
                         </Button>
                     ) : null,
             },
@@ -241,7 +236,6 @@ const TransactionHistory: React.FC = () => {
     const stateOptions = [
         { value: "SUCCESS", label: "Success" },
         { value: "PENDING", label: "Pending" },
-        { value: "FAILED", label: "Failed" },
         { value: "CANCELLED", label: "Cancelled" },
     ];
 
@@ -263,13 +257,13 @@ const TransactionHistory: React.FC = () => {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateParams({ studentIdNumber: e.target.value })}
                 />
                 <Input
-                    placeholder="First Name"
+                    placeholder="Ism"
                     style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
                     value={firstName}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateParams({ firstName: e.target.value })}
                 />
                 <Input
-                    placeholder="Last Name"
+                    placeholder="Familiya"
                     style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
                     value={lastName}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateParams({ lastName: e.target.value })}
@@ -282,7 +276,7 @@ const TransactionHistory: React.FC = () => {
                 />
                 <Select
                     allowClear
-                    placeholder="Provider"
+                    placeholder="To'lov uslubi"
                     style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
                     options={providerOptions}
                     value={provider || undefined}
@@ -310,7 +304,7 @@ const TransactionHistory: React.FC = () => {
                     className="bg-green-700 text-white w-full md:w-auto"
                     onClick={() => updateParams({})}
                 >
-                    Search
+                  Qidirish
                 </Button>
             </div>
 

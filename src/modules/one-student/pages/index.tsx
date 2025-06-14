@@ -1,71 +1,166 @@
-import { useParams } from "react-router-dom";
-import { useGetStudentById } from "../hooks/queries";
-import { Card, Descriptions, Image, Spin, Alert, Typography } from "antd";
+import { useNavigate, useParams } from "react-router-dom";
+import { useGetStudentById, useGetStudentsTrInfo } from "../hooks/queries";
+import { Card, Descriptions, Image, Spin, Alert, Typography, Table, Button } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 
-const StudentDetails = () => {
-  const { id } = useParams();
-  const { data: response, isLoading, error } = useGetStudentById(id);
 
-  if (isLoading) return <Spin size="large" style={{ display: "block", margin: "50px auto" }} />;
-  if (error) return <Alert message="Error fetching student data" type="error" showIcon />;
 
-  const student = response?.data;
+interface StudentDetails {
+  studentIdNumber: string;
+  pinfl: string;
+  fullName: string;
+  phone: string | null;
+  birthDate: number;
+  genderName: string;
+  studentStatusName: string;
+  levelName: string;
+  specialtyName: string;
+  groupName: string;
+  educationTypeName: string;
+  countryName: string;
+  provinceName: string;
+  districtName: string;
+  image: string;
+  universityName: string;
+}
 
-  if (!student) return <Alert message="Student not found" type="warning" showIcon />;
+const StudentDetails: React.FC = () => {
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const { data: studentResponse, isLoading: isStudentLoading, error: studentError } = useGetStudentById(id);
+  const student = studentResponse?.data;
+  const studentIdNumber = student?.studentIdNumber;
+  const pinfl = student?.pinfl;
+  const { data: trInfoResponse, isLoading: isTrLoading, error: trError } = useGetStudentsTrInfo({ studentIdNumber, pinfl });
+
+  if (isStudentLoading || isTrLoading) {
+    return <Spin size="large" style={{ display: "block", margin: "50px auto" }} />;
+  }
+
+  if (studentError) {
+    return <Alert message="Error fetching student data" description={studentError.message} type="error" showIcon />;
+  }
+
+  if (trError) {
+    return <Alert message="Error fetching transaction data" description={trError.message} type="error" showIcon />;
+  }
+
+  if (!student) {
+    return <Alert message="Student not found" type="warning" showIcon />;
+  }
+
+  const trInfo = trInfoResponse?.data;
+
+  const columns = [
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      render: (date: string) => new Date(date).toLocaleDateString(),
+    },
+    {
+      title: "Contract Number",
+      dataIndex: "contractNumber",
+      key: "contractNumber",
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      render: (amount: number) => amount.toLocaleString(),
+    },
+    {
+      title: "Currency",
+      dataIndex: "currencyCode",
+      key: "currencyCode",
+      render: (code: string) => (code === "860" ? "UZS" : code),
+    },
+  ];
 
   return (
-    <Card
-      style={{
-        maxWidth: 800,
-        margin: "50px auto",
-        padding: 20,
-        borderRadius: 10,
-        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 20 }}>
-        <Image
-          width={100}
-          height={120}
-          src={student.image}
-          style={{ borderRadius: "50%", border: "2px solid #050556" }}
-        />
-        <div>
-          <Title level={3} style={{ color: "#050556", margin: 0 }}>
-            {student.fullName}
-          </Title>
-          <Text type="secondary" style={{ fontSize: 16 }}>
-            {student.universityName}
-          </Text>
-        </div>
+    <div className="flex flex-col justify-center items-center py-10" >
+      <div className="max-w-2xl flex justify-end items-end w-full">
+        <Button className="text-green-500 font-medium" type="default" icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)}>
+          Ortga
+        </Button>
       </div>
+      <Card
+        style={{
+          maxWidth: 1400,
+          margin: "20px auto",
+          padding: 20,
+          borderRadius: 10,
+          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 20 }}>
+          <Image
+            width={100}
+            height={120}
+            src={student.image}
+            style={{ borderRadius: "50%", border: "2px solid #050556" }}
+            fallback="https://via.placeholder.com/100"
+          />
+          <div>
+            <Title level={3} style={{ color: "#050556", margin: 0 }}>
+              {student.fullName}
+            </Title>
+            <Text type="secondary" style={{ fontSize: 16 }}>
+              {student.universityName}
+            </Text>
+          </div>
+        </div>
 
-      <Descriptions bordered column={2} size="middle">
-        <Descriptions.Item label="Student ID">
-          <Text strong style={{ color: "#050556" }}>{student.studentIdNumber}</Text>
-        </Descriptions.Item>
-        <Descriptions.Item label="Pinfl">
-          <Text strong style={{ color: "#050556" }}>{student.pinfl}</Text>
-        </Descriptions.Item>
-        <Descriptions.Item label="Phone">{student.phone || "N/A"}</Descriptions.Item>
-        <Descriptions.Item label="Birth Date">
-          {new Date(student.birthDate * 1000).toLocaleDateString()}
-        </Descriptions.Item>
-        <Descriptions.Item label="Gender">
-          <Text strong style={{ color: "#050556" }}>{student.genderName}</Text>
-        </Descriptions.Item>
-        <Descriptions.Item label="Status"><Text>{student.studentStatusName}</Text></Descriptions.Item>
-        <Descriptions.Item label="Education Level">{student.levelName}</Descriptions.Item>
-        <Descriptions.Item label="Specialty">{student.specialtyName}</Descriptions.Item>
-        <Descriptions.Item label="Group">{student.groupName}</Descriptions.Item>
-        <Descriptions.Item label="Education Type">{student.educationTypeName}</Descriptions.Item>
-        <Descriptions.Item label="Country">{student.countryName}</Descriptions.Item>
-        <Descriptions.Item label="Region">{student.provinceName}</Descriptions.Item>
-        <Descriptions.Item label="District">{student.districtName}</Descriptions.Item>
-      </Descriptions>
-    </Card>
+        <Descriptions bordered column={2} size="middle" style={{ marginBottom: 20 }}>
+          <Descriptions.Item label="Student ID">
+            <Text strong style={{ color: "#050556" }}>{student.studentIdNumber}</Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="PINFL">
+            <Text strong style={{ color: "#050556" }}>{student.pinfl}</Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Tel">{student.phone || "N/A"}</Descriptions.Item>
+          <Descriptions.Item label="To'g'ilgan sana">
+            {new Date(student.birthDate * 1000).toLocaleDateString()}
+          </Descriptions.Item>
+          <Descriptions.Item label="Jins">
+            <Text strong style={{ color: "#050556" }}>{student.genderName}</Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Status">
+            <Text>{student.studentStatusName}</Text>
+          </Descriptions.Item>
+          <Descriptions.Item label="Ta'lim darajasi">{student.levelName}</Descriptions.Item>
+          <Descriptions.Item label="Mutaxasisligi">{student.specialtyName}</Descriptions.Item>
+          <Descriptions.Item label="Guruhi">{student.groupName}</Descriptions.Item>
+          <Descriptions.Item label="Ta'lim shakli">{student.educationTypeName}</Descriptions.Item>
+          <Descriptions.Item label="Mamlakat">{student.countryName}</Descriptions.Item>
+          <Descriptions.Item label="Viloyat">{student.provinceName}</Descriptions.Item>
+          <Descriptions.Item label="Tuman">{student.districtName}</Descriptions.Item>
+        </Descriptions>
+
+        <Title level={4} style={{ color: "#050556", marginBottom: 16 }}>
+          Tranzaksiyalar tarixi
+        </Title>
+        {trInfo?.transactions?.length ? (
+          <>
+            <Table
+              columns={columns}
+              dataSource={trInfo.transactions}
+              rowKey="date"
+              pagination={false}
+              style={{ marginBottom: 16 }}
+            />
+            <Text strong style={{ fontSize: 16 }}>
+              Jami to'langan: {trInfo.total.toLocaleString()} UZS
+            </Text>
+          </>
+        ) : (
+          <Text>Tranzaksiyalar topilmadi</Text>
+        )}
+      </Card>
+    </div>
+
   );
 };
 

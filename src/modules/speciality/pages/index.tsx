@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
-import { Button,  Space, Tooltip, Switch } from "antd";
-import { CheckOutlined, CloseOutlined, EditOutlined } from "@ant-design/icons";
+import { Switch } from "antd";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { GlobalTable } from "@components";
 import { useGetSpeciality } from "../hooks/queries";
 import { useBlockSpeciality, useUnblockSpeciality } from "../hooks/mutations";
-import SpecialityDrawer from "./modal";
 import { AnyObject } from "antd/es/_util/type";
 
 const Index = () => {
   const [tableData, setTableData] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [updateData, setUpdateData] = useState(null);
   const [total, setTotal] = useState<number>(0);
   const navigate = useNavigate();
   const { search } = useLocation();
@@ -23,7 +20,7 @@ const Index = () => {
     page: 1,
   });
 
-  const { data: speciality,isFetching:isGetingSpeciality } = useGetSpeciality({
+  const { data: speciality, isFetching: isGetingSpeciality } = useGetSpeciality({
     size: params.size,
     page: params.page - 1,
   });
@@ -42,23 +39,13 @@ const Index = () => {
     }
   }, [speciality]);
 
-  const openModal = (record = null) => {
-    setUpdateData(record);
-    setIsModalOpen(true);
-  };
-
-  const handleTableChange = (pagination:AnyObject) => {
+  const handleTableChange = (pagination: AnyObject) => {
     const { current, pageSize } = pagination;
     setParams({ size: pageSize, page: current });
     navigate(`?page=${current}&size=${pageSize}`);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setUpdateData(null);
-  };
-
-  const handleToggleVisibility = (id:number|string, isVisible:boolean) => {
+  const handleToggleVisibility = (id: number | string, isVisible: boolean) => {
     if (isVisible) {
       blockSpeciality.mutate(id);
     } else {
@@ -68,15 +55,14 @@ const Index = () => {
 
   const columns = [
     { title: "ID", dataIndex: "id" },
-    { title: "Speciality Code", dataIndex: "code" },
-    { title: "Speciality Name", dataIndex: "name",width:340 },
-    { title: "Education Type", dataIndex: "educationType" },
-    { title: "Education Language", dataIndex: "educationLang" },
+    { title: "Mutaxasislik kodi", dataIndex: "code" },
+    { title: "Mutaxasislik nomi", dataIndex: "name", width: 340 },
+    { title: "Ta'lim shakli", dataIndex: "educationType" },
     {
       title: "Visible",
       dataIndex: "isVisible",
-      sorter:false,
-      render: (visible:boolean, record:any) => (
+      sorter: false,
+      render: (visible: boolean, record: any) => (
         <Switch
           checked={visible}
           checkedChildren={<CheckOutlined />}
@@ -88,30 +74,12 @@ const Index = () => {
         />
       ),
     },
-    {
-      title: "Action",
-      key: "action",
-      render: (record:any) => (
-        <Space size="middle">
-          <Tooltip title="Edit">
-            <Button onClick={() => openModal(record)}>
-              <EditOutlined />
-            </Button>
-          </Tooltip>
-        </Space>
-      ),
-    },
   ];
+
   return (
-    <>
-      <SpecialityDrawer open={isModalOpen} handleClose={closeModal} update={updateData} />
-      <div className="flex flex-col gap-4 px-5 py-4 ">
-        <Button type="primary" size="large" onClick={() => openModal()} style={{ maxWidth: 80, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40 }}>
-          Create
-        </Button>
-      </div>
+    <div className="flex flex-col gap-4 px-5 py-4">
       <GlobalTable
-      loading={isGetingSpeciality}
+        loading={isGetingSpeciality}
         data={tableData}
         columns={columns}
         handleChange={handleTableChange}
@@ -123,7 +91,7 @@ const Index = () => {
           pageSizeOptions: ["10", "20", "50", "100"],
         }}
       />
-    </>
+    </div>
   );
 };
 

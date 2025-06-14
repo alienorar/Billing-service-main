@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { Button, Popconfirm, Space, Tooltip, message } from "antd";
+import { Button, Popconfirm, Space, Tooltip,} from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { TablePaginationConfig } from "antd";
@@ -25,13 +25,12 @@ const Index = () => {
   const page = Number(searchParams.get("page")) || 1;
   const size = Number(searchParams.get("size")) || 10;
 
-  // Temporary search state
-  // const [tempSearchParams, setTempSearchParams] = useState({ name });
+ 
 
   // Fetch payment groups with parameters
   const { data: pmGroupList, isFetching, error } = useGetPmtGroupList({
     size,
-    page: page - 1, // Adjust for 0-based API
+    page: page - 1, 
 
   });
 
@@ -58,14 +57,6 @@ const Index = () => {
     });
   };
 
-  // Handle search
-  // const handleSearch = () => {
-  //   setSearchParams({
-  //     page: "1",
-  //     size: size.toString(),
-
-  //   });
-  // };
 
   // Modal handlers
   const showModal = () => setIsModalOpen(true);
@@ -107,14 +98,14 @@ const Index = () => {
         className: "text-center font-semibold text-gray-700",
       },
       {
-        title: "Name",
+        title: "Nomi",
         dataIndex: "name",
         key: "name",
         width: 200,
         className: "text-gray-800",
       },
       {
-        title: "Duration",
+        title: "Muddati",
         dataIndex: "duration",
         key: "duration",
         width: 120,
@@ -122,7 +113,7 @@ const Index = () => {
         className: "text-center text-gray-700",
       },
       {
-        title: "Contract Amounts",
+        title: "Kontrakt miqdori",
         dataIndex: "contractAmounts",
         key: "contractAmounts",
         render: (contractAmounts: Record<string, number> = {}) => (
@@ -132,7 +123,7 @@ const Index = () => {
                 key={year}
                 className="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-full sm:px-1.5 sm:py-0.5 sm:text-xs"
               >
-                Year {year}: {amount.toLocaleString()} UZS
+                Yil {year}: {amount.toLocaleString()} UZS
               </span>
             ))}
           </div>
@@ -151,7 +142,7 @@ const Index = () => {
             </Tooltip>
             <Tooltip title="Delete">
               <Popconfirm
-                title="Are you sure you want to delete this payment group?"
+                title="Bu guruhni o'chirishga ishonchingiz komilmi?"
                 onConfirm={() => deleteData(record.id)}
                 okText="Yes"
                 cancelText="No"
@@ -201,7 +192,7 @@ const Index = () => {
           onClick={showModal}
           style={{ maxWidth: 80, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40 }}
         >
-          Create
+         Yaratish
         </Button>
       </div>
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
