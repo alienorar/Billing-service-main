@@ -1,4 +1,5 @@
 import axiosInstance from "@api";
+import { StudentDiscount } from "@types";
 
 // ============= GET STUDENT BY ID============
 export async function getStudentById(id:number|string|undefined) {
@@ -9,4 +10,15 @@ export async function getStudentById(id:number|string|undefined) {
 export async function getStudentsTrInfo(params:any) {
     return (await axiosInstance.get(`api/v1/student/transaction/info`,{params})).data
 }
+
+// ============= CREATE STUDENTS DISCOUNTS ============
+export async function createStudentsDiscounts(data:StudentDiscount) {
+    return (await axiosInstance.post(`api/v1/discount/create`,data)).data
+}
+
+// ============= GET STUDENTS DISCOUNTS ============
+export async function getStudentsDiscounts(params:any) {
+    return (await axiosInstance.get(`api/v1/discount/list/pageable?studentId=`,{params})).data
+}
+
 

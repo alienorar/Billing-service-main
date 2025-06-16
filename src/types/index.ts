@@ -3,20 +3,23 @@ import { ColumnsType, TablePaginationConfig, TableProps } from "antd/es/table";
 
 // ========== PARAMS TYPE ==========
 export interface ParamsType {
-  size?: number,
-  page?: number,
+  size?: number|string|undefined,
+  page?: number|string|undefined,
   search?: string,
-  phone?: number|string,
+  phone?: number | string,
   firstName?: string;
   lastName?: string;
-  studentIdNumber?:string;
-  pinfl?:string;
-  provider?:string;
-  state?:any;
-  from?:string|number;
-  to?:string|number;
-  educationForm?:any;
-   educationType?:any
+  studentIdNumber?: string;
+  pinfl?: string;
+  provider?: string;
+  name?: string | undefined,
+  state?: string | undefined;
+  from?: string | number;
+  to?: string | number;
+  educationForm?: string | undefined;
+  educationType?: string | undefined;
+  educationLang?: string | undefined;
+  active?: string | undefined;
 }
 
 export interface PagingType {
@@ -66,8 +69,8 @@ export interface TablePropsType {
   data: AnyObject[] | undefined;
   pagination: false | TablePaginationConfig | undefined;
   handleChange: (pagination: TablePaginationConfig) => void;
-  onRow?: TableProps<AnyObject>["onRow"]; 
-  loading?:boolean;
+  onRow?: TableProps<AnyObject>["onRow"];
+  loading?: boolean;
 
 }
 // ==========GLOBAL DELETE TYPE ==========
@@ -100,7 +103,7 @@ export interface RoleType {
 export interface RoleModalType extends GlobalModalProps {
   update?: RoleType;
   permessionL?: any[];
-  selectedPermL?: { id: number; name: string; displayName: string }[]; 
+  selectedPermL?: { id: number; name: string; displayName: string }[];
 }
 
 
@@ -139,17 +142,17 @@ export interface SpecialityType {
 
 
 export interface PaymentGroup {
-  id?: number ;
+  id?: number;
   name?: string;
-  duration?: number|any;
-  contractAmounts?: string|number|any;
-  groupIds:any[];
+  duration?: number | any;
+  contractAmounts?: string | number | any;
+  groupIds: any[];
 }
 
 export interface GroupListUpdate {
-  groupId?: number|string;
-  paymentGroupId?: number|string;
-  id?:number|string
+  groupId?: number | string;
+  paymentGroupId?: number | string;
+  id?: number | string
 }
 
 
@@ -185,13 +188,13 @@ export interface PaymentGroup {
   name?: string;
   duration?: number | any;
   contractAmounts?: any;
- groupIds:any[];
+  groupIds: any[];
   groups?: number[];
 }
 
 export interface ContractAmountForm {
   key: string;
-  amount: number|any;
+  amount: number | any;
 }
 
 export interface PmtGroupFormValues {
@@ -200,3 +203,12 @@ export interface PmtGroupFormValues {
   contractAmounts: ContractAmountForm[];
   groupIds: any[];
 }
+
+
+export interface StudentDiscount {
+  studentId: number;
+  description: string;
+  discountType: "SUM";
+  studentLevel: number;
+  amount: number;
+};

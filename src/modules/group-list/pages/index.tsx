@@ -51,6 +51,7 @@ const GroupList: React.FC = () => {
   const name = searchParams.get("name") ?? "";
   const educationLang = searchParams.get("educationLang") ?? "";
   const educationForm = searchParams.get("educationForm") ?? "";
+  const educationType = searchParams.get("educationType") ?? "";
   const active = searchParams.get("active") ?? "";
 
   /* ---------- Data ---------- */
@@ -60,6 +61,7 @@ const GroupList: React.FC = () => {
     name: name || undefined,
     educationLang: educationLang || undefined,
     educationForm: educationForm || undefined,
+    educationType: educationType || undefined,
     active: active || undefined,
   } as QueryParams);
 
@@ -227,6 +229,12 @@ const GroupList: React.FC = () => {
     { value: "SIRTQI", label: "Sirtqi" },
   ];
 
+  const educationTypeOptions: { value: string; label: string }[] = [
+    { value: "", label: "All" },
+    { value: "BAKALAVR", label: "Bakalavr" },
+    { value: "MAGISTR", label: "Magistr" },
+  ];
+
   const activeOptions: { value: string; label: string }[] = [
     { value: "", label: "All" },
     { value: "true", label: "Aktiv" },
@@ -264,6 +272,14 @@ const GroupList: React.FC = () => {
             options={educationFormOptions}
             value={educationForm || undefined}
             onChange={(value: string | undefined) => updateParams({ educationForm: value || undefined })}
+          />
+          <Select
+            allowClear
+            placeholder="Ta'lim turi"
+            style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
+            options={educationTypeOptions}
+            value={educationForm || undefined}
+            onChange={(value: string | undefined) => updateParams({ educationType: value || undefined })}
           />
           <Select
             allowClear
