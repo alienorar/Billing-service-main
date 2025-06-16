@@ -19,7 +19,6 @@ interface StudentRecord {
     level: string;
 }
 
-
 const filterEmpty = (obj: Record<string, string | undefined>): Record<string, string> =>
     Object.fromEntries(
         Object.entries(obj).filter(([, v]) => v !== "" && v !== undefined)
@@ -27,14 +26,10 @@ const filterEmpty = (obj: Record<string, string | undefined>): Record<string, st
 
 const GroupSinglePage: React.FC = () => {
     const navigate = useNavigate();
-
     const { id } = useParams<{ id: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
-
     const page = Number(searchParams.get("page") ?? 1);
     const size = Number(searchParams.get("size") ?? 10);
-
-    // Convert id to number
     const groupId = id ? Number(id) : undefined;
 
     // Handle invalid groupId
@@ -174,6 +169,9 @@ const GroupSinglePage: React.FC = () => {
                         showSizeChanger: true,
                         pageSizeOptions: ["10", "20", "50", "100"],
                     }}
+                    onRow={(record: StudentRecord) => ({
+                        onClick: () => navigate(`/super-admin-panel/students/${record.id}`),
+                    })}
                 />
             )}
         </div>

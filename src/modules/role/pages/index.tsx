@@ -19,7 +19,7 @@ const Index = () => {
   const navigate = useNavigate()
   const { search } = useLocation()
   const [selectedPermL, setSelectedPermL] = useState([])
-  const [roleId, setRoleId] = useState<number | string | undefined>(undefined)
+  const [roleId, setRoleId] = useState<number | string | undefined>()
   const { data: permessionTree } = useGetPermessionTree()
   const queryClient = useQueryClient()
 

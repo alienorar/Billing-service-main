@@ -32,10 +32,8 @@ const StudentDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { data: studentResponse, isLoading: isStudentLoading, error: studentError } = useGetStudentById(id);
   const student = studentResponse?.data;
-  const studentIdNumber = student?.studentIdNumber;
-  const pinfl = student?.pinfl;
-  const { data: trInfoResponse, isLoading: isTrLoading, error: trError } = useGetStudentsTrInfo({ studentIdNumber, pinfl });
-  const { data: studentsDiscounts, isLoading: isDiscountsLoading, error: discountsError } = useGetStudentsDiscounts({ studentIdNumber });
+  const { data: trInfoResponse, isLoading: isTrLoading, error: trError } = useGetStudentsTrInfo({id});
+  const { data: studentsDiscounts, isLoading: isDiscountsLoading, error: discountsError } = useGetStudentsDiscounts({ studentId: id });
 
   if (isStudentLoading || isTrLoading || isDiscountsLoading) {
     return <Spin size="large" style={{ display: "block", margin: "50px auto" }} />;
@@ -60,11 +58,11 @@ const StudentDetails: React.FC = () => {
   const trInfo = trInfoResponse?.data;
   const discounts = studentsDiscounts?.data?.content;
 
- 
+
   // const showModal = () => setIsModalOpen(true)
   // const handleClose = () => {
   //   setIsModalOpen(false)
-   
+
   // }
 
 
@@ -129,12 +127,12 @@ const StudentDetails: React.FC = () => {
       {/* <DiscountsModal
         open={isModalOpen}
         handleClose={handleClose} /> */}
-            
+
 
 
 
       <div className="flex flex-col justify-center items-center py-10">
-        <div className="max-w-2xl flex justify-end items-end w-full">
+        <div className="max-w-3xl flex justify-end items-end w-full">
           <Button className="text-green-500 font-medium" type="default" icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)}>
             Ortga
           </Button>
@@ -173,9 +171,31 @@ const StudentDetails: React.FC = () => {
             <Descriptions.Item label="PINFL">
               <Text strong style={{ color: "#050556" }}>{student.pinfl}</Text>
             </Descriptions.Item>
-            <Descriptions.Item label="Tel">{student.phone || "N/A"}</Descriptions.Item>
+            <Descriptions.Item label="Tel">{student.phone || "-"}</Descriptions.Item>
             <Descriptions.Item label="To'g'ilgan sana">
-              {new Date(student.birthDate * 1000).toLocaleDateString()}
+              {(() => {
+                const date = new Date(student.birthDate * 1000);
+                const year = date.getFullYear();
+                const month = date.getMonth();
+                const day = String(date.getDate()).padStart(2, "0");
+
+                const monthNames = [
+                  "yanvar",
+                  "fevral",
+                  "mart",
+                  "aprel",
+                  "may",
+                  "iyun",
+                  "iyul",
+                  "avgust",
+                  "sentyabr",
+                  "oktyabr",
+                  "noyabr",
+                  "dekabr",
+                ];
+
+                return `${year}-yil ${day}-${monthNames[month]}`;
+              })()}
             </Descriptions.Item>
             <Descriptions.Item label="Jins">
               <Text strong style={{ color: "#050556" }}>{student.genderName}</Text>
@@ -183,13 +203,28 @@ const StudentDetails: React.FC = () => {
             <Descriptions.Item label="Status">
               <Text>{student.studentStatusName}</Text>
             </Descriptions.Item>
-            <Descriptions.Item label="Ta'lim darajasi">{student.levelName}</Descriptions.Item>
+            <Descriptions.Item label="Kursi">{student.levelName}</Descriptions.Item>
             <Descriptions.Item label="Mutaxasisligi">{student.specialtyName}</Descriptions.Item>
             <Descriptions.Item label="Guruhi">{student.groupName}</Descriptions.Item>
             <Descriptions.Item label="Ta'lim shakli">{student.educationTypeName}</Descriptions.Item>
             <Descriptions.Item label="Mamlakat">{student.countryName}</Descriptions.Item>
             <Descriptions.Item label="Viloyat">{student.provinceName}</Descriptions.Item>
             <Descriptions.Item label="Tuman">{student.districtName}</Descriptions.Item>
+            <Descriptions.Item label="Shartnoma summasi">
+              {Number(trInfo.totalMustPaidAmount).toLocaleString()} UZS
+            </Descriptions.Item>
+            <Descriptions.Item label="Chegirma summasi">
+              {Number(trInfo.totalDiscountAmount).toLocaleString()} UZS
+            </Descriptions.Item>
+            <Descriptions.Item label="To‘langan summa">
+              {Number(trInfo.totalPaidAmount).toLocaleString()} UZS
+            </Descriptions.Item>
+            <Descriptions.Item label="Qarzdorlik">
+              {Number(trInfo.totalMustPaidAmount).toLocaleString()} UZS
+            </Descriptions.Item>
+          </Descriptions>
+          <Descriptions bordered column={2} size="small" style={{ marginBottom: 20 }}>
+
           </Descriptions>
 
           <Tabs
@@ -226,14 +261,6 @@ const StudentDetails: React.FC = () => {
                   <>
                     {discounts?.length ? (
                       <div>
-                        {/* <Button
-                          type="primary"
-                          size="large"
-                          style={{ maxWidth: 160, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40 }}
-                          onClick={showModal}
-                        >
-                          Create
-                        </Button> */}
                         <Table
                           columns={discountColumns}
                           dataSource={discounts}

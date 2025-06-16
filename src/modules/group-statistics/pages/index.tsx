@@ -132,7 +132,7 @@ const Index: React.FC = () => {
                     a.contractStudentCount - b.contractStudentCount,
             },
             {
-                title: "Qarzdor studentlar soni",
+                title: "Qarzdorlik summasi",
                 dataIndex: "allStudentDebts",
                 key: "allStudentDebts",
                 render: (value: number | null) => (value ? value.toLocaleString() : "-"),
@@ -140,7 +140,7 @@ const Index: React.FC = () => {
                     (a.allStudentDebts || 0) - (b.allStudentDebts || 0),
             },
             {
-                title: "Qarzdorligi yo'q studentlar soni",
+                title: "Jami to'langan summa",
                 dataIndex: "allStudentPaid",
                 key: "allStudentPaid",
                 render: (value: number | null) => (value ? value.toLocaleString() : "-"),

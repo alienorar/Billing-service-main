@@ -8,7 +8,7 @@ export async function getStudentById(id:number|string|undefined) {
 
 // ============= GET STUDENTS TR INFO BY PINFL============
 export async function getStudentsTrInfo(params:any) {
-    return (await axiosInstance.get(`api/v1/student/transaction/info`,{params})).data
+    return (await axiosInstance.get(`api/v1/student/transaction/list`,{params})).data
 }
 
 // ============= CREATE STUDENTS DISCOUNTS ============
@@ -18,7 +18,7 @@ export async function createStudentsDiscounts(data:StudentDiscount) {
 
 // ============= GET STUDENTS DISCOUNTS ============
 export async function getStudentsDiscounts(params:any) {
-    return (await axiosInstance.get(`api/v1/discount/list/pageable?studentId=`,{params})).data
+    return (await axiosInstance.get(`api/v1/discount/list/pageable`,{params})).data
 }
 
 
