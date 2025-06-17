@@ -14,3 +14,27 @@ export const logout = () => {
   localStorage.removeItem("refreshToken");
   window.location.href = "/";
 };
+
+// =========================Role permission service ========================
+
+// Foydalanuvchi ruxsatlarini saqlash (array ko'rinishida)
+export const setUserPermissions = (permissions: string[]) => {
+  localStorage.setItem("permissions", JSON.stringify(permissions));
+};
+
+// Foydalanuvchi ruxsatlarini olish
+export const getUserPermissions = (): string[] => {
+  const permissions = localStorage.getItem("permissions");
+  return permissions ? JSON.parse(permissions) : [];
+};
+
+// Berilgan ruxsat bormi tekshirish
+export const hasPermission = (permission: string): boolean => {
+  const permissions = getUserPermissions();
+  return permissions.includes(permission);
+};
+
+// Foydalanuvchi ruxsatlarini tozalash (logout paytida)
+export const clearPermissions = () => {
+  localStorage.removeItem("permissions");
+};
