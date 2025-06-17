@@ -1,90 +1,66 @@
+
+"use client"
+
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
   RouterProvider,
+  Navigate,
 } from "react-router-dom";
 import App from "../App.tsx";
-import {
-  SignIn,
-  AdminPanel,
-  AdminPage,
-  Students,
-  OneStudent,
-  Speciality,
-  PaymentHistory,
-  TransactionHistory,
-  PaymentDetails,
-  StudentStatistics,
-  PmGroupController,
-  OnePaymentGroup,
-  GroupStatistics,
-  GroupList,
-  GroupStudents,
-  NotFound,
-  Role,
-} from "@modules";
+import { SignIn, AdminPanel, NotFound, AccessDenied } from "@modules";
 import { getUserPermissions } from "../utils/token-service/index.ts";
+import { routesConfig } from "./routes";
 
 const Index = () => {
   const permissions = getUserPermissions();
+//   console.log("User Permissions:", permissions);
 
-  // Helper function to check if user has required permissions
-  const hasPermission = (requiredPermissions:any) => {
-    if (!requiredPermissions) return true; // If no permissions required, allow access
-    return requiredPermissions.every((perm:any) => permissions.includes(perm));
+  const hasPermission = (requiredPermissions: string[]) => {
+    if (!requiredPermissions || requiredPermissions.length === 0) {
+      console.log("No permissions required for route"); // Debug
+      return true;
+    }
+    const hasAllPermissions = requiredPermissions.every((perm) => {
+      const hasPerm = permissions.includes(perm);
+      if (!hasPerm) {
+        console.log(`Missing permission: ${perm}`); // Debug
+      }
+      return hasPerm;
+    });
+    // console.log(`Route permissions check: ${requiredPermissions} -> ${hasAllPermissions}`); // Debug
+    return hasAllPermissions;
   };
 
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route>
-        <Route path="/" element={<App />}>
-          <Route path="/" element={<SignIn />} />
-          <Route path="super-admin-panel" element={<AdminPanel />}>
-            {hasPermission(["ADMIN_ROLE_MENU"]) && (
-              <Route index element={<Role />} />
-            )}
-            {hasPermission(["ADMIN_USER_MENU"]) && (
-              <Route path="admin-page" element={<AdminPage />} />
-            )}
-            {hasPermission(["STUDENT_MENU"]) && (
-              <Route path="students" element={<Students />} />
-            )}
-            {hasPermission(["STUDENT_MENU"]) && (
-              <Route path="students/:id" element={<OneStudent />} />
-            )}
-            {hasPermission(["SPECIALITY_MENU"]) && (
-              <Route path="speciality" element={<Speciality />} />
-            )}
-            {hasPermission(["PAYMENT_MENU"]) && (
-              <Route path="payment-history" element={<PaymentHistory />} />
-            )}
-            {hasPermission(["TRANSACTION_MENU"]) && (
-              <Route path="transaction-history" element={<TransactionHistory />} />
-            )}
-            {hasPermission(["PAYMENT_DETAILS_VIEW"]) && (
-              <Route path="transaction-history/:id" element={<PaymentDetails />} />
-            )}
-            {hasPermission(["PAYMENT_GROUP_MENU"]) && (
-              <Route path="pmgroup-controller" element={<PmGroupController />} />
-            )}
-            {hasPermission(["PM_GROUP_VIEW"]) && (
-              <Route path="pmgroup-controller/:id" element={<OnePaymentGroup />} />
-            )}
-            {hasPermission(["STUDENT_STATISTICS_MENU"]) && (
-              <Route path="students-statistics" element={<StudentStatistics />} />
-            )}
-            {hasPermission(["GROUP_STATISTICS_MENU"]) && (
-              <Route path="group-statistics" element={<GroupStatistics />} />
-            )}
-            {hasPermission(["GROUP_STUDENTS_VIEW"]) && (
-              <Route path="group-statistics/:id" element={<GroupStudents />} />
-            )}
-            {hasPermission(["GROUP_MENU"]) && (
-              <Route path="group-list" element={<GroupList />} />
-            )}
-          </Route>
+      <Route path="/" element={<App />}>
+        <Route path="/" element={<SignIn />} />
+        <Route path="/super-admin-panel" element={<AdminPanel />}>
+          {/* Index route for /super-admin-panel */}
+          <Route
+            index
+            element={
+              hasPermission(["ADMIN_ROLE_MENU"]) ? (
+                <Navigate to="super-admin-panel/role" replace />
+              ) : (
+                <AccessDenied />
+              )
+            }
+          />
+          {/* Dynamically render routes from routesConfig */}
+          {routesConfig.map(({ path, element, permissions: routePermissions }) => (
+            <Route
+              key={path}
+              path={path}
+              element={hasPermission(routePermissions) ? element : <AccessDenied />}
+            />
+          ))}
+          {/* Catch-all for invalid sub-routes */}
+          <Route path="*" element={<AccessDenied />} />
         </Route>
+        {/* Catch-all for invalid top-level routes */}
         <Route path="*" element={<NotFound />} />
       </Route>
     )

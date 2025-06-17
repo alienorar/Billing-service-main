@@ -53,6 +53,10 @@ const GroupStudents = loadable(() => import('./group-students/pages'), {
 const NotFound = loadable(() => import('./not-found'), {
   fallback: <Loading />
 });
+
+const AccessDenied = loadable(() => import('./access-denied'), {
+  fallback: <Loading />
+});
 export {
   SignIn,
   AdminPanel,
@@ -71,4 +75,5 @@ export {
   GroupList,
   GroupStudents,
   NotFound,
+  AccessDenied
 }

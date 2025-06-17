@@ -1,15 +1,11 @@
 "use client"
 
-import { Modal, Form, Input, Button, TreeSelect } from "antd"
+import { Modal, Form, Input, Button, Select } from "antd"
 import { useEffect } from "react"
 import { useCreateRoles, useUpdateRoles } from "../hooks/mutations"
 import type { RoleModalType, RoleType } from "@types"
 
-interface Permission {
-  id: number
-  name: string
-  children?: Permission[]
-}
+const { Option, OptGroup } = Select
 
 const RolesModal = ({ open, handleClose, update, permessionL }: RoleModalType) => {
   const [form] = Form.useForm()
@@ -53,65 +49,139 @@ const RolesModal = ({ open, handleClose, update, permessionL }: RoleModalType) =
   }
 
   return (
-    <Modal title={update?.id ? "Edit Role" : "Add New Role"} open={open} onCancel={handleClose} footer={null}>
-      <Form form={form} name="roles_form" layout="vertical" onFinish={onFinish}>
-        {update?.id && (
-          <Form.Item label="Role ID" name="id">
-            <Input disabled style={{ padding: "10px", border: "1px solid #d9d9d9", borderRadius: "6px" }} />
-          </Form.Item>
-        )}
-
-        <Form.Item label="Role Name" name="name" rules={[{ required: true, message: "Enter role name!" }]}>
-          <Input style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }} />
-        </Form.Item>
-
-        <Form.Item label="Display Name" name="displayName" rules={[{ required: true, message: "Enter display name!" }]}>
-          <Input style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }} />
-        </Form.Item>
-
-        <Form.Item label="Default URL" name="defaultUrl" rules={[{ required: true, message: "Enter default URL!" }]}>
-          <Input style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }} />
-        </Form.Item>
-
-        <Form.Item label="Permissions" name="permissions">
-          <TreeSelect
-            treeData={permessionL?.map((parent) => ({
-              title: parent.name,
-              value: parent.id,
-              key: parent.id,
-              children: parent.children?.map((child: Permission) => ({
-                title: child.name,
-                value: child.id,
-                key: child.id,
-              })),
-            }))}
-            treeCheckable={true}
-            showCheckedStrategy={TreeSelect.SHOW_PARENT}
-            placeholder="Select permissions"
-            style={{ width: "100%" }}
-            value={form.getFieldValue("permissions") || []}
-            onChange={(values) => form.setFieldsValue({ permissions: values })}
-          />
-        </Form.Item>
-        <Form.Item>
-          <Button
-            block
-            htmlType="submit"
-            loading={isCreating || isUpdating}
-            style={{
-              backgroundColor: "#050556",
-              color: "white",
-              height: "40px",
-              fontSize: "18px",
-              marginTop: "10px",
-              borderRadius: "6px",
-            }}
+    <>
+      <style>{`
+        .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+          background-color: #b8d9f2 !important;
+        }
+        .ant-select-item-option-selected:not(.ant-select-item-option-disabled) .ant-select-item-option-content {
+          color: #1f2937 !important;
+        }
+      `}</style>
+      <Modal
+        title={
+          <span className="text-2xl font-semibold text-gray-800">
+            {update?.id ? "Edit Role" : "Add New Role"}
+          </span>
+        }
+        open={open}
+        onCancel={handleClose}
+        footer={null}
+        className="rounded-lg"
+        styles={{
+          content: { 
+            padding: '24px', 
+            backgroundColor: '#f9fafb',
+            borderRadius: '12px',
+          },
+          header: { 
+            padding: '16px 24px', 
+            borderBottom: '1px solid #e5e7eb' 
+          },
+        }}
+      >
+        <Form 
+          form={form} 
+          name="roles_form" 
+          layout="vertical" 
+          onFinish={onFinish}
+          className="space-y-4"
+        >
+          {update?.id && (
+            <Form.Item 
+              label={<span className="text-gray-700 font-medium">Role ID</span>} 
+              name="id"
+            >
+              <Input 
+                disabled 
+                className="rounded-md border-gray-300 bg-gray-100 text-gray-600 py-2 px-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+              />
+            </Form.Item>
+          )}
+          <Form.Item 
+            label={<span className="text-gray-700 font-medium">Role Name</span>} 
+            name="name" 
+            rules={[{ required: true, message: "Enter role name!" }]}
           >
-            {update?.id ? "Update Role" : "Create Role"}
-          </Button>
-        </Form.Item>
-      </Form>
-    </Modal>
+            <Input 
+              className="rounded-md border-gray-300 py-2 px-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+              placeholder="Enter role name"
+            />
+          </Form.Item>
+          <Form.Item 
+            label={<span className="text-gray-700 font-medium">Display Name</span>} 
+            name="displayName" 
+            rules={[{ required: true, message: "Enter display name!" }]}
+          >
+            <Input 
+              className="rounded-md border-gray-300 py-2 px-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+              placeholder="Enter display name"
+            />
+          </Form.Item>
+          <Form.Item 
+            label={<span className="text-gray-700 font-medium">Default URL</span>} 
+            name="defaultUrl" 
+            rules={[{ required: true, message: "Enter default URL!" }]}
+          >
+            <Input 
+              className="rounded-md border-gray-300 py-2 px-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+              placeholder="Enter default URL"
+            />
+          </Form.Item>
+          <Form.Item 
+            label={<span className="text-gray-700 font-medium">Permissions</span>} 
+            name="permissions"
+          >
+            <Select
+              mode="multiple"
+              placeholder="Select permissions"
+              className="w-full"
+              dropdownClassName="rounded-lg shadow-lg"
+              value={form.getFieldValue("permissions") || []}
+              onChange={(values) => form.setFieldsValue({ permissions: values })}
+            >
+              {permessionL?.map((parent) => (
+                <OptGroup
+                  key={parent.id}
+                  label={
+                    <span className="font-semibold text-gray-700 text-sm">
+                      {parent.name}
+                    </span>
+                  }
+                >
+                  <Option 
+                    key={`parent-${parent.id}`} 
+                    value={parent.id} 
+                    label={`[Group] ${parent.name}`}
+                  >
+                    <span className="font-medium text-green-600">{parent.name}</span>
+                  </Option>
+                  {parent.children?.map((child:any) => (
+                    <Option 
+                      key={child.id} 
+                      value={child.id} 
+                      label={child.name}
+                    >
+                      <span className="pl-3 text-gray-600">{child.name}</span>
+                    </Option>
+                  ))}
+                </OptGroup>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <Button
+              block
+              htmlType="submit"
+              loading={isCreating || isUpdating}
+              className="h-10 bg-[#050556] text-white font-semibold rounded-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200"
+            >
+              {update?.id ? "Update Role" : "Create Role"}
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </>
   )
 }
 

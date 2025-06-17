@@ -1,7 +1,7 @@
 // src/components/ProtectedRoute.tsx
 import { Navigate, Outlet } from "react-router-dom";
 
-import { Spin } from "antd";
+// import { Spin } from "antd";
 import { useAuth } from "../contexts/auth-context";
 
 type ProtectedRouteProps = {
@@ -13,9 +13,9 @@ type ProtectedRouteProps = {
 export const ProtectedRoute = ({
   requiredPermissions = [],
   redirectTo = "/login",
-  loadingElement = <Spin size="large" />,
+//   loadingElement = <Spin size="large" />,
 }: ProtectedRouteProps) => {
-  const { isAuthenticated, userPermissions, hasPermission } = useAuth();
+  const { isAuthenticated, hasPermission } = useAuth();
 
   if (!isAuthenticated) {
     return <Navigate to={redirectTo} replace />;

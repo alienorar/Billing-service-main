@@ -99,11 +99,11 @@ const Index = () => {
       dataIndex: "id",
     },
     {
-      title: "Rol ismi",
+      title: "Rol nomi",
       dataIndex: "name",
     },
     {
-      title: "Ko'rinib Turuvchi ism",
+      title: "Ko'rinib turuvchi nomi",
       dataIndex: "displayName",
     },
     {
