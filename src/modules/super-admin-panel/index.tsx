@@ -12,7 +12,7 @@ import { NavLink, useLocation, Outlet, useNavigate } from "react-router-dom";
 import { getUserPermissions } from "../../utils/token-service";
 import MainLogo from "../../assets/otu-logo.png";
 import LogoText from "../../assets/logo-text.png";
-import { logout } from "../../utils/token-service";
+// import { logout } from "../../utils/token-service";
 import { routesConfig } from "../../router/routes";
 
 const { Header, Sider, Content } = Layout;
@@ -36,7 +36,7 @@ const App = () => {
   );
 
   const handleLogout = () => {
-    logout();
+    // logout();
     navigate("/");
   };
 

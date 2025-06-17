@@ -9,11 +9,11 @@ export const setRefreshToken = (token: string) => {
   localStorage.setItem("refreshToken", token);
 };
 
-export const logout = () => {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-  window.location.href = "/";
-};
+// export const logout = () => {
+//   localStorage.removeItem("accessToken");
+//   localStorage.removeItem("refreshToken");
+//   window.location.href = "/";
+// };
 
 // =========================Role permission service ========================
 
