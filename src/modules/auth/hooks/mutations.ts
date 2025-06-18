@@ -18,7 +18,7 @@ export function useSignInMutation() {
             setUserPermissions(permissons)
             // console.log(response?.data?.data?.user.role.permissions,"dbjefkjk3")
             
-            navigate("/super-admin-panel/super-admin-panel/role");
+            navigate("/super-admin-panel/role");
         },
         onError: (error: any) => {
             openNotification('error', "Invalid username or password", error.data?.message,)
