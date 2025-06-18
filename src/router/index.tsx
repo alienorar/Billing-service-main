@@ -34,7 +34,7 @@ const Index = () => {
             element={hasPermission(["ADMIN_ROLE_MENU"]) ? <Navigate to="role" replace /> : <AccessDenied />}
           />
           {/* Dynamically render routes from routesConfig */}
-          {routesConfig.map(({ path, element, permissions: routePermissions }) => (
+          {routesConfig?.map(({ path, element, permissions: routePermissions }) => (
             <Route key={path} path={path} element={hasPermission(routePermissions) ? element : <AccessDenied />} />
           ))}
           {/* Catch-all for invalid sub-routes */}
