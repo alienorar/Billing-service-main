@@ -1,4 +1,4 @@
-import { AnyObject } from "antd/es/_util/type";
+import {AnyObject }  from "antd/es/_util/type";
 import { ColumnsType, TablePaginationConfig, TableProps } from "antd/es/table";
 
 // ========== PARAMS TYPE ==========
@@ -20,6 +20,7 @@ export interface ParamsType {
   educationType?: string | undefined;
   educationLang?: string | undefined;
   active?: string | undefined;
+  showDebt?:string
 }
 
 export interface PagingType {

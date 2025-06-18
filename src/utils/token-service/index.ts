@@ -17,9 +17,9 @@ export const logout = () => {
 
 // =========================Role permission service ========================
 
-// Foydalanuvchi ruxsatlarini saqlash (array ko'rinishida)
 export const setUserPermissions = (permissions: string[]) => {
   localStorage.setItem("permissions", JSON.stringify(permissions));
+  window.dispatchEvent(new CustomEvent('permissionsUpdated'));
 };
 
 // Foydalanuvchi ruxsatlarini olish
@@ -37,4 +37,5 @@ export const hasPermission = (permission: string): boolean => {
 // Foydalanuvchi ruxsatlarini tozalash (logout paytida)
 export const clearPermissions = () => {
   localStorage.removeItem("permissions");
+  window.dispatchEvent(new CustomEvent('permissionsUpdated'));
 };
