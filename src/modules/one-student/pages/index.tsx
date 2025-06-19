@@ -129,13 +129,13 @@ const StudentDetails: React.FC = () => {
       key: "action",
       render: (record: any) => (
         <Space size="middle">
-          <Tooltip title="Edit">
+          <Tooltip title="Tahrirlash">
             <Button onClick={() => editData(record)}>
               <EditOutlined />
             </Button>
           </Tooltip>
 
-          <Tooltip title="delete">
+          <Tooltip title="O'chirish">
             <Popconfirm
               title="Bu chegirmani o'chirishga ishonchingiz komilmi ?!"
               // onConfirm={() => deleteData(record.id)}
