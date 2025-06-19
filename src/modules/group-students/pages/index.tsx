@@ -17,6 +17,15 @@ interface StudentRecord {
     group: string;
     paymentGroup: string | null;
     level: string;
+    paymentDetails:DebtAmout;
+}
+
+interface DebtAmout {
+    studentDebtAmount?: number;
+    studentMustPaidAmount?: number;
+    studentContractAmount?: number;
+    studentPaidAmount?: number;
+    studentDiscountAmount?: number;
 }
 
 
@@ -104,18 +113,8 @@ const GroupSinglePage: React.FC = () => {
                 key: "fullName",
                 sorter: (a: StudentRecord, b: StudentRecord) => a.fullName.localeCompare(b.fullName),
             },
-            {
-                title: "PINFL",
-                dataIndex: "pinfl",
-                key: "pinfl",
-                sorter: (a: StudentRecord, b: StudentRecord) => a.pinfl.localeCompare(b.pinfl),
-            },
-            {
-                title: "Student ID",
-                dataIndex: "studentIdNumber",
-                key: "studentIdNumber",
-                sorter: (a: StudentRecord, b: StudentRecord) => a.studentIdNumber.localeCompare(b.studentIdNumber),
-            },
+         
+         
             {
                 title: "Phone",
                 dataIndex: "phone",
@@ -142,10 +141,23 @@ const GroupSinglePage: React.FC = () => {
             },
             {
                 title: "Qarzdorlik",
-                dataIndex: "studentMustPaidAmount",
-                key: "studentMustPaidAmount",
-                sorter: (a: StudentRecord, b: StudentRecord) => a.level.localeCompare(b.level),
-            },
+                key: "studentDebtAmount",
+                sorter: (a: StudentRecord, b: StudentRecord) => {
+                  const valA = a.paymentDetails?.studentDebtAmount ?? 0;
+                  const valB = b.paymentDetails?.studentDebtAmount ?? 0;
+                  return valA - valB;
+                },
+                render: (_: any, record: StudentRecord) => {
+                  const amount = record.paymentDetails?.studentDebtAmount ?? 0;
+                  return (
+                    <span className={amount < 0 ? "text-red-500 font-semibold" : "text-green-500 font-semibold"}>
+                      {amount.toLocaleString()}
+                    </span>
+                  );
+                },
+            }
+              
+              
 
         ],
         []
