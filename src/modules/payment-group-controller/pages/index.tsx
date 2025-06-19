@@ -143,12 +143,12 @@ const Index = () => {
         key: "action",
         render: (_: any, record: any) => (
           <Space size="middle">
-            <Tooltip title="Edit">
+            <Tooltip title="Tahrirlash">
               <Button onClick={() => editData(record)}>
                 <EditOutlined />
               </Button>
             </Tooltip>
-            <Tooltip title="Delete">
+            <Tooltip title="O'chirish">
               <Popconfirm
                 title="Bu guruhni o'chirishga ishonchingiz komilmi?"
                 onConfirm={() => deleteData(record.id)}
@@ -176,7 +176,7 @@ const Index = () => {
                 </Button>
               </Popconfirm>
             </Tooltip>
-            <Tooltip title="view">
+            <Tooltip title="Ko'rish">
               <Button onClick={() => handleView(record.id.toString())}>
                 <FiEye size={18} />
               </Button>

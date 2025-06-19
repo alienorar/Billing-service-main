@@ -1,20 +1,31 @@
-import { Modal, Form, Input, Button, Select } from "antd";
-import { useEffect } from "react";
-import { useCreateStudentsDiscounts, useUpdateStudentsDiscounts } from "../hooks/mutations";
+import { Modal, Form, Input, Button, Select, message } from "antd";
+import { useEffect, useState } from "react";
+import {
+    useCreateStudentsDiscounts,
+    useUpdateStudentsDiscounts,
+    useUploadDiscountReason
+} from "../hooks/mutations";
 import { StudentDiscount } from "@types";
 
 const { Option } = Select;
 
 const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
     const [form] = Form.useForm();
+    const [reasonFileUuid, setReasonFileUuid] = useState<string | null>(null);
+    const [initialFileInfo, setInitialFileInfo] = useState<string | null>(null);
+
     const { mutate: createMutate, isPending: isCreating } = useCreateStudentsDiscounts();
     const { mutate: updateMutate, isPending: isUpdating } = useUpdateStudentsDiscounts();
+    const { mutateAsync: uploadFile } = useUploadDiscountReason();
 
     const discountTypeOptions = [
         {
-            value: "SUM", label: "Sum"
-        }
-    ]
+            value: "SUM",
+            label: "Sum",
+        },
+    ];
+
+    // Forma qiymatlari va fayl ma'lumotlarini sozlash
     useEffect(() => {
         if (update?.id) {
             form.setFieldsValue({
@@ -23,21 +34,63 @@ const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
                 discountType: update.discountType,
                 studentLevel: update.studentLevel,
                 amount: update.amount,
-
             });
+
+            const reason = update.reasonFile || null;
+            setReasonFileUuid(reason);
+            setInitialFileInfo(reason);
         } else {
             form.resetFields();
+            setReasonFileUuid(null);
+            setInitialFileInfo(null);
         }
     }, [update, form]);
 
+    // Modal yopilganda fayl ma'lumotlarini tozalash
+    useEffect(() => {
+        if (!open) {
+            setReasonFileUuid(null);
+            setInitialFileInfo(null);
+        }
+    }, [open]);
+
+    // Faylni serverga yuklash
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await uploadFile(formData);
+            const uuid = response?.uuid || response?.data?.uuid;
+
+            if (!uuid) throw new Error("Fayl yuklandi, lekin uuid topilmadi.");
+
+            setReasonFileUuid(uuid);
+            setInitialFileInfo(null); // Eski faylni yashirish
+            message.success("Fayl muvaffaqiyatli yuklandi.");
+        } catch (error) {
+            console.error("Fayl yuklashda xatolik:", error);
+            message.error("Fayl yuklashda xatolik yuz berdi.");
+        }
+    };
+
     const onFinish = async (value: StudentDiscount) => {
-        const payload: StudentDiscount = {
+        if (!reasonFileUuid) {
+            message.error("Iltimos, sabab faylini yuklang!");
+            return;
+        }
+
+        const payload: StudentDiscount & { reasonFile: string } = {
             id: update?.id,
             studentId: studentId,
             description: value.description,
             discountType: value.discountType,
             studentLevel: value.studentLevel,
             amount: value.amount,
+            reasonFile: reasonFileUuid,
         };
 
         if (update?.id) {
@@ -49,18 +102,16 @@ const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
 
     return (
         <Modal
-            title={update?.roleId ? "Edit Admin" : "Add New Admin"}
+            title={update?.id ? "Edit Discount" : "Add New Discount"}
             open={open}
             onCancel={handleClose}
             footer={null}
         >
-            <Form form={form} name="transaction_form" layout="vertical" onFinish={onFinish}>
-
-
+            <Form form={form} name="discount_form" layout="vertical" onFinish={onFinish}>
                 <Form.Item
                     label="Tarif"
                     name="description"
-                    rules={[{ required: true, message: "Enter description!" }]}
+                    rules={[{ required: true, message: "Tarif nomini kiriting!" }]}
                 >
                     <Input style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }} />
                 </Form.Item>
@@ -68,12 +119,14 @@ const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
                 <Form.Item
                     label="Chegirma turi"
                     name="discountType"
-                    rules={[{ required: true, message: "Chegirma turini kiriting !" }]}
+                    rules={[{ required: true, message: "Chegirma turini tanlang!" }]}
                 >
-                    <Select placeholder="Chegirma turini tanlang"
-                        style={{ padding: "5px", borderRadius: "6px", border: "1px solid #d9d9d9" }}>
-                        {discountTypeOptions?.map((type: any) => (
-                            <Option key={type.label} value={type.value}>
+                    <Select
+                        placeholder="Chegirma turini tanlang"
+                        style={{ padding: "5px", borderRadius: "6px", border: "1px solid #d9d9d9" }}
+                    >
+                        {discountTypeOptions.map((type) => (
+                            <Option key={type.value} value={type.value}>
                                 {type.label}
                             </Option>
                         ))}
@@ -83,18 +136,39 @@ const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
                 <Form.Item
                     label="Student kursi"
                     name="studentLevel"
-                    rules={[{ required: true, message: "Enter last name!" }]}
+                    rules={[{ required: true, message: "Student kursini kiriting!" }]}
                 >
-                    <Input style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }} />
+                    <Input
+                        type="number"
+                        style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
+                    />
                 </Form.Item>
 
                 <Form.Item
                     label="Chegirma miqdori"
                     name="amount"
-                    rules={[{ required: true, message: "Select a role!" }]}
+                    rules={[{ required: true, message: "Chegirma miqdorini kiriting!" }]}
                 >
-                    <Input style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }} />
+                    <Input
+                        type="number"
+                        style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
+                    />
+                </Form.Item>
 
+                <Form.Item label="Fayl yuklash (Chegirma sababi)">
+                    <Input type="file" onChange={handleFileChange} />
+
+                    {reasonFileUuid && (
+                        <div style={{ marginTop: "8px", color: "green" }}>
+                            Fayl yuklandi: <code>{reasonFileUuid}</code>
+                        </div>
+                    )}
+
+                    {!reasonFileUuid && initialFileInfo && (
+                        <div style={{ marginTop: "8px", color: "blue" }}>
+                            Avval yuklangan fayl: <code>{initialFileInfo}</code>
+                        </div>
+                    )}
                 </Form.Item>
 
                 <Form.Item>
@@ -111,7 +185,7 @@ const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
                             borderRadius: "6px",
                         }}
                     >
-                        {update?.id ? "Update Admin" : "Create Admin"}
+                        {update?.id ? "Update Discount" : "Create Discount"}
                     </Button>
                 </Form.Item>
             </Form>

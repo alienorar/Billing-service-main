@@ -115,7 +115,7 @@ const Index = () => {
       key: "action",
       render: (record: any) => (
         <Space size="middle" className="text-center">
-          <Tooltip title="edit">
+          <Tooltip title="Tahrirlash">
             <Button onClick={() => editData(record.id)} className="flex items-center justify-center">
               <EditOutlined />
             </Button>
