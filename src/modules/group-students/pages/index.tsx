@@ -17,6 +17,7 @@ interface StudentRecord {
     group: string;
     paymentGroup: string | null;
     level: string;
+    studentMustPaidAmount:number;
 }
 
 
@@ -104,18 +105,8 @@ const GroupSinglePage: React.FC = () => {
                 key: "fullName",
                 sorter: (a: StudentRecord, b: StudentRecord) => a.fullName.localeCompare(b.fullName),
             },
-            {
-                title: "PINFL",
-                dataIndex: "pinfl",
-                key: "pinfl",
-                sorter: (a: StudentRecord, b: StudentRecord) => a.pinfl.localeCompare(b.pinfl),
-            },
-            {
-                title: "Student ID",
-                dataIndex: "studentIdNumber",
-                key: "studentIdNumber",
-                sorter: (a: StudentRecord, b: StudentRecord) => a.studentIdNumber.localeCompare(b.studentIdNumber),
-            },
+         
+         
             {
                 title: "Phone",
                 dataIndex: "phone",
@@ -144,7 +135,13 @@ const GroupSinglePage: React.FC = () => {
                 title: "Qarzdorlik",
                 dataIndex: "studentMustPaidAmount",
                 key: "studentMustPaidAmount",
-                sorter: (a: StudentRecord, b: StudentRecord) => a.level.localeCompare(b.level),
+                sorter: (a: StudentRecord, b: StudentRecord) =>
+                    a.studentMustPaidAmount - b.studentMustPaidAmount,
+                render: (amount: number) => (
+                    <span className={amount < 0 ? "text-red-500 font-semibold" : "text-green-500 font-semibold"}>
+                    {amount.toLocaleString()}
+                    </span>
+                ),
             },
 
         ],
