@@ -207,9 +207,10 @@ export interface PmtGroupFormValues {
 
 
 export interface StudentDiscount {
-  studentId: number;
-  description: string;
-  discountType: "SUM";
-  studentLevel: number;
-  amount: number;
+  id?:number|string
+  studentId?: number;
+  description?: string;
+  discountType?: "SUM";
+  studentLevel?: number;
+  amount?: number;
 };

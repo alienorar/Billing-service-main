@@ -21,4 +21,8 @@ export async function getStudentsDiscounts(params:any) {
     return (await axiosInstance.get(`api/v1/discount/list/pageable`,{params})).data
 }
 
+// ============= CREATE STUDENTS DISCOUNTS ============
+export async function updateStudentsDiscounts(data:StudentDiscount) {
+    return (await axiosInstance.put(`/api/v1/discount/update`,data)).data
+}
 

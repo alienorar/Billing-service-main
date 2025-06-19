@@ -1,45 +1,50 @@
 import { Modal, Form, Input, Button, Select } from "antd";
 import { useEffect } from "react";
-import { AdminModalType, AdminType } from "@types";
-import { useCreateStudentsDiscounts } from "../hooks/mutations";
+import { useCreateStudentsDiscounts, useUpdateStudentsDiscounts } from "../hooks/mutations";
+import { StudentDiscount } from "@types";
 
 const { Option } = Select;
 
-const DiscountsModal = ({ open, handleClose, update, roles }: AdminModalType) => {
+const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
     const [form] = Form.useForm();
     const { mutate: createMutate, isPending: isCreating } = useCreateStudentsDiscounts();
-    // const { mutate: updateMutate, isPending: isUpdating } = useUpdateAdmin();
+    const { mutate: updateMutate, isPending: isUpdating } = useUpdateStudentsDiscounts();
 
+    const discountTypeOptions = [
+        {
+            value: "SUM", label: "Sum"
+        }
+    ]
     useEffect(() => {
         if (update?.id) {
             form.setFieldsValue({
-                roleId: update.roleId,
-                username: update.username,
-                phone: update.phone,
-                firstName: update.firstName,
-                lastName: update.lastName,
-            
+                studentId: update.studentId,
+                description: update.description,
+                discountType: update.discountType,
+                studentLevel: update.studentLevel,
+                amount: update.amount,
+
             });
         } else {
             form.resetFields();
         }
     }, [update, form]);
 
-    const onFinish = async (value: AdminType) => {
-        const payload: any = {
-            id:update?.id,
-            roleId: value.roleId,
-            username: value.username,
-            phone: value.phone,
-            firstName: value.firstName,
-            lastName: value.lastName,
+    const onFinish = async (value:StudentDiscount) => {
+        const payload:StudentDiscount = {
+            id: update.id,
+            studentId: studentId,
+            description: value.description,
+            discountType: value.discountType,
+            studentLevel: value.studentLevel,
+            amount: value.amount,
         };
 
-        // if (update?.id) {
-        //     updateMutate(payload, { onSuccess: handleClose });
-        // } else {
+        if (update?.id) {
+            updateMutate(payload, { onSuccess: handleClose });
+        } else {
             createMutate(payload, { onSuccess: handleClose });
-        // }
+        }
     };
 
     return (
@@ -49,59 +54,54 @@ const DiscountsModal = ({ open, handleClose, update, roles }: AdminModalType) =>
             onCancel={handleClose}
             footer={null}
         >
-            <Form form={form} name="admin_form" layout="vertical" onFinish={onFinish}>
+            <Form form={form} name="transaction_form" layout="vertical" onFinish={onFinish}>
+
+
                 <Form.Item
-                    label="Username"
-                    name="username"
-                    rules={[{ required: true, message: "Enter username!" }]}
+                    label="Tarif"
+                    name="description"
+                    rules={[{ required: true, message: "Enter description!" }]}
                 >
                     <Input style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }} />
                 </Form.Item>
 
                 <Form.Item
-                    label="Phone"
-                    name="phone"
-                    rules={[{ required: true, message: "Enter phone number!" }]}
+                    label="Chegirma turi"
+                    name="discountType"
+                    rules={[{ required: true, message: "Chegirma turini kiriting !" }]}
                 >
-                    <Input style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }} />
+                    <Select placeholder="Chegirma turini tanlang"
+                        style={{ padding: "5px", borderRadius: "6px", border: "1px solid #d9d9d9" }}>
+                        {discountTypeOptions?.map((type: any) => (
+                            <Option key={type.label} value={type.value}>
+                                {type.label}
+                            </Option>
+                        ))}
+                    </Select>
                 </Form.Item>
 
                 <Form.Item
-                    label="First Name"
-                    name="firstName"
-                    rules={[{ required: true, message: "Enter first name!" }]}
-                >
-                    <Input style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }} />
-                </Form.Item>
-
-                <Form.Item
-                    label="Last Name"
-                    name="lastName"
+                    label="Student kursi"
+                    name="studentLevel"
                     rules={[{ required: true, message: "Enter last name!" }]}
                 >
                     <Input style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }} />
                 </Form.Item>
 
                 <Form.Item
-                    label="Role"
-                    name="roleId"
+                    label="Chegirma miqdori"
+                    name="amount"
                     rules={[{ required: true, message: "Select a role!" }]}
                 >
-                    <Select placeholder="Select role"
-                        style={{ padding: "5px", borderRadius: "6px", border: "1px solid #d9d9d9" }}>
-                        {roles?.map((role: any) => (
-                            <Option key={role.id} value={role.id}>
-                                {role.name}
-                            </Option>
-                        ))}
-                    </Select>
+                    <Input style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }} />
+
                 </Form.Item>
 
                 <Form.Item>
                     <Button
                         block
                         htmlType="submit"
-                        loading={isCreating}
+                        loading={isCreating || isUpdating}
                         style={{
                             backgroundColor: "#050556",
                             color: "white",
