@@ -1,84 +1,69 @@
-
 "use client"
 
-import { useState } from "react";
-import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  LoginOutlined,
-} from "@ant-design/icons";
-import { Button, Layout, Menu, Popconfirm, theme } from "antd";
-import { NavLink, useLocation, Outlet, useNavigate } from "react-router-dom";
-import { getUserPermissions } from "../../utils/token-service";
-import MainLogo from "../../assets/otu-logo.png";
-import LogoText from "../../assets/logo-text.png";
-// import { logout } from "../../utils/token-service";
-import { routesConfig } from "../../router/routes";
+import { useState } from "react"
+import { MenuFoldOutlined, MenuUnfoldOutlined, LoginOutlined } from "@ant-design/icons"
+import { Button, Layout, Menu, Popconfirm, theme } from "antd"
+import { NavLink, useLocation, Outlet } from "react-router-dom"
+import { getUserPermissions, logout } from "../../utils/token-service"
+import MainLogo from "../../assets/otu-logo.png"
+import LogoText from "../../assets/logo-text.png"
+import { routesConfig } from "../../router/routes"
 
-const { Header, Sider, Content } = Layout;
-const { Item } = Menu;
+const { Header, Sider, Content } = Layout
+const { Item } = Menu
 
-const App = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const permissions = getUserPermissions();
+const AdminPanel = () => {
+  const [collapsed, setCollapsed] = useState(false)
+  // const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const permissions = getUserPermissions()
 
   // Helper function to check permissions
   const hasPermission = (requiredPermissions: string[]) => {
-    if (!requiredPermissions || requiredPermissions.length === 0) return true;
-    return requiredPermissions.every((perm) => permissions.includes(perm));
-  };
+    if (!requiredPermissions || requiredPermissions.length === 0) return true
+    return requiredPermissions.every((perm) => permissions.includes(perm))
+  }
 
   // Filter routes to show only those with permissions and showInSidebar: true
-  const accessibleRoutes = routesConfig.filter(
-    (item) => item.showInSidebar && hasPermission(item.permissions)
-  );
+  const accessibleRoutes = routesConfig.filter((item) => item.showInSidebar && hasPermission(item.permissions))
 
   const handleLogout = () => {
-    // logout();
-    navigate("/");
-  };
+    logout();
+    // navigate("/")
+  }
 
   const handleLogoutOk = () => {
-    handleLogout();
-  };
+    handleLogout()
+
+  }
 
   const {
     token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+  } = theme.useToken()
 
   return (
     <Layout>
-      <Sider trigger={null} collapsible collapsed={collapsed} width={260}>
+      <Sider trigger={null} collapsible collapsed={collapsed} width={290}>
         <div className="demo-logo-vertical" />
         <div className="flex pl-8 items-center p-4 gap-2 font-semibold mb-2">
-          <img
-            src={MainLogo}
-            alt="main-logo"
-            className="w-[30px] h-[30px] object-cover"
-          />
+          <img src={MainLogo || "/placeholder.svg"} alt="main-logo" className="w-[30px] h-[30px] object-cover" />
           {!collapsed && (
             <img
-              src={LogoText}
+              src={LogoText || "/placeholder.svg"}
               className="text-[20px] text-[#fff] object-contain w-[80px] h-[40px] flex"
             />
           )}
         </div>
-        <Menu
-          theme="dark"
-          mode="inline"
-          selectedKeys={[pathname]}
-          style={{ borderRight: 0 }}
-        >
+        <Menu theme="dark" mode="inline" selectedKeys={[pathname]} style={{ borderRight: 0 }}>
           {accessibleRoutes.map((item) => (
             <Item
-              key={item.path}
+              key={`/super-admin-panel/${item.path}`}
               icon={
                 <span
-                  className={`inline-flex items-center justify-center w-6 h-6 ${
-                    pathname === item.path ? "text-white" : "text-gray-300 group-hover:text-white"
-                  }`}
+                  className={`inline-flex items-center justify-center w-6 h-6 ${pathname === `/super-admin-panel/${item.path}`
+                      ? "text-white"
+                      : "text-gray-300 group-hover:text-white"
+                    }`}
                 >
                   {item.icon}
                 </span>
@@ -86,12 +71,11 @@ const App = () => {
               className="group"
             >
               <NavLink
-                to={item.path}
+                to={`/super-admin-panel/${item.path}`}
                 className={({ isActive }) =>
-                  `block w-full text-[18px] no-underline transition-colors duration-200 py-2 px-4  items-center ${
-                    isActive
-                      ? "text-sky-500 bg-[#001529] font-semibold"
-                      : "text-gray-300 hover:text-white hover:bg-[#1f1f1f]"
+                  `block w-full text-[18px] no-underline transition-colors duration-200 py-2 px-4 items-center ${isActive
+                    ? "text-sky-500 bg-[#001529] font-semibold"
+                    : "text-gray-300 hover:text-white hover:bg-[#1f1f1f]"
                   }`
                 }
               >
@@ -162,9 +146,8 @@ const App = () => {
           <Outlet />
         </Content>
       </Layout>
-    
     </Layout>
-  );
-};
+  )
+}
 
-export default App;
+export default AdminPanel

@@ -149,7 +149,6 @@ const Index = () => {
               <Button>
                 <DeleteOutlined className='text-red-400 text-[18px]' />
               </Button>
-
             </Popconfirm>
           </Tooltip>
         </Space>

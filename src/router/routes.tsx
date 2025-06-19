@@ -1,4 +1,3 @@
-
 import {
   FaHourglassEnd,
   FaRegCreditCard,
@@ -7,8 +6,8 @@ import {
   FaUserGraduate,
   FaUsers,
   FaUserShield,
-} from "react-icons/fa";
-import { FaUserGear, FaUsersViewfinder } from "react-icons/fa6";
+} from "react-icons/fa"
+import { FaUserGear, FaUsersViewfinder } from "react-icons/fa6"
 import {
   AdminPage,
   Students,
@@ -24,14 +23,11 @@ import {
   GroupList,
   GroupStudents,
   Role,
-} from "@modules";
-
-
-
+} from "@modules"
 
 export const routesConfig = [
   {
-    path: "super-admin-panel/role",
+    path: "role",
     label: "Rol va ruxsatlar",
     icon: <FaUserGear style={{ fontSize: "22px" }} />,
     element: <Role />,
@@ -39,7 +35,7 @@ export const routesConfig = [
     showInSidebar: true,
   },
   {
-    path: "super-admin-panel/admin-page",
+    path: "admin-page",
     label: "Admin User",
     icon: <FaUserShield style={{ fontSize: "22px" }} />,
     element: <AdminPage />,
@@ -47,7 +43,7 @@ export const routesConfig = [
     showInSidebar: true,
   },
   {
-    path: "super-admin-panel/students",
+    path: "students",
     label: "Studentlar",
     icon: <FaUserGraduate style={{ fontSize: "22px" }} />,
     element: <Students />,
@@ -55,13 +51,13 @@ export const routesConfig = [
     showInSidebar: true,
   },
   {
-    path: "super-admin-panel/students/:id",
+    path: "students/:id",
     element: <OneStudent />,
     permissions: ["STUDENT_MENU"],
     showInSidebar: false,
   },
   {
-    path: "super-admin-panel/speciality",
+    path: "speciality",
     label: "Yo'nalishlar",
     icon: <FaSlack style={{ fontSize: "22px" }} />,
     element: <Speciality />,
@@ -69,7 +65,7 @@ export const routesConfig = [
     showInSidebar: true,
   },
   {
-    path: "super-admin-panel/group-list",
+    path: "group-list",
     label: "Guruhlar ro'yxati",
     icon: <FaUsers style={{ fontSize: "22px" }} />,
     element: <GroupList />,
@@ -77,7 +73,7 @@ export const routesConfig = [
     showInSidebar: true,
   },
   {
-    path: "super-admin-panel/pmgroup-controller",
+    path: "pmgroup-controller",
     label: "To'lov guruhlari",
     icon: <FaUsersViewfinder style={{ fontSize: "22px" }} />,
     element: <PmGroupController />,
@@ -85,13 +81,13 @@ export const routesConfig = [
     showInSidebar: true,
   },
   {
-    path: "super-admin-panel/pmgroup-controller/:id",
+    path: "pmgroup-controller/:id",
     element: <OnePaymentGroup />,
     permissions: ["PAYMENT_GROUP_MENU"],
     showInSidebar: false,
   },
   {
-    path: "super-admin-panel/payment-history",
+    path: "payment-history",
     label: "Click",
     icon: <FaRegCreditCard style={{ fontSize: "22px" }} />,
     element: <PaymentHistory />,
@@ -99,7 +95,7 @@ export const routesConfig = [
     showInSidebar: true,
   },
   {
-    path: "super-admin-panel/transaction-history",
+    path: "transaction-history",
     label: "Tranzaksiyalar ro'yxati",
     icon: <FaHourglassEnd style={{ fontSize: "22px" }} />,
     element: <TransactionHistory />,
@@ -107,13 +103,13 @@ export const routesConfig = [
     showInSidebar: true,
   },
   {
-    path: "super-admin-panel/transaction-history/:id",
+    path: "transaction-history/:id",
     element: <PaymentDetails />,
     permissions: ["TRANSACTION_MENU"],
     showInSidebar: false,
   },
   {
-    path: "super-admin-panel/students-statistics",
+    path: "students-statistics",
     label: "Studentlar statistikasi",
     icon: <FaSignal style={{ fontSize: "22px" }} />,
     element: <StudentStatistics />,
@@ -121,7 +117,7 @@ export const routesConfig = [
     showInSidebar: true,
   },
   {
-    path: "super-admin-panel/group-statistics",
+    path: "group-statistics",
     label: "Guruhlar statistikasi",
     icon: <FaSignal style={{ fontSize: "22px" }} />,
     element: <GroupStatistics />,
@@ -129,9 +125,9 @@ export const routesConfig = [
     showInSidebar: true,
   },
   {
-    path: "super-admin-panel/group-statistics/:id",
+    path: "group-statistics/:id",
     element: <GroupStudents />,
     permissions: ["GROUP_STATISTICS_MENU"],
     showInSidebar: false,
   },
-];
+]

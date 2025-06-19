@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { TablePaginationConfig, Spin, Alert, Button } from "antd";
+import { TablePaginationConfig, Spin, Alert, Button, Input } from "antd";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { GlobalTable } from "@components";
 import { useGetStudents } from "../hooks/queries";
@@ -17,12 +17,17 @@ interface StudentRecord {
     group: string;
     paymentGroup: string | null;
     level: string;
+    paymentDetails:DebtAmout;
 }
 
-const filterEmpty = (obj: Record<string, string | undefined>): Record<string, string> =>
-    Object.fromEntries(
-        Object.entries(obj).filter(([, v]) => v !== "" && v !== undefined)
-    ) as Record<string, string>;
+interface DebtAmout {
+    studentDebtAmount?: number;
+    studentMustPaidAmount?: number;
+    studentContractAmount?: number;
+    studentPaidAmount?: number;
+    studentDiscountAmount?: number;
+}
+
 
 const GroupSinglePage: React.FC = () => {
     const navigate = useNavigate();
@@ -31,8 +36,11 @@ const GroupSinglePage: React.FC = () => {
     const page = Number(searchParams.get("page") ?? 1);
     const size = Number(searchParams.get("size") ?? 10);
     const groupId = id ? Number(id) : undefined;
+    const phone = searchParams.get("phone") || "";
+    const firstName = searchParams.get("firstName") || "";
+    const lastName = searchParams.get("lastName") || "";
+    const showDebt = searchParams.get("showDebt") || "";
 
-    // Handle invalid groupId
     if (!groupId || isNaN(groupId)) {
         return (
             <Alert
@@ -49,6 +57,11 @@ const GroupSinglePage: React.FC = () => {
         page: page - 1,
         size,
         groupId,
+        phone: phone ? Number(phone) : undefined,
+        firstName,
+        lastName,
+        showDebt: true,
+
     });
 
     const [tableData, setTableData] = useState<StudentRecord[]>([]);
@@ -61,23 +74,30 @@ const GroupSinglePage: React.FC = () => {
         }
     }, [studentsByGroupId]);
 
-    const updateParams = (changed: Record<string, string | undefined>): void => {
-        const merged = {
-            ...Object.fromEntries(searchParams.entries()),
-            ...changed,
-        } as Record<string, string | undefined>;
-        if (!("page" in changed)) merged.page = "1";
-        if (!("size" in merged)) merged.size = size.toString();
-        setSearchParams(filterEmpty(merged));
-    };
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         const { current = 1, pageSize = 10 } = pagination;
-        updateParams({
+        setSearchParams({
             page: current.toString(),
             size: pageSize.toString(),
+            phone,
+            firstName,
+            lastName,
+            showDebt,
         });
     };
+
+    const handleSearch = () => {
+        setSearchParams({
+            page: "1",
+            size: size.toString(),
+            phone,
+            firstName,
+            lastName,
+            showDebt,
+        });
+    };
+
 
     const columns = useMemo(
         () => [
@@ -93,18 +113,8 @@ const GroupSinglePage: React.FC = () => {
                 key: "fullName",
                 sorter: (a: StudentRecord, b: StudentRecord) => a.fullName.localeCompare(b.fullName),
             },
-            {
-                title: "PINFL",
-                dataIndex: "pinfl",
-                key: "pinfl",
-                sorter: (a: StudentRecord, b: StudentRecord) => a.pinfl.localeCompare(b.pinfl),
-            },
-            {
-                title: "Student ID",
-                dataIndex: "studentIdNumber",
-                key: "studentIdNumber",
-                sorter: (a: StudentRecord, b: StudentRecord) => a.studentIdNumber.localeCompare(b.studentIdNumber),
-            },
+         
+         
             {
                 title: "Phone",
                 dataIndex: "phone",
@@ -129,6 +139,26 @@ const GroupSinglePage: React.FC = () => {
                 key: "level",
                 sorter: (a: StudentRecord, b: StudentRecord) => a.level.localeCompare(b.level),
             },
+            {
+                title: "Qarzdorlik",
+                key: "studentDebtAmount",
+                sorter: (a: StudentRecord, b: StudentRecord) => {
+                  const valA = a.paymentDetails?.studentDebtAmount ?? 0;
+                  const valB = b.paymentDetails?.studentDebtAmount ?? 0;
+                  return valA - valB;
+                },
+                render: (_: any, record: StudentRecord) => {
+                  const amount = record.paymentDetails?.studentDebtAmount ?? 0;
+                  return (
+                    <span className={amount < 0 ? "text-red-500 font-semibold" : "text-green-500 font-semibold"}>
+                      {amount.toLocaleString()}
+                    </span>
+                  );
+                },
+            }
+              
+              
+
         ],
         []
     );
@@ -147,11 +177,90 @@ const GroupSinglePage: React.FC = () => {
 
     return (
         <div className="flex flex-col gap-4 px-5 py-4">
-            <div className="flex gap-7 px-6 items-center justify-between">
-                <h1 className="text-green-500">Studentlar guruhi IDsi: {id}</h1>
+            <div className="flex gap-4 px-6 items-center justify-between">
                 <Button className="text-green-500" type="default" icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)}>
                     Ortga
                 </Button>
+                <div className="flex items-center justify-between gap-3">
+                    <Input
+                        placeholder="Tel"
+                        value={phone}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setSearchParams({
+                                page: "1",
+                                size: size.toString(),
+                                phone: e.target.value,
+                                firstName,
+                                lastName,
+                                showDebt,
+                            })
+                        }
+                        style={{
+                            padding: "6px",
+                            border: "1px solid #d9d9d9",
+                            borderRadius: "6px",
+                        }}
+                        className="w-[300px]"
+                    />
+                    <Input
+                        placeholder="Ism"
+                        value={firstName}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setSearchParams({
+                                page: "1",
+                                size: size.toString(),
+                                phone,
+                                firstName: e.target.value,
+                                lastName,
+                                showDebt,
+                            })
+                        }
+                        style={{
+                            padding: "6px",
+                            border: "1px solid #d9d9d9",
+                            borderRadius: "6px",
+                        }}
+                        className="w-[300px]"
+                    />
+                    <Input
+                        placeholder="Familiya"
+                        value={lastName}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setSearchParams({
+                                page: "1",
+                                size: size.toString(),
+                                phone,
+                                firstName,
+                                lastName: e.target.value,
+                                showDebt,
+                            })
+                        }
+                        style={{
+                            padding: "6px",
+                            border: "1px solid #d9d9d9",
+                            borderRadius: "6px",
+                        }}
+                        className="w-[300px]"
+                    />
+
+
+
+                    <Button
+                        type="primary"
+                        size="large"
+                        style={{
+                            maxWidth: 220,
+                            minWidth: 80,
+                            backgroundColor: "green",
+                            color: "white",
+                            height: 32,
+                        }}
+                        onClick={handleSearch}
+                    >
+                        Qidirish
+                    </Button>
+                </div>
+
             </div>
 
             {isLoading ? (

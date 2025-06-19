@@ -1,6 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
-import { Button, Input, Space, Tooltip, Popconfirm, message, Select } from "antd";
+import {
+  Button,
+  Input,
+  Space,
+  Tooltip,
+  Popconfirm,
+  message,
+  Select,
+  
+} from "antd";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { GlobalTable } from "@components";
 import { AdminType } from "@types";
@@ -10,7 +19,10 @@ import { useGetStudents, useSyncGetStudents } from "../hooks/queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { syncStudent } from "../service";
 
+
 const Index = () => {
+  const [isInDebt, setIsInDebt] = useState<boolean | undefined>(undefined);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tableData, setTableData] = useState<AdminType[]>([]);
   const [total, setTotal] = useState<number>(0);
@@ -26,8 +38,7 @@ const Index = () => {
   const lastName = searchParams.get("lastName") || "";
   const educationForm = searchParams.get("educationForm") || "";
   const educationType = searchParams.get("educationType") || "";
-
-
+  const showDebt = searchParams.get("showDebt") || "";
 
   const educationFormOptions: { value: string; label: string }[] = [
     { value: "", label: "All" },
@@ -41,6 +52,7 @@ const Index = () => {
     { value: "BAKALAVR", label: "Bakalavr" },
     { value: "MAGISTR", label: "Magistr" },
   ];
+  
 
   // Fetch students data
   const { data: students } = useGetStudents({
@@ -50,8 +62,8 @@ const Index = () => {
     firstName,
     lastName,
     educationForm,
-    educationType
-
+    showDebt,
+    educationType,
   });
 
   // Sync students data (disabled by default)
@@ -61,7 +73,10 @@ const Index = () => {
 
   useEffect(() => {
     if (students?.data?.content) {
+      console.log(students?.data?.content);
+
       setTableData(students.data.content);
+
       setTotal(students.data.paging.totalItems || 0);
     }
   }, [students]);
@@ -82,7 +97,8 @@ const Index = () => {
       firstName,
       lastName,
       educationForm,
-      educationType
+      educationType,
+      showDebt,
     });
   };
 
@@ -94,7 +110,8 @@ const Index = () => {
       firstName,
       lastName,
       educationForm,
-      educationType
+      educationType,
+      showDebt,
     });
   };
 
@@ -104,7 +121,6 @@ const Index = () => {
 
   const showModal = () => setIsModalOpen(true);
   const handleClose = () => setIsModalOpen(false);
-
 
   const handleSync = async () => {
     try {
@@ -121,8 +137,6 @@ const Index = () => {
       message.error("Failed to sync students");
     }
   };
-
-
 
   const columns = [
     {
@@ -153,7 +167,15 @@ const Index = () => {
       title: "Mutaxasislik",
       dataIndex: "speciality",
     },
-
+    ...(isInDebt
+      ? [
+          {
+            title: "Qarzdorligi",
+            dataIndex: "studentMustPaidAmount",
+          },
+        ]
+      : []
+    ),
     {
       title: "Action",
       key: "action",
@@ -184,10 +206,15 @@ const Index = () => {
                 firstName,
                 lastName,
                 educationForm,
-                educationType
+                educationType,
+                showDebt,
               })
             }
-            style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
+            style={{
+              padding: "6px",
+              border: "1px solid #d9d9d9",
+              borderRadius: "6px",
+            }}
             className="w-[300px]"
           />
           <Input
@@ -201,10 +228,15 @@ const Index = () => {
                 firstName: e.target.value,
                 lastName,
                 educationForm,
-                educationType
+                educationType,
+                showDebt,
               })
             }
-            style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
+            style={{
+              padding: "6px",
+              border: "1px solid #d9d9d9",
+              borderRadius: "6px",
+            }}
             className="w-[300px]"
           />
           <Input
@@ -218,50 +250,122 @@ const Index = () => {
                 firstName,
                 lastName: e.target.value,
                 educationForm,
-                educationType
+                educationType,
+                showDebt,
               })
             }
-            style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
+            style={{
+              padding: "6px",
+              border: "1px solid #d9d9d9",
+              borderRadius: "6px",
+            }}
             className="w-[300px]"
           />
           <Select
             allowClear
             placeholder="Ta'lim shakli"
-            style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
+            style={{
+              padding: "6px",
+              border: "1px solid #d9d9d9",
+              borderRadius: "6px",
+            }}
             options={educationFormOptions}
             value={educationForm || ""}
             className="w-[200px]"
-
-            onChange={(value: string | undefined) => setSearchParams({
-              page: "1",
-              size: size.toString(),
-              phone,
-              firstName,
-              lastName,
-              educationType,
-              educationForm: value || ""
-            })}
+            onChange={(value: string | undefined) =>
+              setSearchParams({
+                page: "1",
+                size: size.toString(),
+                phone,
+                firstName,
+                lastName,
+                educationType,
+                educationForm: value || "",
+                showDebt,
+              })
+            }
           />
+          <label className="flex items-center gap-2 cursor-pointer p-[5px] border-[1px] border-[#5e5d5d27] rounded-lg">
+            <input
+              type="checkbox"
+              checked={isInDebt}
+              onChange={(e) => {
+                const checked = e.target.checked;
+
+                setIsInDebt(checked);
+                setSearchParams({
+                  page: "1",
+                  size: size.toString(),
+                  phone,
+                  firstName,
+                  lastName,
+                  educationType,
+                  educationForm,
+                  showDebt: checked ? "true" : "",
+                });
+              }}
+              className="hidden"
+            />
+            <span
+              className={`w-5 h-5 flex items-center justify-center border-2 rounded ${
+                isInDebt ? "bg-[#050556]" : "bg-white"
+              } border-[#050556"]`}
+            >
+              {isInDebt && (
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="#ffffff"
+                  strokeWidth="3"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              )}
+            </span>
+            <span className="text-[13px] text-gray-800 ">
+              Qarzdorlik
+            </span>
+          </label>
+
+
           <Select
             placeholder="Ta'lim turi"
-            style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }}
+            style={{
+              padding: "6px",
+              border: "1px solid #d9d9d9",
+              borderRadius: "6px",
+            }}
             options={educationTypeOptions}
             value={educationType || ""}
             className="w-[200px]"
-            onChange={(value: string | undefined) => setSearchParams({
-              page: "1",
-              size: size.toString(),
-              phone,
-              firstName,
-              lastName,
-              educationForm,
-              educationType: value || ""
-            })}
+            onChange={(value: string | undefined) =>
+              setSearchParams({
+                page: "1",
+                size: size.toString(),
+                phone,
+                firstName,
+                lastName,
+                educationForm,
+                educationType: value || "",
+                showDebt,
+              })
+            }
           />
           <Button
             type="primary"
             size="large"
-            style={{ maxWidth: 220, minWidth: 80, backgroundColor: "green", color: "white", height: 36 }}
+            style={{
+              maxWidth: 220,
+              minWidth: 80,
+              backgroundColor: "green",
+              color: "white",
+              height: 36,
+            }}
             onClick={handleSearch}
           >
             Qidirish
@@ -283,27 +387,46 @@ const Index = () => {
               },
             }}
             cancelButtonProps={{
-              style: { backgroundColor: "red", borderColor: "red", color: "white", padding: "6px 16px" },
+              style: {
+                backgroundColor: "red",
+                borderColor: "red",
+                color: "white",
+                padding: "6px 16px",
+              },
             }}
           >
             <Button
               type="primary"
               size="large"
-              style={{ maxWidth: 220, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40 }}
+              style={{
+                maxWidth: 220,
+                minWidth: 80,
+                backgroundColor: "#050556",
+                color: "white",
+                height: 40,
+              }}
               className="text-[16px] mx-4"
             >
-            Exel bilan yangilash
+              Exel bilan yangilash
             </Button>
           </Popconfirm>
           <Button
             type="primary"
             size="large"
-            style={{ maxWidth: 206, minWidth: 80, backgroundColor: "#050556", color: "white", height: 40, paddingRight: "2px", paddingLeft: "2px" }}
+            style={{
+              maxWidth: 206,
+              minWidth: 80,
+              backgroundColor: "#050556",
+              color: "white",
+              height: 40,
+              paddingRight: "2px",
+              paddingLeft: "2px",
+            }}
             className="text-[16px] "
             onClick={handleSync}
             loading={isSyncing}
           >
-             Hemis orqali yangilash
+            Hemis orqali yangilash
           </Button>
         </div>
       </div>
@@ -331,3 +454,4 @@ const Index = () => {
 };
 
 export default Index;
+
