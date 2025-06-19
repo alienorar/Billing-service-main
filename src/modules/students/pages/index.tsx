@@ -186,7 +186,7 @@ const Index = () => {
       key: "action",
       render: (record: any) => (
         <Space size="middle">
-          <Tooltip title="View">
+          <Tooltip title="Ko'rish">
             <Button onClick={() => handleView(record.id.toString())}>
               <FiEye size={18} />
             </Button>

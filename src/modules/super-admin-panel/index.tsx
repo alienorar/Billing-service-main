@@ -29,7 +29,6 @@ const AdminPanel = () => {
 
   const handleLogout = () => {
     logout();
-    // navigate("/")
   }
 
   const handleLogoutOk = () => {
@@ -40,6 +39,11 @@ const AdminPanel = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken()
+
+  const Firstname = localStorage.getItem("Firstname")
+  const Lastname = localStorage.getItem("Lastname")
+
+
 
   return (
     <Layout>
@@ -61,8 +65,8 @@ const AdminPanel = () => {
               icon={
                 <span
                   className={`inline-flex items-center justify-center w-6 h-6 ${pathname === `/super-admin-panel/${item.path}`
-                      ? "text-white"
-                      : "text-gray-300 group-hover:text-white"
+                    ? "text-white"
+                    : "text-gray-300 group-hover:text-white"
                     }`}
                 >
                   {item.icon}
@@ -88,6 +92,7 @@ const AdminPanel = () => {
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }}>
           <div className="flex justify-between px-3 items-center">
+
             <Button
               type="text"
               icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -98,42 +103,51 @@ const AdminPanel = () => {
                 height: 64,
               }}
             />
-            <Popconfirm
-              title="Are you sure you want to logout?"
-              onConfirm={handleLogoutOk}
-              okText="Yes"
-              cancelText="No"
-              okButtonProps={{
-                style: {
-                  backgroundColor: "green",
-                  borderColor: "green",
-                  marginLeft: "10px",
-                  padding: "6px 16px",
-                },
-              }}
-              cancelButtonProps={{
-                style: {
-                  backgroundColor: "red",
-                  borderColor: "red",
-                  color: "white",
-                  padding: "6px 16px",
-                },
-              }}
-            >
-              <Button
-                type="text"
-                icon={<LoginOutlined />}
-                style={{
-                  fontSize: "18px",
-                  width: 84,
-                  height: 44,
-                  marginRight: 30,
-                  fontFamily: "monospace",
+
+
+            <div className="flex justify-between gap-10 items-center">
+
+              <h2 className="text-[#050556] font-bold">Admin: <span className="text-green-700"> {Firstname} {Lastname} ⭐</span></h2>
+
+              <Popconfirm
+                title="Are you sure you want to logout?"
+                onConfirm={handleLogoutOk}
+                okText="Yes"
+                cancelText="No"
+                okButtonProps={{
+                  style: {
+                    backgroundColor: "green",
+                    borderColor: "green",
+                    marginLeft: "10px",
+                    padding: "6px 16px",
+                  },
+                }}
+                cancelButtonProps={{
+                  style: {
+                    backgroundColor: "red",
+                    borderColor: "red",
+                    color: "white",
+                    padding: "6px 16px",
+                  },
                 }}
               >
-                Logout
-              </Button>
-            </Popconfirm>
+                <Button
+                  type="text"
+                  icon={<LoginOutlined />}
+                  style={{
+                    fontSize: "18px",
+                    width: 84,
+                    height: 44,
+                    marginRight: 30,
+                    fontFamily: "monospace",
+                  }}
+                >
+                  Logout
+                </Button>
+              </Popconfirm>
+
+            </div>
+
           </div>
         </Header>
         <Content
