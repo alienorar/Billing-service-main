@@ -141,6 +141,12 @@ const GroupSinglePage: React.FC = () => {
             },
             {
                 title: "Qarzdorlik",
+<<<<<<< HEAD
+                dataIndex: "studentDebtAmount",
+                key: "studentDebtAmount",
+                sorter: (a: StudentRecord, b: StudentRecord) => a.level.localeCompare(b.level),
+            },
+=======
                 key: "studentDebtAmount",
                 sorter: (a: StudentRecord, b: StudentRecord) => {
                   const valA = a.paymentDetails?.studentDebtAmount ?? 0;
@@ -158,6 +164,7 @@ const GroupSinglePage: React.FC = () => {
             }
               
               
+>>>>>>> 21afbed7c0b01de2ae377d19516592086b20fb1a
 
         ],
         []
