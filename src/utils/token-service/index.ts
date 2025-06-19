@@ -1,3 +1,4 @@
+
 export const getAccessToken = () => localStorage.getItem("accessToken");
 export const getRefreshToken = () => localStorage.getItem("refreshToken");
 
@@ -11,9 +12,23 @@ export const setRefreshToken = (token: string) => {
 
 export const logout = () => {
   localStorage.removeItem("accessToken");
+  localStorage.removeItem("username")
   clearPermissions()
   window.location.href = "/";
 };
+
+export const setFirstname = (data:any) => {
+  localStorage.setItem("Firstname", data);
+};
+
+export const getFirstname = () => localStorage.getItem("Firstname");
+
+export const setLastname = (data:any) => {
+  localStorage.setItem("Lastname", data);
+};
+
+export const getLastname = () => localStorage.getItem("Lastname");
+
 
 // =========================Role permission service ========================
 
