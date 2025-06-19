@@ -30,8 +30,8 @@ const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
         }
     }, [update, form]);
 
-    const onFinish = async (value:StudentDiscount) => {
-        const payload:StudentDiscount = {
+    const onFinish = async (value: StudentDiscount) => {
+        const payload: StudentDiscount = {
             id: update?.id,
             studentId: studentId,
             description: value.description,

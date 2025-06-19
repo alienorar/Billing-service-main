@@ -271,7 +271,7 @@ const StudentDetails: React.FC = () => {
                 </span>
                 <span className="text-sm font-bold text-red-600">
 
-                  {Number(trInfo.totalMustPaidAmount).toLocaleString()}
+                  {Number(trInfo.totalDebtAmount).toLocaleString()}
                   UZS
                 </span>
               </div>
