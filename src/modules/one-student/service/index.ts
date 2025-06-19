@@ -26,3 +26,4 @@ export async function updateStudentsDiscounts(data:StudentDiscount) {
     return (await axiosInstance.put(`/api/v1/discount/update`,data)).data
 }
 
+
