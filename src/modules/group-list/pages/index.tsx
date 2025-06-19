@@ -206,7 +206,7 @@ const GroupList: React.FC = () => {
         key: "action",
         render: (_: any, record: any) => (
           <Space size="middle">
-            <Tooltip title="Edit">
+            <Tooltip title="Tahrirlash">
               <Button onClick={() => editData(record)}>
                 <EditOutlined />
               </Button>
