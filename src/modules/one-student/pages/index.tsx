@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetStudentById, useGetStudentsDiscounts, useGetStudentsTrInfo } from "../hooks/queries";
-import { Card, Descriptions, Image, Spin, Alert, Typography, Table, Button, Tabs, Space, Tooltip, Popconfirm } from "antd";
-import { ArrowLeftOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Card, Descriptions, Image, Spin, Alert, Typography, Table, Button, Tabs, Space, Tooltip, } from "antd";
+import { ArrowLeftOutlined, EditOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import DiscountsModal from "./modal";
 
@@ -61,7 +61,7 @@ const StudentDetails: React.FC = () => {
   const showModal = () => setIsModalOpen(true);
   const handleClose = () => {
     setIsModalOpen(false);
-    // setUpdate(null);
+    setUpdate(null);
   };
 
     const editData = (item:any) => {
@@ -133,35 +133,6 @@ const StudentDetails: React.FC = () => {
             <Button onClick={() => editData(record)}>
               <EditOutlined />
             </Button>
-          </Tooltip>
-
-          <Tooltip title="delete">
-            <Popconfirm
-              title="Bu chegirmani o'chirishga ishonchingiz komilmi ?!"
-              // onConfirm={() => deleteData(record.id)}
-              okText="Ha"
-              cancelText="Yo'q"
-              okButtonProps={{
-                style: {
-                  backgroundColor: "green",
-                  borderColor: "green",
-                  marginLeft: "10px",
-                  padding: "6px 16px",
-                },
-              }}
-              cancelButtonProps={{
-                style: {
-                  backgroundColor: "red",
-                  borderColor: "red",
-                  color: "white",
-                  padding: "6px 16px",
-                },
-              }}
-            >
-              <Button>
-                <DeleteOutlined className='text-red-400 text-[18px]' />
-              </Button>
-            </Popconfirm>
           </Tooltip>
         </Space>
       ),
@@ -300,7 +271,7 @@ const StudentDetails: React.FC = () => {
                 </span>
                 <span className="text-sm font-bold text-red-600">
 
-                  {Number(trInfo.totalMustPaidAmount).toLocaleString()}
+                  {Number(trInfo.totalDebtAmount).toLocaleString()}
                   UZS
                 </span>
               </div>
