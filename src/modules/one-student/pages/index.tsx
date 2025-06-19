@@ -160,7 +160,7 @@ const StudentDetails: React.FC = () => {
             boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 20 }}>
+          <div className="flex items-center gap-5 mb-5" >
             <Image
               width={100}
               height={120}

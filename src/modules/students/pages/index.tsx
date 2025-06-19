@@ -143,10 +143,7 @@ const Index = () => {
       title: "ID",
       dataIndex: "id",
     },
-    {
-      title: "Student ID",
-      dataIndex: "studentIdNumber",
-    },
+
     {
       title: "To'liq ism",
       dataIndex: "fullName",
@@ -169,11 +166,19 @@ const Index = () => {
     },
     ...(isInDebt
       ? [
-          {
-            title: "Qarzdorligi",
-            dataIndex: "studentMustPaidAmount",
+        {
+          title: "Qarzdorligi",
+          key: "studentDebtAmount",
+          render: (_: any, record: any) => {
+            const amount = record.paymentDetails?.studentDebtAmount ?? 0;
+            return (
+              <span className={amount < 0 ? "text-red-500 font-semibold" : "text-green-500 font-semibold"}>
+                {amount.toLocaleString()}
+              </span>
+            );
           },
-        ]
+        },
+      ]
       : []
     ),
     {
