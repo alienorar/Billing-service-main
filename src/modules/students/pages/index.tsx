@@ -21,7 +21,8 @@ import { syncStudent } from "../service";
 
 
 const Index = () => {
-  const [isInDebt, setIsInDebt] = useState<boolean | undefined>(undefined);
+  
+
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tableData, setTableData] = useState<AdminType[]>([]);
@@ -29,6 +30,9 @@ const Index = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
+
+  
+
 
   // URL search parameters
   const page = Number(searchParams.get("page")) || 1;
@@ -39,6 +43,13 @@ const Index = () => {
   const educationForm = searchParams.get("educationForm") || "";
   const educationType = searchParams.get("educationType") || "";
   const showDebt = searchParams.get("showDebt") || "";
+
+  // Save the checkbox value
+  const [isInDebt, setIsInDebt] = useState<boolean>(false);
+  useEffect(() => {
+    const showDebt = searchParams.get("showDebt") === "true";
+    setIsInDebt(showDebt);
+  }, [searchParams]);
 
   const educationFormOptions: { value: string; label: string }[] = [
     { value: "", label: "All" },
@@ -296,21 +307,22 @@ const Index = () => {
               checked={isInDebt}
               onChange={(e) => {
                 const checked = e.target.checked;
-
                 setIsInDebt(checked);
-                setSearchParams({
-                  page: "1",
-                  size: size.toString(),
-                  phone,
-                  firstName,
-                  lastName,
-                  educationType,
-                  educationForm,
-                  showDebt: checked ? "true" : "",
-                });
+
+                const params = new URLSearchParams(searchParams);
+                params.set("page", "1");
+
+                if (checked) {
+                  params.set("showDebt", "true");
+                } else {
+                  params.delete("showDebt");
+                }
+
+                setSearchParams(params);
               }}
               className="hidden"
             />
+
             <span
               className={`w-5 h-5 flex items-center justify-center border-2 rounded ${
                 isInDebt ? "bg-[#050556]" : "bg-white"
