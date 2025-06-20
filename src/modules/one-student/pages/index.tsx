@@ -47,8 +47,8 @@ const StudentDetails: React.FC = () => {
     error: discountsError,
   } = useGetStudentsDiscounts({ studentId: id });
 
-  const { data: trInfoResponse, isLoading: isTrLoading } = useGetStudentsTrInfo({ id });
-  const { data: studentsDiscounts, isLoading: isDiscountsLoading, error: discountsError } = useGetStudentsDiscounts({ studentId: id });
+  // const { data: trInfoResponse, isLoading: isTrLoading } = useGetStudentsTrInfo({ id });
+  // const { data: studentsDiscounts, isLoading: isDiscountsLoading, error: discountsError } = useGetStudentsDiscounts({ studentId: id });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [update, setUpdate] = useState<any | null>(null);
@@ -247,7 +247,7 @@ const StudentDetails: React.FC = () => {
             <Descriptions.Item label="Tel">
               {student.phone || "-"}
             </Descriptions.Item>
-
+            <Descriptions.Item>
               <Text strong style={{ color: "#050556" }}>{student?.studentIdNumber}</Text>
             </Descriptions.Item>
             <Descriptions.Item label="PINFL">
@@ -448,7 +448,6 @@ const StudentDetails: React.FC = () => {
               </div>
             </div>
           </div>
-
           <Tabs
             defaultActiveKey="transactions"
             items={[
