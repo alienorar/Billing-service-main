@@ -203,7 +203,7 @@ const StudentDetails: React.FC = () => {
 
 
 
-            <Descriptions.Item label="To'g'ilgan sana">
+            <Descriptions.Item label="To'g'ilgan sanasi">
               {(() => {
                 const date = new Date(student?.birthDate * 1000);
                 const year = date.getFullYear();
