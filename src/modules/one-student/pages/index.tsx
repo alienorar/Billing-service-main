@@ -31,7 +31,7 @@ const StudentDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { data: studentResponse, isLoading: isStudentLoading, error: studentError } = useGetStudentById(id);
   const student = studentResponse?.data;
-  const { data: trInfoResponse, isLoading: isTrLoading, error: trError } = useGetStudentsTrInfo({ id });
+  const { data: trInfoResponse, isLoading: isTrLoading } = useGetStudentsTrInfo({ id });
   const { data: studentsDiscounts, isLoading: isDiscountsLoading, error: discountsError } = useGetStudentsDiscounts({ studentId: id });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [update, setUpdate] = useState<any | null>(null);
@@ -44,9 +44,6 @@ const StudentDetails: React.FC = () => {
     return <Alert message="Error fetching student data" description={studentError.message} type="error" showIcon />;
   }
 
-  if (trError) {
-    return <Alert message="Error fetching transaction data" description={trError.message} type="error" showIcon />;
-  }
 
   if (discountsError) {
     return <Alert message="Error fetching discounts data" description={discountsError.message} type="error" showIcon />;
@@ -164,34 +161,34 @@ const StudentDetails: React.FC = () => {
             <Image
               width={100}
               height={120}
-              src={student.image}
+              src={student?.image}
               style={{ borderRadius: "50%", border: "2px solid #050556" }}
               fallback="https://via.placeholder.com/100"
             />
             <div>
               <Title level={3} style={{ color: "#050556", margin: 0 }}>
-                {student.fullName}
+                {student?.fullName}
               </Title>
               <Text type="secondary" style={{ fontSize: 16 }}>
-                {student.universityName}
+                {student?.universityName}
               </Text>
             </div>
           </div>
 
           <Descriptions bordered column={2} size="middle" style={{ marginBottom: 20 }}>
             <Descriptions.Item label="Student ID">
-              <Text strong style={{ color: "#050556" }}>{student.studentIdNumber}</Text>
+              <Text strong style={{ color: "#050556" }}>{student?.studentIdNumber}</Text>
             </Descriptions.Item>
             <Descriptions.Item label="PINFL">
-              <Text strong style={{ color: "#050556" }}>{student.pinfl}</Text>
+              <Text strong style={{ color: "#050556" }}>{student?.pinfl}</Text>
             </Descriptions.Item>
-            <Descriptions.Item label="Tel">{student.phone || "-"}</Descriptions.Item>
+            <Descriptions.Item label="Tel">{student?.phone || "-"}</Descriptions.Item>
             <Descriptions.Item label="To'g'ilgan sana">
               {(() => {
-                const date = new Date(student.birthDate * 1000);
+                const date = new Date(student?.birthDate * 1000);
                 const year = date.getFullYear();
                 const month = date.getMonth();
-                const day = String(date.getDate()).padStart(2, "0");
+                const day = String(date?.getDate()).padStart(2, "0");
 
                 const monthNames = [
                   "yanvar",
@@ -212,18 +209,18 @@ const StudentDetails: React.FC = () => {
               })()}
             </Descriptions.Item>
             <Descriptions.Item label="Jins">
-              <Text strong style={{ color: "#050556" }}>{student.genderName}</Text>
+              <Text strong style={{ color: "#050556" }}>{student?.genderName}</Text>
             </Descriptions.Item>
             <Descriptions.Item label="Status">
-              <Text>{student.studentStatusName}</Text>
+              <Text>{student?.studentStatusName}</Text>
             </Descriptions.Item>
-            <Descriptions.Item label="Kursi">{student.levelName}</Descriptions.Item>
-            <Descriptions.Item label="Mutaxasisligi">{student.specialtyName}</Descriptions.Item>
-            <Descriptions.Item label="Guruhi">{student.groupName}</Descriptions.Item>
-            <Descriptions.Item label="Ta'lim shakli">{student.educationTypeName}</Descriptions.Item>
-            <Descriptions.Item label="Mamlakat">{student.countryName}</Descriptions.Item>
-            <Descriptions.Item label="Viloyat">{student.provinceName}</Descriptions.Item>
-            <Descriptions.Item label="Tuman">{student.districtName}</Descriptions.Item>
+            <Descriptions.Item label="Kursi">{student?.levelName}</Descriptions.Item>
+            <Descriptions.Item label="Mutaxasisligi">{student?.specialtyName}</Descriptions.Item>
+            <Descriptions.Item label="Guruhi">{student?.groupName}</Descriptions.Item>
+            <Descriptions.Item label="Ta'lim shakli">{student?.educationTypeName}</Descriptions.Item>
+            <Descriptions.Item label="Mamlakat">{student?.countryName}</Descriptions.Item>
+            <Descriptions.Item label="Viloyat">{student?.provinceName}</Descriptions.Item>
+            <Descriptions.Item label="Tuman">{student?.districtName}</Descriptions.Item>
           </Descriptions>
 
           <div className="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
@@ -237,7 +234,7 @@ const StudentDetails: React.FC = () => {
                   Shartnoma summasi :
                 </span>
                 <span className="text-sm font-bold text-gray-800">
-                  {trInfo?.totalContractAmount ? Number(trInfo.totalContractAmount).toLocaleString() : "0"} UZS
+                  {trInfo?.totalContractAmount ? Number(trInfo?.totalContractAmount).toLocaleString() : "0"} UZS
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -248,7 +245,7 @@ const StudentDetails: React.FC = () => {
                   Chegirma summasi
                 </span>
                 <span className="text-sm font-bold text-green-600">
-                  {trInfo?.totalDiscountAmount ? Number(trInfo.totalDiscountAmount).toLocaleString() : "0"} UZS
+                  {trInfo?.totalDiscountAmount ? Number(trInfo?.totalDiscountAmount).toLocaleString() : "0"} UZS
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -259,7 +256,7 @@ const StudentDetails: React.FC = () => {
                   To‘langan summa
                 </span>
                 <span className="text-sm font-bold text-blue-600">
-                  {trInfo?.totalPaidAmount ? Number(trInfo.totalPaidAmount).toLocaleString() : "0"} UZS
+                  {trInfo?.totalPaidAmount ? Number(trInfo?.totalPaidAmount).toLocaleString() : "0"} UZS
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -271,8 +268,8 @@ const StudentDetails: React.FC = () => {
                 </span>
                 <span className="text-sm font-bold text-red-600">
 
-                  {Number(trInfo.totalDebtAmount).toLocaleString()}
-                  UZS
+              {   trInfo ? Number(trInfo?.totalDebtAmount).toLocaleString() : 0  }
+                    UZS
                 </span>
               </div>
             </div>
@@ -299,7 +296,7 @@ const StudentDetails: React.FC = () => {
                           style={{ marginBottom: 16 }}
                         />
                         <Text strong style={{ fontSize: 16 }}>
-                          Jami to'langan: {trInfo.total.toLocaleString()} UZS
+                          Jami to'langan: {trInfo?.total.toLocaleString()} UZS
                         </Text>
                       </>
                     ) : (
