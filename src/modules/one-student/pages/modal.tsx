@@ -6,6 +6,7 @@ import {
     useUploadDiscountReason
 } from "../hooks/mutations";
 import { StudentDiscount } from "@types";
+// import { useDownloadDiscountReason } from "../hooks/queries";
 
 const { Option } = Select;
 
@@ -13,7 +14,6 @@ const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
     const [form] = Form.useForm();
     const [reasonFileUuid, setReasonFileUuid] = useState<string | null>(null);
     const [initialFileInfo, setInitialFileInfo] = useState<string | null>(null);
-
     const { mutate: createMutate, isPending: isCreating } = useCreateStudentsDiscounts();
     const { mutate: updateMutate, isPending: isUpdating } = useUpdateStudentsDiscounts();
     const { mutateAsync: uploadFile } = useUploadDiscountReason();
@@ -65,15 +65,13 @@ const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
         try {
             const response = await uploadFile(formData);
             const uuid = response?.uuid || response?.data?.uuid;
-
             if (!uuid) throw new Error("Fayl yuklandi, lekin uuid topilmadi.");
-
             setReasonFileUuid(uuid);
             setInitialFileInfo(null); // Eski faylni yashirish
             message.success("Fayl muvaffaqiyatli yuklandi.");
         } catch (error) {
             console.error("Fayl yuklashda xatolik:", error);
-            message.error("Fayl yuklashda xatolik yuz berdi.");
+            // message.error("Fayl yuklashda xatolik yuz berdi.");
         }
     };
 
@@ -100,6 +98,8 @@ const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
         }
     };
 
+    // const {data:downloadReason } = useDownloadDiscountReason({reasonFileUuid})
+    // console.log(reasonFileUuid,"hdfjhejhfj")
     return (
         <Modal
             title={update?.id ? "Edit Discount" : "Add New Discount"}

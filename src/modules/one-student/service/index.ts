@@ -31,5 +31,10 @@ export async function uploadDiscountReason(data:any) {
     return (await axiosInstance.post(`api/v1/file/upload`,data)).data
 }
 
+// ============= DOWNLOAD STUDENTS DISCOUNTS REASON FILE ============
+export async function downloadDiscountReason(params:any) {
+    return (await axiosInstance.get(`api/v1/file/download/`,{params})).data
+}
+
 
 
