@@ -338,12 +338,9 @@ const StudentDetails: React.FC = () => {
                   </svg>
                   Qarzdorlik
                 </span>
-                <span className="text-sm font-bold text-red-600">
-
-
-
-                  {trInfo ? Number(trInfo?.totalDebtAmount).toLocaleString() : "0"} UZS
-
+                
+                <span className={Number(trInfo?.totalDebtAmount) < 0 ?"text-sm font-bold text-red-600":"text-sm font-bold text-green-600"}>
+                  {Number(trInfo?.totalDebtAmount) > 0?"+":""}{trInfo ? Number(trInfo?.totalDebtAmount).toLocaleString() : "0"} UZS
                 </span>
               </div>
             </div>
