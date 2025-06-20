@@ -132,18 +132,18 @@ const TransactionDetails: React.FC = () => {
     : [];
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", padding: "20px", minHeight: "100vh", backgroundColor: "#f5f5f5" }}>
+    <div className="flex justify-center p-5 min-h-[100vh] bg-[#f5f5f5]" >
       <Card
         style={{ maxWidth: 800, width: "100%", boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}
         title={
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div className="flex items-center gap-2">
             <Title level={3} style={{ margin: 0, color: PRIMARY_COLOR }}>
               Transaction Details (ID: {id})
             </Title>
           </div>
         }
         extra={
-          <div style={{ display: "flex", gap: 8 }}>
+          <div className="flex gap-2" >
             <Button
               type="default"
               icon={<ArrowLeftOutlined />}

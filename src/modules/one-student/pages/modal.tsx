@@ -159,13 +159,13 @@ const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
                     <Input type="file" onChange={handleFileChange} />
 
                     {reasonFileUuid && (
-                        <div style={{ marginTop: "8px", color: "green" }}>
+                        <div className="mt-2 text-green-600" >
                             Fayl yuklandi: <code>{reasonFileUuid}</code>
                         </div>
                     )}
 
                     {!reasonFileUuid && initialFileInfo && (
-                        <div style={{ marginTop: "8px", color: "blue" }}>
+                        <div className="mt-2 text-blue-600" >
                             Avval yuklangan fayl: <code>{initialFileInfo}</code>
                         </div>
                     )}
