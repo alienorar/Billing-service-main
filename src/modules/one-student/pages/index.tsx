@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetStudentById, useGetStudentsDiscounts, useGetStudentsTrInfo } from "../hooks/queries";
-import { Card, Descriptions, Image, Spin, Alert, Typography, Table, Button, Tabs, Space, Tooltip} from "antd";
-import { ArrowLeftOutlined,  EditOutlined } from "@ant-design/icons";
+import { Card, Descriptions, Image,  Typography, Table, Button, Tabs, Space, Tooltip } from "antd";
+import { ArrowLeftOutlined, EditOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import DiscountsModal from "./modal";
 
@@ -31,20 +31,16 @@ const StudentDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const {
     data: studentResponse,
-    isLoading: isStudentLoading,
-    error: studentError,
   } = useGetStudentById(id);
   const student = studentResponse?.data;
 
   const {
     data: trInfoResponse,
-    isLoading: isTrLoading,
-    error: trError,
+
   } = useGetStudentsTrInfo({ id });
   const {
     data: studentsDiscounts,
-    isLoading: isDiscountsLoading,
-    error: discountsError,
+
   } = useGetStudentsDiscounts({ studentId: id });
 
   // const { data: trInfoResponse, isLoading: isTrLoading } = useGetStudentsTrInfo({ id });
@@ -53,50 +49,7 @@ const StudentDetails: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [update, setUpdate] = useState<any | null>(null);
 
-  if (isStudentLoading || isTrLoading || isDiscountsLoading) {
-    return (
-      <Spin size="large" style={{ display: "block", margin: "50px auto" }} />
-    );
-  }
 
-  if (studentError) {
-    return (
-      <Alert
-        message="Error fetching student data"
-        description={studentError.message}
-        type="error"
-        showIcon
-      />
-    );
-  }
-
-
-  if (trError) {
-    return (
-      <Alert
-        message="Error fetching transaction data"
-        description={trError.message}
-        type="error"
-        showIcon
-      />
-    );
-  }
-
-
-  if (discountsError) {
-    return (
-      <Alert
-        message="Error fetching discounts data"
-        description={discountsError.message}
-        type="error"
-        showIcon
-      />
-    );
-  }
-
-  if (!student) {
-    return <Alert message="Student not found" type="warning" showIcon />;
-  }
 
   const trInfo = trInfoResponse?.data;
   const discounts = studentsDiscounts?.data?.content;
@@ -173,7 +126,7 @@ const StudentDetails: React.FC = () => {
             </Button>
           </Tooltip>
 
-        
+
         </Space>
       ),
     },
@@ -236,24 +189,19 @@ const StudentDetails: React.FC = () => {
             <Descriptions.Item label="Student ID">
 
               <Text strong style={{ color: "#050556" }}>
-                {student.studentIdNumber}
+                {student?.studentIdNumber}
               </Text>
             </Descriptions.Item>
             <Descriptions.Item label="PINFL">
               <Text strong style={{ color: "#050556" }}>
-                {student.pinfl}
+                {student?.pinfl || "-"}
               </Text>
             </Descriptions.Item>
             <Descriptions.Item label="Tel">
-              {student.phone || "-"}
+              {student?.phone || "-"}
             </Descriptions.Item>
-            <Descriptions.Item>
-              <Text strong style={{ color: "#050556" }}>{student?.studentIdNumber}</Text>
-            </Descriptions.Item>
-            <Descriptions.Item label="PINFL">
-              <Text strong style={{ color: "#050556" }}>{student?.pinfl}</Text>
-            </Descriptions.Item>
-            <Descriptions.Item label="Tel">{student?.phone || "-"}</Descriptions.Item>
+
+
 
             <Descriptions.Item label="To'g'ilgan sana">
               {(() => {
@@ -280,40 +228,7 @@ const StudentDetails: React.FC = () => {
                 return `${year}-yil ${day}-${monthNames[month]}`;
               })()}
             </Descriptions.Item>
-            <Descriptions.Item label="Jins">
 
-              <Text strong style={{ color: "#050556" }}>
-                {student.genderName}
-              </Text>
-
-              <Text strong style={{ color: "#050556" }}>{student?.genderName}</Text>
-
-            </Descriptions.Item>
-            <Descriptions.Item label="Status">
-              <Text>{student?.studentStatusName}</Text>
-            </Descriptions.Item>
-
-            <Descriptions.Item label="Kursi">
-              {student.levelName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Mutaxasisligi">
-              {student.specialtyName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Guruhi">
-              {student.groupName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Ta'lim shakli">
-              {student.educationTypeName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Mamlakat">
-              {student.countryName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Viloyat">
-              {student.provinceName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Tuman">
-              {student.districtName}
-            </Descriptions.Item>
 
             <Descriptions.Item label="Kursi">{student?.levelName}</Descriptions.Item>
             <Descriptions.Item label="Mutaxasisligi">{student?.specialtyName}</Descriptions.Item>
@@ -350,10 +265,6 @@ const StudentDetails: React.FC = () => {
                 </span>
                 <span className="text-sm font-bold text-gray-800">
 
-                  {trInfo?.totalContractAmount
-                    ? Number(trInfo.totalContractAmount).toLocaleString()
-                    : "0"}{" "}
-                  UZS
 
                   {trInfo?.totalContractAmount ? Number(trInfo?.totalContractAmount).toLocaleString() : "0"} UZS
 
@@ -379,10 +290,6 @@ const StudentDetails: React.FC = () => {
                 </span>
                 <span className="text-sm font-bold text-green-600">
 
-                  {trInfo?.totalDiscountAmount
-                    ? Number(trInfo.totalDiscountAmount).toLocaleString()
-                    : "0"}{" "}
-                  UZS
 
                   {trInfo?.totalDiscountAmount ? Number(trInfo?.totalDiscountAmount).toLocaleString() : "0"} UZS
 
@@ -408,10 +315,6 @@ const StudentDetails: React.FC = () => {
                 </span>
                 <span className="text-sm font-bold text-blue-600">
 
-                  {trInfo?.totalPaidAmount
-                    ? Number(trInfo.totalPaidAmount).toLocaleString()
-                    : "0"}{" "}
-                  UZS
 
                   {trInfo?.totalPaidAmount ? Number(trInfo?.totalPaidAmount).toLocaleString() : "0"} UZS
 
@@ -437,12 +340,9 @@ const StudentDetails: React.FC = () => {
                 </span>
                 <span className="text-sm font-bold text-red-600">
 
-                  {Number(trInfo.totalDebtAmount).toLocaleString()}
-                  UZS
 
 
-              {   trInfo ? Number(trInfo?.totalDebtAmount).toLocaleString() : 0  }
-                    UZS
+                  {trInfo ? Number(trInfo?.totalDebtAmount).toLocaleString() : "0"} UZS
 
                 </span>
               </div>
