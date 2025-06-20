@@ -131,7 +131,6 @@ const StudentDetails: React.FC = () => {
       ),
     },
   ];
-  console.log(trInfo?.transactions);
 
   return (
     <>

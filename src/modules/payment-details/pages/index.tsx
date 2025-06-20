@@ -52,7 +52,6 @@ const TransactionDetails: React.FC = () => {
       message.error("Cannot retry: Transaction ID not available");
       return;
     }
-    console.log("Retry button clicked, id:", transactionId);
     retryTransaction(transactionId); // Trigger the mutation
   };
 

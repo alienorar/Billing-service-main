@@ -84,7 +84,6 @@ const Index = () => {
 
   useEffect(() => {
     if (students?.data?.content) {
-      console.log(students?.data?.content);
 
       setTableData(students.data.content);
 
