@@ -26,4 +26,10 @@ export async function updateStudentsDiscounts(data:StudentDiscount) {
     return (await axiosInstance.put(`/api/v1/discount/update`,data)).data
 }
 
+// ============= UPLOAD STUDENTS DISCOUNTS REASON FILE ============
+export async function uploadDiscountReason(data:any) {
+    return (await axiosInstance.post(`api/v1/file/upload`,data)).data
+}
+
+
 

@@ -17,7 +17,7 @@ interface StudentRecord {
     group: string;
     paymentGroup: string | null;
     level: string;
-    paymentDetails:DebtAmout;
+    paymentDetails: DebtAmout;
 }
 
 interface DebtAmout {
@@ -113,8 +113,8 @@ const GroupSinglePage: React.FC = () => {
                 key: "fullName",
                 sorter: (a: StudentRecord, b: StudentRecord) => a.fullName.localeCompare(b.fullName),
             },
-         
-         
+
+
             {
                 title: "Phone",
                 dataIndex: "phone",
@@ -143,21 +143,21 @@ const GroupSinglePage: React.FC = () => {
                 title: "Qarzdorlik",
                 key: "studentDebtAmount",
                 sorter: (a: StudentRecord, b: StudentRecord) => {
-                  const valA = a.paymentDetails?.studentDebtAmount ?? 0;
-                  const valB = b.paymentDetails?.studentDebtAmount ?? 0;
-                  return valA - valB;
+                    const valA = a.paymentDetails?.studentDebtAmount ?? 0;
+                    const valB = b.paymentDetails?.studentDebtAmount ?? 0;
+                    return valA - valB;
                 },
                 render: (_: any, record: StudentRecord) => {
-                  const amount = record.paymentDetails?.studentDebtAmount ?? 0;
-                  return (
-                    <span className={amount < 0 ? "text-red-500 font-semibold" : "text-green-500 font-semibold"}>
-                      {amount.toLocaleString()}
-                    </span>
-                  );
+                    const amount = record.paymentDetails?.studentDebtAmount ?? 0;
+                    return (
+                        <span className={amount < 0 ? "text-red-500 font-semibold" : "text-green-500 font-semibold"}>
+                            {amount.toLocaleString()}
+                        </span>
+                    );
                 },
             }
-              
-              
+
+
 
         ],
         []

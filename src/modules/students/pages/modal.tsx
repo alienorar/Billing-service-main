@@ -19,7 +19,7 @@ const UploadStudentDataModal: React.FC<UploadStudentDataModalProps> = ({ open, o
 
     const onFinish = async () => {
         if (fileList.length === 0) {
-            message.warning("Please select a file first!");
+            message.warning("Fileni tanlang!");
             return;
         }
         const formData = new FormData();
@@ -29,7 +29,7 @@ const UploadStudentDataModal: React.FC<UploadStudentDataModalProps> = ({ open, o
     };
 
     return (
-        <Modal title="Upload Students Data" open={open} onCancel={onClose} footer={null}>
+        <Modal title="Studentlar ma'lumotlarini yuklash" open={open} onCancel={onClose} footer={null}>
             <Form form={form} layout="vertical" onFinish={onFinish}>
                 <Form.Item label="Upload File" name="file" rules={[{ required: true, message: "Please upload a file!" }]}>
                     <Upload beforeUpload={() => false} fileList={fileList} onChange={handleUpload}>

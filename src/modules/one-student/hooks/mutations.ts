@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { StudentDiscount } from "@types";
-import { createStudentsDiscounts, updateStudentsDiscounts } from "../service";
+import { createStudentsDiscounts, updateStudentsDiscounts, uploadDiscountReason } from "../service";
 import { openNotification } from "@utils";
 
 // ============ CREATE ROLES ===========
@@ -23,6 +23,21 @@ export function useUpdateStudentsDiscounts() {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: (data:StudentDiscount) => updateStudentsDiscounts(data),
+        onSuccess: (data) => {
+            openNotification("success", "Success", data?.data?.message)
+            queryClient.invalidateQueries({ queryKey: ["discounts"] });
+        },
+        onError: (error) => {
+                openNotification("error", "Error", error?.message)
+        }
+    })
+}
+
+// ============ CREATE ROLES ===========
+export function useUploadDiscountReason() {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: (data:any) => uploadDiscountReason(data),
         onSuccess: (data) => {
             openNotification("success", "Success", data?.data?.message)
             queryClient.invalidateQueries({ queryKey: ["discounts"] });
