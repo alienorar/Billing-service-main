@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetStudentById, useGetStudentsDiscounts, useGetStudentsTrInfo } from "../hooks/queries";
-import { Card, Descriptions, Image, Spin, Alert, Typography, Table, Button, Tabs, Space, Tooltip, } from "antd";
-import { ArrowLeftOutlined, EditOutlined } from "@ant-design/icons";
+import { Card, Descriptions, Image, Spin, Alert, Typography, Table, Button, Tabs, Space, Tooltip} from "antd";
+import { ArrowLeftOutlined,  EditOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import DiscountsModal from "./modal";
 
@@ -131,6 +131,8 @@ const StudentDetails: React.FC = () => {
               <EditOutlined />
             </Button>
           </Tooltip>
+
+        
         </Space>
       ),
     },
