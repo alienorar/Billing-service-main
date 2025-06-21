@@ -1,8 +1,10 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetStudentById, useGetStudentsDiscounts, useGetStudentsTrInfo } from "../hooks/queries";
-import { Card, Descriptions, Image,  Typography, Table, Button, Tabs, Space, Tooltip } from "antd";
-import { ArrowLeftOutlined, EditOutlined } from "@ant-design/icons";
+import { Card, Descriptions, Image, Typography, Table, Button, Tabs, Space, Tooltip, message } from "antd";
+import { ArrowLeftOutlined, EditOutlined, DownloadOutlined } from "@ant-design/icons";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { downloadDiscountReason } from "../service";
 import DiscountsModal from "./modal";
 
 const { Title, Text } = Typography;
@@ -29,30 +31,21 @@ interface StudentDetails {
 const StudentDetails: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const {
-    data: studentResponse,
-  } = useGetStudentById(id);
+  const { data: studentResponse } = useGetStudentById(id);
   const student = studentResponse?.data;
 
-  const {
-    data: trInfoResponse,
-
-  } = useGetStudentsTrInfo({ id });
-  const {
-    data: studentsDiscounts,
-
-  } = useGetStudentsDiscounts({ studentId: id });
-
-  // const { data: trInfoResponse, isLoading: isTrLoading } = useGetStudentsTrInfo({ id });
-  // const { data: studentsDiscounts, isLoading: isDiscountsLoading, error: discountsError } = useGetStudentsDiscounts({ studentId: id });
+  const { data: trInfoResponse } = useGetStudentsTrInfo({ id });
+  const { data: studentsDiscounts } = useGetStudentsDiscounts({ studentId: id });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [update, setUpdate] = useState<any | null>(null);
 
-
-
   const trInfo = trInfoResponse?.data;
   const discounts = studentsDiscounts?.data?.content;
+
+  console.log("[StudentDetails] Component rendered, id:", id);
+  console.log("[StudentDetails] Discounts data:", discounts);
+
   const showModal = () => setIsModalOpen(true);
   const handleClose = () => {
     setIsModalOpen(false);
@@ -63,6 +56,55 @@ const StudentDetails: React.FC = () => {
     setUpdate(item);
     showModal();
   };
+
+  // Mutation for downloading the discount reason file
+  const { mutate: downloadFile, isPending: isDownloading } = useMutation({
+    mutationFn: downloadDiscountReason,
+    onMutate: (reasonFile) => {
+      console.log("[useMutation] Initiating download for reasonFile:", reasonFile);
+      message.loading({ content: "Fayl yuklanmoqda...", key: "download" });
+    },
+    onSuccess: (data, reasonFile) => {
+      console.log("[useMutation] Download successful for reasonFile:", reasonFile);
+      const url = window.URL.createObjectURL(data);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `discount_reason_${reasonFile}.pdf`; // Adjust extension if known
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      message.success({ content: "Fayl yuklab olindi!", key: "download" });
+    },
+    onError: (error: any) => {
+      console.error("[useMutation] Download failed:", {
+        message: error.message,
+        response: error.response ? {
+          status: error.response.status,
+          data: error.response.data,
+        } : "No response",
+      });
+      if (error.message === "Authentication token not found") {
+        message.error({ content: "Tizimga kirish uchun token topilmadi! Iltimos, qayta kiring.", key: "download" });
+        navigate("/login");
+      } else if (error.message === "target must be an object") {
+        message.error({ content: "Faylni yuklashda xato: Noto'g'ri so'rov formati!", key: "download" });
+      } else {
+        message.error({ content: "Faylni yuklashda xatolik yuz berdi!", key: "download" });
+      }
+    },
+  });
+
+  const handleDownload = (reasonFile: string) => {
+    console.log("[handleDownload] Download button clicked for reasonFile:", reasonFile);
+    if (reasonFile) {
+      downloadFile(reasonFile); // Pass reasonFile as a string
+    } else {
+      console.error("[handleDownload] No reasonFile provided");
+      message.error({ content: "Fayl ID topilmadi!", key: "download" });
+    }
+  };
+
   const transactionColumns = [
     {
       title: "Date",
@@ -88,6 +130,7 @@ const StudentDetails: React.FC = () => {
       render: (code: string) => (code === "860" ? "UZS" : code),
     },
   ];
+
   const discountColumns = [
     {
       title: "ID",
@@ -95,25 +138,48 @@ const StudentDetails: React.FC = () => {
       key: "id",
     },
     {
-      title: "Description",
+      title: "Chegirma tarifi",
       dataIndex: "description",
       key: "description",
     },
     {
-      title: "Discount Type",
+      title: "Chegirma turi",
       dataIndex: "discountType",
       key: "discountType",
     },
     {
-      title: "Amount",
+      title: "Miqdori",
       dataIndex: "amount",
       key: "amount",
       render: (amount: number) => amount.toLocaleString() + " UZS",
     },
     {
-      title: "Student Level",
+      title: "Talaba kursi",
       dataIndex: "studentLevel",
       key: "studentLevel",
+    },
+ 
+    {
+      title: "Chegirma Sababi",
+      key: "download",
+      render: (record: any) => (
+        <Space size="middle">
+          {record.reasonFile && (
+            <Tooltip title="Faylni yuklab olish">
+              <Button
+                onClick={() => {
+                  console.log("[Button] Download button clicked for record:", record);
+                  handleDownload(record?.reasonFile);
+                }}
+                loading={isDownloading}
+                disabled={isDownloading}
+              >
+                <DownloadOutlined />
+              </Button>
+            </Tooltip>
+          )}
+        </Space>
+      ),
     },
     {
       title: "Action",
@@ -125,13 +191,10 @@ const StudentDetails: React.FC = () => {
               <EditOutlined />
             </Button>
           </Tooltip>
-
-
         </Space>
       ),
     },
   ];
-  console.log(trInfo?.transactions);
 
   return (
     <>
@@ -141,7 +204,6 @@ const StudentDetails: React.FC = () => {
         studentId={id}
         update={update}
       />
-
       <div className="flex flex-col justify-center items-center py-10">
         <div className="max-w-3xl flex justify-end items-end w-full">
           <Button
@@ -163,7 +225,7 @@ const StudentDetails: React.FC = () => {
           }}
         >
           <div className="flex items-center gap-5 mb-5">
-            <Image
+             <Image
               width={100}
               height={120}
               src={student?.image}
@@ -187,7 +249,6 @@ const StudentDetails: React.FC = () => {
             style={{ marginBottom: 20 }}
           >
             <Descriptions.Item label="Student ID">
-
               <Text strong style={{ color: "#050556" }}>
                 {student?.studentIdNumber}
               </Text>
@@ -200,16 +261,12 @@ const StudentDetails: React.FC = () => {
             <Descriptions.Item label="Tel">
               {student?.phone || "-"}
             </Descriptions.Item>
-
-
-
             <Descriptions.Item label="To'g'ilgan sanasi">
               {(() => {
                 const date = new Date(student?.birthDate * 1000);
                 const year = date.getFullYear();
                 const month = date.getMonth();
-                const day = String(date?.getDate()).padStart(2, "0");
-
+                const day = String(date.getDate()).padStart(2, "0");
                 const monthNames = [
                   "yanvar",
                   "fevral",
@@ -224,12 +281,9 @@ const StudentDetails: React.FC = () => {
                   "noyabr",
                   "dekabr",
                 ];
-
                 return `${year}-yil ${day}-${monthNames[month]}`;
               })()}
             </Descriptions.Item>
-
-
             <Descriptions.Item label="Kursi">{student?.levelName}</Descriptions.Item>
             <Descriptions.Item label="Mutaxasisligi">{student?.specialtyName}</Descriptions.Item>
             <Descriptions.Item label="Guruhi">{student?.groupName}</Descriptions.Item>
@@ -237,7 +291,6 @@ const StudentDetails: React.FC = () => {
             <Descriptions.Item label="Mamlakat">{student?.countryName}</Descriptions.Item>
             <Descriptions.Item label="Viloyat">{student?.provinceName}</Descriptions.Item>
             <Descriptions.Item label="Tuman">{student?.districtName}</Descriptions.Item>
-
           </Descriptions>
 
           <div className="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
@@ -264,10 +317,7 @@ const StudentDetails: React.FC = () => {
                   Shartnoma summasi :
                 </span>
                 <span className="text-sm font-bold text-gray-800">
-
-
                   {trInfo?.totalContractAmount ? Number(trInfo?.totalContractAmount).toLocaleString() : "0"} UZS
-
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -289,10 +339,7 @@ const StudentDetails: React.FC = () => {
                   Chegirma summasi
                 </span>
                 <span className="text-sm font-bold text-green-600">
-
-
                   {trInfo?.totalDiscountAmount ? Number(trInfo?.totalDiscountAmount).toLocaleString() : "0"} UZS
-
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -314,10 +361,7 @@ const StudentDetails: React.FC = () => {
                   To'langan summa
                 </span>
                 <span className="text-sm font-bold text-blue-600">
-
-
                   {trInfo?.totalPaidAmount ? Number(trInfo?.totalPaidAmount).toLocaleString() : "0"} UZS
-
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -338,9 +382,8 @@ const StudentDetails: React.FC = () => {
                   </svg>
                   Qarzdorlik
                 </span>
-                
-                <span className={Number(trInfo?.totalDebtAmount) < 0 ?"text-sm font-bold text-red-600":"text-sm font-bold text-green-600"}>
-                  {Number(trInfo?.totalDebtAmount) > 0?"+":""}{trInfo ? Number(trInfo?.totalDebtAmount).toLocaleString() : "0"} UZS
+                <span className={Number(trInfo?.totalDebtAmount) < 0 ? "text-sm font-bold text-red-600" : "text-sm font-bold text-green-600"}>
+                  {Number(trInfo?.totalDebtAmount) > 0 ? "+" : ""}{trInfo ? Number(trInfo?.totalDebtAmount).toLocaleString() : "0"} UZS
                 </span>
               </div>
             </div>
