@@ -1,6 +1,3 @@
-"use client"
-
-import type React from "react"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react"
@@ -75,9 +72,11 @@ const Index = () => {
 
   useEffect(() => {
     if (students?.data?.content) {
+
       console.log(students?.data?.content)
       setTableData(students.data.content)
       setTotal(students.data.paging.totalItems || 0)
+
     }
   }, [students])
 
@@ -465,18 +464,31 @@ const Index = () => {
               Exel bilan yangilash
             </Button>
           </Popconfirm>
-          <Button
-            type="primary"
-            size="large"
-            style={{
-              maxWidth: 206,
-              minWidth: 80,
-              backgroundColor: "#050556",
-              color: "white",
-              height: 40,
-              paddingRight: "2px",
-              paddingLeft: "2px",
+          <Popconfirm
+            title="Hemis orqali yangilashni tasdiqlaysizmi !"
+            onConfirm={() => {
+              handleSync();         
+              setIsConfirmVisible(false);  
             }}
+            okText="Yes"
+            cancelText="No"
+            okButtonProps={{
+              style: {
+                backgroundColor: "green",
+                borderColor: "green",
+                marginLeft: "10px",
+                padding: "6px 16px",
+              },
+            }}
+            cancelButtonProps={{
+              style: {
+                backgroundColor: "red",
+                borderColor: "red",
+                color: "white",
+                padding: "6px 16px",
+              },
+            }}
+
             className="text-[16px] mx-2"
             onClick={handleSync}
             loading={isSyncing}
@@ -504,6 +516,7 @@ const Index = () => {
           >
             Studentlar ro'yhatini yuklash
           </Button>
+
         </div>
       </div>
 
