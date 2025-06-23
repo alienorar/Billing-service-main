@@ -474,7 +474,9 @@ const Index = () => {
             title="Hemis orqali yangilashni tasdiqlaysizmi !"
             onConfirm={() => {
               handleSync();         
-              setIsConfirmVisible(false);  
+              setIsConfirmVisible(false); 
+              isConfirmVisible
+
             }}
             okText="Yes"
             cancelText="No"
