@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import {getStudentById, getStudentsDiscounts, getStudentsTrInfo } from "../service";
+import {downloadDiscountReason, getStudentById, getStudentsDiscounts, getStudentsTrInfo } from "../service";
 
 // ============ GET ADMINS ===========
 export function useGetStudentById(id:number | string |undefined ) {
@@ -22,6 +22,14 @@ export function useGetStudentsDiscounts(params:any) {
     return useQuery({
         queryKey:["discounts",params],
         queryFn:()=> getStudentsDiscounts(params)
+    })
+}
+
+// ============= DOWNLOAD STUDENTS DISCOUNTS REASON FILE============
+export function useDownloadDiscountReason(params:any) {
+    return useQuery({
+        queryKey:["discounts",params],
+        queryFn:()=> downloadDiscountReason(params)
     })
 }
 

@@ -32,4 +32,48 @@ export async function uploadDiscountReason(data:any) {
 }
 
 
+export async function downloadDiscountReason(reasonFile: string) {
+//   console.log("[downloadDiscountReason] Starting download for reasonFile:", reasonFile);
+
+  // Try possible token keys for x-admin-token
+  const possibleTokenKeys = ["x-admin-token", "adminToken", "token", "authToken", "jwt", "accessToken"];
+  let token: string | null = null;
+
+  for (const key of possibleTokenKeys) {
+    token = localStorage.getItem(key);
+    if (token) {
+      console.log(`[downloadDiscountReason] Token found in localStorage for key "${key}":`, token);
+      break;
+    }
+  }
+
+
+
+ 
+  try {
+    console.log("[downloadDiscountReason] Sending GET request to:", `api/v1/file/download/${reasonFile}`);
+    const response = await axiosInstance.get(`api/v1/file/download/${reasonFile}`, {
+      responseType: "blob",
+      headers: {
+        "x-admin-token": token,
+        "accept": "multipart/form-data",
+      },
+    });
+    // console.log("[downloadDiscountReason] Response received:", {
+    //   status: response.status,
+    //   headers: response.headers,
+    //   data: response.data instanceof Blob ? `Blob of size ${response.data.size}` : response.data,
+    // });
+    return response.data;
+  } catch (error: any) {
+    // console.error("[downloadDiscountReason] Error during request:", {
+    //   message: error.message,
+    //   response: error.response ? {
+    //     status: error.response.status,
+    //     data: error.response.data,
+    //   } : "No response",
+    // });
+    throw error;
+  }
+}
 

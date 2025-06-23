@@ -8,7 +8,7 @@ import {
   Popconfirm,
   message,
   Select,
-  
+
 } from "antd";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { GlobalTable } from "@components";
@@ -21,7 +21,7 @@ import { syncStudent } from "../service";
 
 
 const Index = () => {
-  
+
 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,7 +31,7 @@ const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
 
-  
+
 
 
   // URL search parameters
@@ -63,7 +63,7 @@ const Index = () => {
     { value: "BAKALAVR", label: "Bakalavr" },
     { value: "MAGISTR", label: "Magistr" },
   ];
-  
+
 
   // Fetch students data
   const { data: students } = useGetStudents({
@@ -152,27 +152,66 @@ const Index = () => {
     {
       title: "ID",
       dataIndex: "id",
+      render: (value: any) => value ?? "-",
     },
-
     {
       title: "To'liq ism",
       dataIndex: "fullName",
+      render: (value: any) => value ?? "-",
     },
     {
-      title: "Ta'lim shakli",
-      dataIndex: "educationForm",
+      title: "Pinfl",
+      dataIndex: "pinfl",
+      render: (value: any) => value ?? "-",
     },
     {
-      title: "Ta'lim turi",
-      dataIndex: "educationType",
+      title: "Tel",
+      dataIndex: "phone",
+      render: (value: any) => value ?? "-",
+    },
+    {
+      title: "Ta'lim shakli/turi",
+      key: "education",
+      render: (_: any, record: any) => {
+        const type = record.educationType
+          ? record.educationType.charAt(0).toUpperCase() + record.educationType.slice(1).toLowerCase()
+          : "-";
+        const form = record.educationForm
+          ? record.educationForm.charAt(0).toUpperCase() + record.educationForm.slice(1).toLowerCase()
+          : "-";
+
+
+        // Define colors based on educationForm and educationType values
+        const typeColor =
+          type === "Bakalavr" ? "text-green-500"
+            : type === "Magistr" ? "text-orange-500"
+              : type === "-" ? "text-gray-500"
+                : "text-black";
+        const formColor =
+          form === "Kunduzgi" ? "text-blue-500"
+            : form === "Sirtqi" ? "text-gray-600"
+              : form === "-" ? "text-gray-500"
+                : "text-black";
+
+
+        return (
+          <div className="flex flex-col">
+            <span className={`${typeColor} font-semibold`}>{type}</span>
+            <span className={`${formColor} font-semibold`}>{form}</span>
+
+          </div>
+        );
+      },
     },
     {
       title: "Guruh",
       dataIndex: "group",
+      render: (value: any) => value ?? "-",
     },
     {
       title: "Mutaxasislik",
       dataIndex: "speciality",
+      render: (value: any) => value ?? "-",
     },
     ...(isInDebt
       ? [
@@ -182,30 +221,35 @@ const Index = () => {
           render: (_: any, record: any) => {
             const amount = record.paymentDetails?.studentDebtAmount ?? 0;
             return (
-              <span className={amount < 0 ? "text-red-500 font-semibold" : "text-green-500 font-semibold"}>
-                {amount.toLocaleString()}
+              <span
+                className={
+                  amount < 0 ? "text-red-500 font-semibold" : "text-green-500 font-semibold"
+                }
+              >
+                {amount !== 0 ? amount.toLocaleString() : "-"}
               </span>
             );
           },
         },
       ]
-      : []
-    ),
+      : []),
     {
       title: "Action",
       key: "action",
-      render: (record: any) => (
-        <Space size="middle">
-          <Tooltip title="Ko'rish">
-            <Button onClick={() => handleView(record.id.toString())}>
-              <FiEye size={18} />
-            </Button>
-          </Tooltip>
-        </Space>
-      ),
+      render: (record: any) =>
+        record?.id ? (
+          <Space size="middle">
+            <Tooltip title="Ko'rish">
+              <Button onClick={() => handleView(record.id.toString())}>
+                <FiEye size={18} />
+              </Button>
+            </Tooltip>
+          </Space>
+        ) : (
+          "-"
+        ),
     },
   ];
-
   return (
     <>
       <div className="flex flex-col gap-4 px-5 py-4">
@@ -323,9 +367,8 @@ const Index = () => {
             />
 
             <span
-              className={`w-5 h-5 flex items-center justify-center border-2 rounded ${
-                isInDebt ? "bg-[#050556]" : "bg-white"
-              } border-[#050556"]`}
+              className={`w-5 h-5 flex items-center justify-center border-2 rounded ${isInDebt ? "bg-[#050556]" : "bg-white"
+                } border-[#050556"]`}
             >
               {isInDebt && (
                 <svg
