@@ -33,9 +33,7 @@ export async function uploadDiscountReason(data:any) {
 
 
 export async function downloadDiscountReason(reasonFile: string) {
-//   console.log("[downloadDiscountReason] Starting download for reasonFile:", reasonFile);
 
-  // Try possible token keys for x-admin-token
   const possibleTokenKeys = ["x-admin-token", "adminToken", "token", "authToken", "jwt", "accessToken"];
   let token: string | null = null;
 
@@ -51,7 +49,7 @@ export async function downloadDiscountReason(reasonFile: string) {
 
  
   try {
-    console.log("[downloadDiscountReason] Sending GET request to:", `api/v1/file/download/${reasonFile}`);
+    // console.log("[downloadDiscountReason] Sending GET request to:", `api/v1/file/download/${reasonFile}`);
     const response = await axiosInstance.get(`api/v1/file/download/${reasonFile}`, {
       responseType: "blob",
       headers: {
