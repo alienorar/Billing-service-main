@@ -19,6 +19,7 @@ const Index = () => {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const queryClient = useQueryClient()
+ const [isConfirmVisible, setIsConfirmVisible] = useState(false);
 
   // URL search parameters
   const page = Number(searchParams.get("page")) || 1
@@ -62,7 +63,6 @@ const Index = () => {
     educationType,
   })
 
-  // Sync students data (disabled by default)
   const { data: syncData, isFetching: isSyncing } = useSyncGetStudents({
     enabled: false,
   })
@@ -464,7 +464,7 @@ const Index = () => {
               Exel bilan yangilash
             </Button>
           </Popconfirm>
-          <Popconfirm
+    <Popconfirm
             title="Hemis orqali yangilashni tasdiqlaysizmi !"
             onConfirm={() => {
               handleSync();         
@@ -490,13 +490,26 @@ const Index = () => {
                 padding: "6px 16px",
               },
             }}
-
-            className="text-[16px] mx-2"
-            onClick={handleSync}
-            loading={isSyncing}
           >
-            Hemis orqali yangilash
-          </Button>
+            <Button
+              type="primary"
+              size="large"
+              style={{
+                maxWidth: 206,
+                minWidth: 80,
+                backgroundColor: "#050556",
+                color: "white",
+                height: 40,
+                paddingRight: "2px",
+                paddingLeft: "2px",
+              }}
+              className="text-[16px]"
+              loading={isSyncing}
+            >
+              Hemis orqali yangilash
+            </Button>
+          </Popconfirm>
+
 
           <Button
             type="primary"
