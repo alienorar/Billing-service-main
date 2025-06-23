@@ -30,6 +30,7 @@ const Index = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
+  const [isConfirmVisible, setIsConfirmVisible] = useState(false);
 
 
 
@@ -469,24 +470,49 @@ const Index = () => {
               Exel bilan yangilash
             </Button>
           </Popconfirm>
-          <Button
-            type="primary"
-            size="large"
-            style={{
-              maxWidth: 206,
-              minWidth: 80,
-              backgroundColor: "#050556",
-              color: "white",
-              height: 40,
-              paddingRight: "2px",
-              paddingLeft: "2px",
+          <Popconfirm
+            title="Hemis orqali yangilashni tasdiqlaysizmi !"
+            onConfirm={() => {
+              handleSync();         
+              setIsConfirmVisible(false);  
             }}
-            className="text-[16px] "
-            onClick={handleSync}
-            loading={isSyncing}
+            okText="Yes"
+            cancelText="No"
+            okButtonProps={{
+              style: {
+                backgroundColor: "green",
+                borderColor: "green",
+                marginLeft: "10px",
+                padding: "6px 16px",
+              },
+            }}
+            cancelButtonProps={{
+              style: {
+                backgroundColor: "red",
+                borderColor: "red",
+                color: "white",
+                padding: "6px 16px",
+              },
+            }}
           >
-            Hemis orqali yangilash
-          </Button>
+            <Button
+              type="primary"
+              size="large"
+              style={{
+                maxWidth: 206,
+                minWidth: 80,
+                backgroundColor: "#050556",
+                color: "white",
+                height: 40,
+                paddingRight: "2px",
+                paddingLeft: "2px",
+              }}
+              className="text-[16px]"
+              loading={isSyncing}
+            >
+              Hemis orqali yangilash
+            </Button>
+          </Popconfirm>
         </div>
       </div>
 
