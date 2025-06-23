@@ -55,6 +55,7 @@ const AdminPanel = () => {
             <img
               src={LogoText || "/placeholder.svg"}
               className="text-[20px] text-[#fff] object-contain w-[80px] h-[40px] flex"
+              alt="img"
             />
           )}
         </div>
