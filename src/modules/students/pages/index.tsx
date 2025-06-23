@@ -65,7 +65,6 @@ const Index = () => {
     educationType,
   })
 
-  // Sync students data (disabled by default)
   const { data: syncData, isFetching: isSyncing } = useSyncGetStudents({
     enabled: false,
   })
