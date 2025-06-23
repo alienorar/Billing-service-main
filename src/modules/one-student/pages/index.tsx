@@ -69,7 +69,7 @@ const StudentDetails: React.FC = () => {
       const url = window.URL.createObjectURL(data);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `discount_reason_${reasonFile}.pdf`; // Adjust extension if known
+      link.download = `discount_reason_${reasonFile}.pdf`; 
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -98,7 +98,7 @@ const StudentDetails: React.FC = () => {
   const handleDownload = (reasonFile: string) => {
     console.log("[handleDownload] Download button clicked for reasonFile:", reasonFile);
     if (reasonFile) {
-      downloadFile(reasonFile); // Pass reasonFile as a string
+      downloadFile(reasonFile); 
     } else {
       console.error("[handleDownload] No reasonFile provided");
       message.error({ content: "Fayl ID topilmadi!", key: "download" });
