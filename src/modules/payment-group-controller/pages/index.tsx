@@ -22,7 +22,7 @@ const Index = () => {
   const { mutate: deletePmtGroup, isPending: isDeleting } = useDeletePmtGroupList();
   // const { data: groupList } = useGetAvailabletGroupList()
 
-  // console.log(groupList," selectedGroupList")
+
   const navigate = useNavigate();
 
   // URL search parameters
@@ -40,8 +40,6 @@ const Index = () => {
 
   // Update table data and log response
   useEffect(() => {
-    // console.log("Payment Groups Response:", pmGroupList);
-    // console.log("API Error:", error);
     if (pmGroupList?.data?.content) {
       setTableData(pmGroupList.data.content);
       setTotal(pmGroupList.data.paging?.totalItems || 0);
