@@ -66,7 +66,7 @@ const Index = () => {
   ];
 
 
-  // Fetch students data
+  // Fetch students datass
   const { data: students } = useGetStudents({
     size,
     page: page - 1,
