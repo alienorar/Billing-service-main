@@ -23,6 +23,7 @@ import {
   GroupList,
   GroupStudents,
   Role,
+  Debt,
 } from "@modules"
 
 export const routesConfig = [
@@ -129,5 +130,13 @@ export const routesConfig = [
     element: <GroupStudents />,
     permissions: ["GROUP_STATISTICS_MENU"],
     showInSidebar: false,
+  },
+  {
+    path: "debt",
+    label:"Qarzdorlik",
+    icon: <FaSignal style={{ fontSize: "22px" }} />,
+    element: <Debt />,
+    permissions: ["DISCOUNT_PAGEABLE"],
+    showInSidebar: true,
   },
 ]

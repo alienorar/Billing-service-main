@@ -43,8 +43,8 @@ const StudentDetails: React.FC = () => {
   const trInfo = trInfoResponse?.data;
   const discounts = studentsDiscounts?.data?.content;
 
-  console.log("[StudentDetails] Component rendered, id:", id);
-  console.log("[StudentDetails] Discounts data:", discounts);
+  // console.log("[StudentDetails] Component rendered, id:", id);
+  // console.log("[StudentDetails] Discounts data:", discounts);
 
   const showModal = () => setIsModalOpen(true);
   const handleClose = () => {
@@ -95,6 +95,7 @@ const StudentDetails: React.FC = () => {
     },
   });
 
+  
   const handleDownload = (reasonFile: string) => {
     console.log("[handleDownload] Download button clicked for reasonFile:", reasonFile);
     if (reasonFile) {
