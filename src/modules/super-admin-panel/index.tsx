@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { MenuFoldOutlined, MenuUnfoldOutlined, LoginOutlined } from "@ant-design/icons"
-import { Button, Layout, Menu, Popconfirm, theme } from "antd"
+import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined ,LogoutOutlined, DownOutlined, UpOutlined } from "@ant-design/icons"
+import { Button, Layout, Menu, Dropdown, theme } from "antd"
 import { NavLink, useLocation, Outlet } from "react-router-dom"
 import { getUserPermissions, logout } from "../../utils/token-service"
 import MainLogo from "../../assets/otu-logo.png"
@@ -14,6 +14,8 @@ const { Item } = Menu
 
 const AdminPanel = () => {
   const [collapsed, setCollapsed] = useState(false)
+
+  const [menuOpen, setMenuOpen] = useState(false);
   // const navigate = useNavigate()
   const { pathname } = useLocation()
   const permissions = getUserPermissions()
@@ -30,18 +32,22 @@ const AdminPanel = () => {
   const handleLogout = () => {
     logout();
   }
-
-  const handleLogoutOk = () => {
-    handleLogout()
-
-  }
-
+  
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken()
 
   const Firstname = localStorage.getItem("Firstname")
   const Lastname = localStorage.getItem("Lastname")
+
+
+  const menu = (
+    <Menu className="px-3 mr-4">
+      <Menu.Item className="font-semibold text-lg text-red-800" key="logout" icon={<LogoutOutlined style={{ fontSize: "16px" }} />} onClick={handleLogout}>
+        Chiqish
+      </Menu.Item>
+    </Menu>
+  );
 
 
 
@@ -105,49 +111,22 @@ const AdminPanel = () => {
               }}
             />
 
+            <div className="flex h-9 justify-end p-3 items-center  text-blact mr-5">
+              <Dropdown overlay={menu} trigger={['click']} onOpenChange={setMenuOpen}>
+                <div className="cursor-pointer flex items-center gap-[6px] text-[#050556]">
+                  <UserOutlined style={{ fontSize: "18px", width: "35px", height: "35px", backgroundColor:"#3333", borderRadius: "50%", display:"flex", justifyContent:"center", color:"#212121" }}  />
+                  <span className="uppercase font-bold">{Firstname} {Lastname}</span>
+                  <span style={{ fontSize: "16px", marginLeft: "4px" }}>
+                    {menuOpen ? <UpOutlined style={{color:"#212121"}} /> : <DownOutlined style={{color:"#212121"}}  />}
+                  </span>
 
-            <div className="flex justify-between gap-10 items-center">
-
-              <h2 className="text-[#050556] font-bold">Admin: <span className="text-green-700"> {Firstname} {Lastname} ⭐</span></h2>
-
-              <Popconfirm
-                title="Are you sure you want to logout?"
-                onConfirm={handleLogoutOk}
-                okText="Yes"
-                cancelText="No"
-                okButtonProps={{
-                  style: {
-                    backgroundColor: "green",
-                    borderColor: "green",
-                    marginLeft: "10px",
-                    padding: "6px 16px",
-                  },
-                }}
-                cancelButtonProps={{
-                  style: {
-                    backgroundColor: "red",
-                    borderColor: "red",
-                    color: "white",
-                    padding: "6px 16px",
-                  },
-                }}
-              >
-                <Button
-                  type="text"
-                  icon={<LoginOutlined />}
-                  style={{
-                    fontSize: "18px",
-                    width: 84,
-                    height: 44,
-                    marginRight: 30,
-                    fontFamily: "monospace",
-                  }}
-                >
-                  Logout
-                </Button>
-              </Popconfirm>
-
+                </div>
+              </Dropdown>
             </div>
+
+
+
+            
 
           </div>
         </Header>

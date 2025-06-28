@@ -1,3 +1,4 @@
+
 // components/StudentDebtsTable.tsx
 import { Table, Button, Tooltip, message, Switch } from "antd";
 import { CheckOutlined, CloseOutlined, DownloadOutlined, EditOutlined } from "@ant-design/icons";
@@ -18,11 +19,13 @@ const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
     const [update, setUpdate] = useState<any | null>(null);
     const debts = data?.data?.content || [];
     const deactivateDebt = useDeactivateDebt()
+
     const showModal = () => setIsModalOpen(true);
     const handleClose = () => {
         setIsModalOpen(false);
         setUpdate(null);
     };
+
 
     const { mutate: downloadFile, isPending: isDownloading } = useMutation({
         mutationFn: downloadDebtReason,
@@ -35,6 +38,7 @@ const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
             link.click();
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
+
             message.success({ content: "Fayl yuklab olindi!", key: "download" });
         },
         onError: (error: any) => {
@@ -49,6 +53,7 @@ const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
             deactivateDebt.mutate(id);
         }
     };
+
     const handleDownload = (reasonFile: string) => {
         if (reasonFile) downloadFile(reasonFile);
         else message.error({ content: "Fayl ID topilmadi!", key: "download" });
@@ -65,6 +70,7 @@ const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
             render: (amount: number) => <span className="text-red-500">{amount.toLocaleString()} UZS</span>,
         },
           {
+
                 title: "Active",
                 dataIndex: "active",
                 // sorter: false,
@@ -80,6 +86,7 @@ const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
                     />
                 ),
             },
+
         {
             title: "Fayl",
             key: "download",
@@ -134,3 +141,4 @@ const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
 };
 
 export default StudentDebtsTable;
+

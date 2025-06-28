@@ -97,6 +97,7 @@ const StudentDetails: React.FC = () => {
   });
 
 
+
   const handleDownload = (reasonFile: string) => {
     console.log("[handleDownload] Download button clicked for reasonFile:", reasonFile);
     if (reasonFile) {
