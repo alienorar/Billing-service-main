@@ -3,6 +3,9 @@ import { ColumnsType, TablePaginationConfig, TableProps } from "antd/es/table";
 
 // ========== PARAMS TYPE ==========
 export interface ParamsType {
+
+    studentId?: number|string;
+
   size?: number | string | undefined,
   page?: number | string | undefined,
   search?: string,
@@ -226,7 +229,7 @@ export interface DebtRecord {
     studentDiscountAmount?: number;
   };
 
-  studentId?: number;
+  studentId?: number|string;
   description?: string;
   reasonFile?: string;
   debtType?: string;
