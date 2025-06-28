@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { downloadDiscountReason } from "../service";
 import DiscountsModal from "./modal";
+import StudentDebtsTable from "../../debt/pages";
 
 const { Title, Text } = Typography;
 
@@ -69,7 +70,7 @@ const StudentDetails: React.FC = () => {
       const url = window.URL.createObjectURL(data);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `discount_reason_${reasonFile}.pdf`; 
+      link.download = `discount_reason_${reasonFile}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -95,11 +96,12 @@ const StudentDetails: React.FC = () => {
     },
   });
 
-  
+
+
   const handleDownload = (reasonFile: string) => {
     console.log("[handleDownload] Download button clicked for reasonFile:", reasonFile);
     if (reasonFile) {
-      downloadFile(reasonFile); 
+      downloadFile(reasonFile);
     } else {
       console.error("[handleDownload] No reasonFile provided");
       message.error({ content: "Fayl ID topilmadi!", key: "download" });
@@ -159,7 +161,7 @@ const StudentDetails: React.FC = () => {
       dataIndex: "studentLevel",
       key: "studentLevel",
     },
- 
+
     {
       title: "Chegirma Sababi",
       key: "download",
@@ -226,7 +228,7 @@ const StudentDetails: React.FC = () => {
           }}
         >
           <div className="flex items-center gap-5 mb-5">
-             <Image
+            <Image
               width={100}
               height={120}
               src={student?.image}
@@ -453,6 +455,11 @@ const StudentDetails: React.FC = () => {
                   </>
                 ),
               },
+              {
+                key: "debts",
+                label: "Qarzdorlik",
+                children: <StudentDebtsTable studentId={id} />
+              }
             ]}
           />
         </Card>
