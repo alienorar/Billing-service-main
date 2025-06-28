@@ -1,16 +1,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { StudentDiscount } from "@types";
-import { createStudentsDiscounts, updateStudentsDiscounts, uploadDiscountReason } from "../service";
+import { DebtRecord } from "@types";
+import { createDebtList, deactivateDebt, updateDebtList, uploadDebtReason } from "../service";
 import { openNotification } from "@utils";
 
 // ============ CREATE ROLES ===========
-export function useCreateStudentsDiscounts() {
+export function useCreateDebtList() {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: (data: StudentDiscount) => createStudentsDiscounts(data),
+        mutationFn: (data: DebtRecord) => createDebtList(data),
         onSuccess: () => {
             openNotification("success", "Success", "Chegirma successfully created");
-            queryClient.invalidateQueries({ queryKey: ["discounts"] });
+            queryClient.invalidateQueries({ queryKey: ["debt"] });
         },
         onError: (error) => {
             openNotification("error", "Error", error?.message)
@@ -19,13 +19,13 @@ export function useCreateStudentsDiscounts() {
 }
 
 // ============ Update student discount ===========
-export function useUpdateStudentsDiscounts() {
+export function useUpdateDebtList() {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: (data: StudentDiscount) => updateStudentsDiscounts(data),
+        mutationFn: (data:DebtRecord) => updateDebtList(data),
         onSuccess: (data) => {
             openNotification("success", "Success", data?.data?.message)
-            queryClient.invalidateQueries({ queryKey: ["discounts"] });
+            queryClient.invalidateQueries({ queryKey: ["debt"] });
         },
         onError: (error) => {
             openNotification("error", "Error", error?.message)
@@ -34,10 +34,10 @@ export function useUpdateStudentsDiscounts() {
 }
 
 // ============ upload discount reason file  ===========
-export function useUploadDiscountReason() {
+export function useUploadDebtReason() {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: (data: any) => uploadDiscountReason(data),
+        mutationFn: (data: any) => uploadDebtReason(data),
         onSuccess: (data) => {
             console.log(data)
             queryClient.invalidateQueries({ queryKey: ["discounts"] });
@@ -48,4 +48,20 @@ export function useUploadDiscountReason() {
     })
 }
 
+export function useDeactivateDebt() {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: (id:number|string) =>deactivateDebt(id),
+        onSuccess: (data) => {
+            openNotification("success", "Success", data?.data?.message)
+        },
+        onSettled: (_, error) => {
+            if (error) {
+                openNotification("error", "Error", error?.message)
+            } else {
+                queryClient.invalidateQueries({ queryKey: ["debt"] })
+            }
+        }
+    })
 
+}
