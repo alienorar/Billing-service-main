@@ -19,7 +19,7 @@ interface Debt {
   amount: number;
 }
 
-const DebtsModal = ({ open, handleClose, update,  }: any) => {
+const DebtsModal = ({ open, handleClose, update, studentId  }: any) => {
   const [form] = Form.useForm();
   const [reasonFileUuid, setReasonFileUuid] = useState<string | null>(null);
   const [initialFileInfo, setInitialFileInfo] = useState<string | null>(null);
@@ -91,7 +91,7 @@ const DebtsModal = ({ open, handleClose, update,  }: any) => {
 
     const payload: Debt & { reasonFile: string } = {
       ...(update?.id && { id: update.id }), 
-      studentId: value.studentId,
+      studentId: studentId,
       description: value.description,
       debtType: value.debtType,
       studentLevel: value.studentLevel,
@@ -115,13 +115,13 @@ const DebtsModal = ({ open, handleClose, update,  }: any) => {
       footer={null}
     >
       <Form form={form} name="debt_form" layout="vertical" onFinish={onFinish}>
-        <Form.Item
+        {/* <Form.Item
           label="Student Id"
           name="studentId"
           rules={[{ required: true, message: "Tavsifni kiriting!" }]}
         >
           <Input style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }} type="number" />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           label="Tavsif"
           name="description"

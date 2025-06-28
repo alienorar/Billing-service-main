@@ -51,7 +51,7 @@ const Index = () => {
     { value: "MAGISTR", label: "Magistr" },
   ]
 
-  // Fetch students data
+  // Fetch students datass
   const { data: students } = useGetStudents({
     size,
     page: page - 1,
