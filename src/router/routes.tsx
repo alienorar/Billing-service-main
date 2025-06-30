@@ -1,4 +1,6 @@
 import {
+  FaHandHoldingUsd,
+  FaHandshake,
   FaHourglassEnd,
   FaRegCreditCard,
   FaSignal,
@@ -24,6 +26,7 @@ import {
   GroupStudents,
   Role,
   Debt,
+  Discount,
 } from "@modules"
 
 export const routesConfig = [
@@ -133,9 +136,17 @@ export const routesConfig = [
   },
   {
     path: "debt",
-    label:"Qarzdorlik",
-    icon: <FaSignal style={{ fontSize: "22px" }} />,
+    label:"Qo'shimcha qarzdorlik",
+    icon: <FaHandshake style={{ fontSize: "22px" }} />,
     element: <Debt />,
+    permissions: ["DISCOUNT_PAGEABLE"],
+    showInSidebar: true,
+  },
+  {
+    path: "discounts",
+    label:"Chegirmalar",
+    icon: <FaHandHoldingUsd style={{ fontSize: "22px" }} />,
+    element: <Discount />,
     permissions: ["DISCOUNT_PAGEABLE"],
     showInSidebar: true,
   },
