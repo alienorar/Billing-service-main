@@ -31,7 +31,9 @@ const Index = () => {
   const educationType = searchParams.get("educationType") || ""
   const showDebt = searchParams.get("showDebt") || ""
   const pinfl = searchParams.get("pinfl") ?? "";
+  const passport = searchParams.get("passport") ?? "";
 
+ 
   // Save the checkbox value
   const [isInDebt, setIsInDebt] = useState<boolean>(false)
   useEffect(() => {
@@ -63,6 +65,7 @@ const Index = () => {
     showDebt,
     educationType,
     pinfl: pinfl || undefined,
+    passport,
 
   })
 
@@ -102,6 +105,7 @@ const Index = () => {
       educationType,
       showDebt,
       pinfl,
+      passport
 
     })
   }
@@ -117,6 +121,7 @@ const Index = () => {
       educationType,
       showDebt,
       pinfl,
+      passport
 
     })
   }
@@ -153,6 +158,7 @@ const Index = () => {
       educationType,
       showDebt,
       pinfl,
+      passport
 
     }
 
@@ -269,7 +275,7 @@ const Index = () => {
   return (
     <>
       <div className="flex flex-col gap-4 px-5 py-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center gap-[20px] flex-wrap">
           <Input
             placeholder="PINFL"
             value={pinfl}
@@ -284,6 +290,32 @@ const Index = () => {
                 educationType,
                 showDebt,
                 pinfl: e.target.value,
+                passport,
+
+              })
+            }
+            style={{
+              padding: "6px",
+              border: "1px solid #d9d9d9",
+              borderRadius: "6px",
+            }}
+            className="w-[300px]"
+          />
+          <Input
+            placeholder="Passport"
+            value={passport}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setSearchParams({
+                page: "1",
+                size: size.toString(),
+                phone,
+                firstName,
+                lastName,
+                educationForm,
+                educationType,
+                showDebt,
+                pinfl,
+                passport:e.target.value
 
               })
             }
@@ -307,7 +339,8 @@ const Index = () => {
                 educationForm,
                 educationType,
                 showDebt,
-                pinfl
+                pinfl,
+                passport
               })
             }
             style={{
@@ -330,7 +363,8 @@ const Index = () => {
                 educationForm,
                 educationType,
                 showDebt,
-                pinfl
+                pinfl,
+                passport
               })
             }
             style={{
@@ -353,7 +387,8 @@ const Index = () => {
                 educationForm,
                 educationType,
                 showDebt,
-                pinfl
+                pinfl,
+                passport
               })
             }
             style={{
@@ -384,7 +419,8 @@ const Index = () => {
                 educationType,
                 educationForm: value || "",
                 showDebt,
-                pinfl
+                pinfl,
+                passport
               })
             }
           />
@@ -443,7 +479,8 @@ const Index = () => {
                 educationForm,
                 educationType: value || "",
                 showDebt,
-                pinfl
+                pinfl,
+                passport
               })
             }
           />
