@@ -19,7 +19,7 @@ const Index = () => {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const queryClient = useQueryClient()
- const [isConfirmVisible, setIsConfirmVisible] = useState(false);
+  const [isConfirmVisible, setIsConfirmVisible] = useState(false);
 
   // URL search parameters
   const page = Number(searchParams.get("page")) || 1
@@ -30,7 +30,10 @@ const Index = () => {
   const educationForm = searchParams.get("educationForm") || ""
   const educationType = searchParams.get("educationType") || ""
   const showDebt = searchParams.get("showDebt") || ""
+  const pinfl = searchParams.get("pinfl") ?? "";
+  const passport = searchParams.get("passport") ?? "";
 
+ 
   // Save the checkbox value
   const [isInDebt, setIsInDebt] = useState<boolean>(false)
   useEffect(() => {
@@ -61,6 +64,9 @@ const Index = () => {
     educationForm,
     showDebt,
     educationType,
+    pinfl: pinfl || undefined,
+    passport,
+
   })
 
   const { data: syncData, isFetching: isSyncing } = useSyncGetStudents({
@@ -98,6 +104,9 @@ const Index = () => {
       educationForm,
       educationType,
       showDebt,
+      pinfl,
+      passport
+
     })
   }
 
@@ -111,6 +120,9 @@ const Index = () => {
       educationForm,
       educationType,
       showDebt,
+      pinfl,
+      passport
+
     })
   }
 
@@ -145,6 +157,9 @@ const Index = () => {
       educationForm,
       educationType,
       showDebt,
+      pinfl,
+      passport
+
     }
 
     // Remove undefined values
@@ -225,19 +240,19 @@ const Index = () => {
     },
     ...(isInDebt
       ? [
-          {
-            title: "Qarzdorligi",
-            key: "studentDebtAmount",
-            render: (_: any, record: any) => {
-              const amount = record.paymentDetails?.studentDebtAmount ?? 0
-              return (
-                <span className={amount < 0 ? "text-red-500 font-semibold" : "text-green-500 font-semibold"}>
-                  {amount !== 0 ? amount.toLocaleString() : "-"}
-                </span>
-              )
-            },
+        {
+          title: "Qarzdorligi",
+          key: "studentDebtAmount",
+          render: (_: any, record: any) => {
+            const amount = record.paymentDetails?.studentDebtAmount ?? 0
+            return (
+              <span className={amount < 0 ? "text-red-500 font-semibold" : "text-green-500 font-semibold"}>
+                {amount !== 0 ? amount.toLocaleString() : "-"}
+              </span>
+            )
           },
-        ]
+        },
+      ]
       : []),
     {
       title: "Action",
@@ -260,7 +275,57 @@ const Index = () => {
   return (
     <>
       <div className="flex flex-col gap-4 px-5 py-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center gap-[20px] flex-wrap">
+          <Input
+            placeholder="PINFL"
+            value={pinfl}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setSearchParams({
+                page: "1",
+                size: size.toString(),
+                phone,
+                firstName,
+                lastName,
+                educationForm,
+                educationType,
+                showDebt,
+                pinfl: e.target.value,
+                passport,
+
+              })
+            }
+            style={{
+              padding: "6px",
+              border: "1px solid #d9d9d9",
+              borderRadius: "6px",
+            }}
+            className="w-[300px]"
+          />
+          <Input
+            placeholder="Passport"
+            value={passport}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setSearchParams({
+                page: "1",
+                size: size.toString(),
+                phone,
+                firstName,
+                lastName,
+                educationForm,
+                educationType,
+                showDebt,
+                pinfl,
+                passport:e.target.value
+
+              })
+            }
+            style={{
+              padding: "6px",
+              border: "1px solid #d9d9d9",
+              borderRadius: "6px",
+            }}
+            className="w-[300px]"
+          />
           <Input
             placeholder="Tel"
             value={phone}
@@ -274,6 +339,8 @@ const Index = () => {
                 educationForm,
                 educationType,
                 showDebt,
+                pinfl,
+                passport
               })
             }
             style={{
@@ -296,6 +363,8 @@ const Index = () => {
                 educationForm,
                 educationType,
                 showDebt,
+                pinfl,
+                passport
               })
             }
             style={{
@@ -318,6 +387,8 @@ const Index = () => {
                 educationForm,
                 educationType,
                 showDebt,
+                pinfl,
+                passport
               })
             }
             style={{
@@ -348,6 +419,8 @@ const Index = () => {
                 educationType,
                 educationForm: value || "",
                 showDebt,
+                pinfl,
+                passport
               })
             }
           />
@@ -374,9 +447,8 @@ const Index = () => {
             />
 
             <span
-              className={`w-5 h-5 flex items-center justify-center border-2 rounded ${
-                isInDebt ? "bg-[#050556]" : "bg-white"
-              } border-[#050556"]`}
+              className={`w-5 h-5 flex items-center justify-center border-2 rounded ${isInDebt ? "bg-[#050556]" : "bg-white"
+                } border-[#050556"]`}
             >
               {isInDebt && (
                 <svg className="w-4 h-4 text-white" fill="none" stroke="#ffffff" strokeWidth="3" viewBox="0 0 24 24">
@@ -407,6 +479,8 @@ const Index = () => {
                 educationForm,
                 educationType: value || "",
                 showDebt,
+                pinfl,
+                passport
               })
             }
           />
@@ -464,11 +538,11 @@ const Index = () => {
               Exel bilan yangilash
             </Button>
           </Popconfirm>
-    <Popconfirm
+          <Popconfirm
             title="Hemis orqali yangilashni tasdiqlaysizmi !"
             onConfirm={() => {
-              handleSync();         
-              setIsConfirmVisible(false); 
+              handleSync();
+              setIsConfirmVisible(false);
               isConfirmVisible
 
             }}
