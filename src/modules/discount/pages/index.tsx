@@ -36,7 +36,7 @@ const DiscountsSection = () => {
   // Fetch discounts with pagination
   const { data: studentsDiscounts, isLoading, error } = useGetStudentsDiscounts({
     studentId,
-    page: currentPage - 1, // API expects 0-based page index
+    page: currentPage - 1, 
     size: pageSize,
   });
 
@@ -58,12 +58,10 @@ const DiscountsSection = () => {
     });
   }, [studentsDiscounts, discounts, totalItems, totalPages, currentPage, pageSize]);
 
-  // Update URL when pagination changes
   useEffect(() => {
     setSearchParams({ page: currentPage.toString(), size: pageSize.toString() });
   }, [currentPage, pageSize, setSearchParams]);
 
-  // Reset currentPage if it exceeds total pages
   useEffect(() => {
     if (totalItems > 0 && totalPages > 0 && currentPage > totalPages) {
       console.log(

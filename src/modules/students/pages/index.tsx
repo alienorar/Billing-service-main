@@ -407,7 +407,7 @@ const Index = () => {
               borderRadius: "6px",
             }}
             options={educationFormOptions}
-            value={educationForm || ""}
+            value={educationForm ||undefined}
             className="w-[200px]"
             onChange={(value: string | undefined) =>
               setSearchParams({
@@ -467,7 +467,7 @@ const Index = () => {
               borderRadius: "6px",
             }}
             options={educationTypeOptions}
-            value={educationType || ""}
+            value={educationType || undefined}
             className="w-[200px]"
             onChange={(value: string | undefined) =>
               setSearchParams({
