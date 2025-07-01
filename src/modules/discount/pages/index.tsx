@@ -1,12 +1,12 @@
 import { Button, Table, Tooltip, Space } from "antd";
-import { EditOutlined, DownloadOutlined } from "@ant-design/icons";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {  DownloadOutlined } from "@ant-design/icons";
+import { useMutation,  } from "@tanstack/react-query";
 import { message } from "antd";
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useGetStudentsDiscounts } from "../hooks/queries";
 import { downloadDiscountReason } from "../service";
-import DiscountsModal from "./modal";
+// import DiscountsModal from "./modal";
 
 interface DiscountType {
   id: string;
@@ -21,7 +21,7 @@ interface DiscountType {
 const DiscountsSection = () => {
   const { id: studentId } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   // Initialize pagination from query parameters
   const [currentPage, setCurrentPage] = useState(() => {
@@ -71,8 +71,8 @@ const DiscountsSection = () => {
     }
   }, [totalItems, totalPages, currentPage, pageSize]);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [update, setUpdate] = useState<DiscountType | null>(null);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [update, setUpdate] = useState<DiscountType | null>(null);
 
   const { mutate: downloadFile, isPending: isDownloading } = useMutation({
     mutationFn: downloadDiscountReason,
@@ -120,20 +120,20 @@ const DiscountsSection = () => {
     }
   };
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
+  // const showModal = () => {
+  //   setIsModalOpen(true);
+  // };
 
-  const handleClose = () => {
-    setIsModalOpen(false);
-    setUpdate(null);
-    queryClient.invalidateQueries({ queryKey: ["studentsDiscounts", studentId] });
-  };
+  // const handleClose = () => {
+  //   setIsModalOpen(false);
+  //   setUpdate(null);
+  //   queryClient.invalidateQueries({ queryKey: ["studentsDiscounts", studentId] });
+  // };
 
-  const editData = (item: DiscountType) => {
-    setUpdate(item);
-    showModal();
-  };
+  // const editData = (item: DiscountType) => {
+  //   setUpdate(item);
+  //   showModal();
+  // };
 
   const handleTableChange = (pagination: any) => {
     console.log("[handleTableChange] Pagination:", pagination);
@@ -190,19 +190,19 @@ const DiscountsSection = () => {
         </Space>
       ),
     },
-    {
-      title: "Action",
-      key: "action",
-      render: (record: DiscountType) => (
-        <Space size="middle">
-          <Tooltip title="Tahrirlash">
-            <Button onClick={() => editData(record)}>
-              <EditOutlined />
-            </Button>
-          </Tooltip>
-        </Space>
-      ),
-    },
+    // {
+    //   title: "Action",
+    //   key: "action",
+    //   render: (record: DiscountType) => (
+    //     <Space size="middle">
+    //       <Tooltip title="Tahrirlash">
+    //         <Button onClick={() => editData(record)}>
+    //           <EditOutlined />
+    //         </Button>
+    //       </Tooltip>
+    //     </Space>
+    //   ),
+    // },
   ];
 
   if (error) {
@@ -211,13 +211,13 @@ const DiscountsSection = () => {
 
   return (
     <>
-      <DiscountsModal
+      {/* <DiscountsModal
         open={isModalOpen}
         handleClose={handleClose}
         studentId={studentId}
         update={update}
-      />
-      <div className="flex w-full items-center justify-end py-4">
+      /> */}
+      {/* <div className="flex w-full items-center justify-end py-4">
         <Button
           type="primary"
           size="large"
@@ -232,7 +232,7 @@ const DiscountsSection = () => {
         >
           Yaratish
         </Button>
-      </div>
+      </div> */}
       {discounts?.length ? (
         <div>
           <Table
