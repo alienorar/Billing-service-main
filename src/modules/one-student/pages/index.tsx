@@ -42,6 +42,9 @@ const StudentDetails: React.FC = () => {
   const [update, setUpdate] = useState<any | null>(null);
 
   const trInfo = trInfoResponse?.data;
+
+  console.log(trInfoResponse?.data.paymentDetails);
+  
   const discounts = studentsDiscounts?.data?.content;
 
   // console.log("[StudentDetails] Component rendered, id:", id);
@@ -320,7 +323,7 @@ const StudentDetails: React.FC = () => {
                   Shartnoma summasi :
                 </span>
                 <span className="text-sm font-bold text-gray-800">
-                  {trInfo?.totalContractAmount ? Number(trInfo?.totalContractAmount).toLocaleString() : "0"} UZS
+                  {trInfo?.totalContractAmount ? Number(trInfo?.paymentDetails.studentContractAmount).toLocaleString() : "0"} UZS
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -342,7 +345,7 @@ const StudentDetails: React.FC = () => {
                   Chegirma summasi
                 </span>
                 <span className="text-sm font-bold text-green-600">
-                  {trInfo?.totalDiscountAmount ? Number(trInfo?.totalDiscountAmount).toLocaleString() : "0"} UZS
+                  {trInfo?.totalDiscountAmount ? Number(trInfo?.paymentDetails.studentDiscountAmount).toLocaleString() : "0"} UZS
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -364,7 +367,7 @@ const StudentDetails: React.FC = () => {
                   To'langan summa
                 </span>
                 <span className="text-sm font-bold text-blue-600">
-                  {trInfo?.totalPaidAmount ? Number(trInfo?.totalPaidAmount).toLocaleString() : "0"} UZS
+                  {trInfo?.totalPaidAmount ? Number(trInfo?.paymentDetails.studentPaidAmount).toLocaleString() : "0"} UZS
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -385,8 +388,30 @@ const StudentDetails: React.FC = () => {
                   </svg>
                   Qarzdorlik
                 </span>
-                <span className={Number(trInfo?.totalDebtAmount) < 0 ? "text-sm font-bold text-red-600" : "text-sm font-bold text-green-600"}>
-                  {Number(trInfo?.totalDebtAmount) > 0 ? "+" : ""}{trInfo ? Number(trInfo?.totalDebtAmount).toLocaleString() : "0"} UZS
+                <span className={Number(trInfo?.paymentDetails.studentDebtAmount) < 0 ? "text-sm font-bold text-red-600" : "text-sm font-bold text-green-600"}>
+                  {Number(trInfo?.paymentDetails.studentDebtAmount) > 0 ? "+" : ""}{trInfo ? Number(trInfo?.paymentDetails.studentDebtAmount).toLocaleString() : "0"} UZS
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                  <svg
+                    className="w-5 h-5 text-red-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                  Qo'shimcha qarzdorlik
+                </span>
+                <span className={Number(trInfo?.paymentDetails.studentAdditionalDebtAmount) < 0 ? "text-sm font-bold text-red-600" : "text-sm font-bold text-green-600"}>
+                  {Number(trInfo?.paymentDetails.studentAdditionalDebtAmount) > 0 ? "+" : ""}{trInfo ? Number(trInfo?.paymentDetails.studentAdditionalDebtAmount).toLocaleString() : "0"} UZS
                 </span>
               </div>
             </div>
