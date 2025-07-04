@@ -148,6 +148,16 @@ const DiscountsSection = () => {
       key: "id",
     },
     {
+      title: "Talaba",
+      key: "studentName",
+      render: (record: any) => record.student?.fullName || "-",
+    },
+    {
+      title: "Guruh",
+      key: "group",
+      render: (record: any) => record.student?.group || "-",
+    },
+    {
       title: "Chegirma tarifi",
       dataIndex: "description",
       key: "description",
