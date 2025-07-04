@@ -1,11 +1,13 @@
-import { Button, Table, Tooltip, Space } from "antd";
-import {  DownloadOutlined } from "@ant-design/icons";
+import { Button, Table, Tooltip, Space,  } from "antd";
+import {  DownloadOutlined,  } from "@ant-design/icons";
 import { useMutation,  } from "@tanstack/react-query";
 import { message } from "antd";
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useGetStudentsDiscounts } from "../hooks/queries";
 import { downloadDiscountReason } from "../service";
+import { FiEye } from "react-icons/fi";
+import AuditModal from "./auditModal";
 // import DiscountsModal from "./modal";
 
 interface DiscountType {
@@ -19,6 +21,9 @@ interface DiscountType {
 }
 
 const DiscountsSection = () => {
+  const [audetModalOpen, setAudetModalOpen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<any | null>(null); 
+
   const { id: studentId } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   // const queryClient = useQueryClient();
@@ -141,6 +146,10 @@ const DiscountsSection = () => {
     setPageSize(pagination.pageSize);
   };
 
+  const showModal = () => {
+    setAudetModalOpen(true);
+  };
+
   const discountColumns = [
     {
       title: "ID",
@@ -200,6 +209,27 @@ const DiscountsSection = () => {
         </Space>
       ),
     },
+    {
+      title: "Action",
+      key: "action",
+      render: (record: any) =>
+        record?.id ? (
+          <Space size="middle">
+            <Tooltip title="Ko'rish">
+              <Button
+                onClick={() => {
+                  setSelectedRecord(record); 
+                  showModal(); 
+                }}
+              >
+                <FiEye size={18} />
+              </Button>
+            </Tooltip>
+          </Space>
+        ) : (
+          "-"
+        ),
+    }
     // {
     //   title: "Action",
     //   key: "action",
@@ -265,6 +295,11 @@ const DiscountsSection = () => {
       ) : (
         <h2>Chegirmalar topilmadi</h2>
       )}
+      <AuditModal
+        audetModalOpen={audetModalOpen}
+        setAudetModalOpen={setAudetModalOpen}
+        record={selectedRecord}
+      />
     </>
   );
 };
