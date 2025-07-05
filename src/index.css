@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+ 
 
 
 /* HTML: <div class="loader"></div> */
@@ -63,4 +64,6 @@
     transform: translate(-50%, -50%); 
     color: green;
   }
+
+
   
