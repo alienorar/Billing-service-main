@@ -10,7 +10,7 @@ import LogoText from "../../assets/logo-text.png"
 import { routesConfig } from "../../router/routes"
 
 const { Header, Sider, Content } = Layout
-const { Item } = Menu
+
 
 const AdminPanel = () => {
   const [collapsed, setCollapsed] = useState(false)
@@ -117,7 +117,6 @@ const AdminPanel = () => {
                 height: 64,
               }}
             />
-
             <div className="flex h-9 justify-end p-3 items-center  text-blact mr-5">
               <Dropdown overlay={menu} trigger={['click']} onOpenChange={setMenuOpen}>
                 <div className="cursor-pointer flex items-center gap-[6px] text-[#050556]">
