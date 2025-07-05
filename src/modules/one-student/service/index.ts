@@ -75,6 +75,7 @@ export async function downloadDiscountReason(reasonFile: string) {
   }
 }
 
+// Discount activation
 export async function toggleDebtActive(id: string | number) {
   return await axiosInstance.put(`api/v1/discount/activate-deactivate/${id}`);
 }

@@ -66,35 +66,42 @@ const AdminPanel = () => {
           )}
         </div>
         <Menu theme="dark" mode="inline" selectedKeys={[pathname]} style={{ borderRight: 0 }}>
-          {accessibleRoutes.map((item) => (
-            <Item
-              key={`/super-admin-panel/${item.path}`}
-              icon={
-                <span
-                  className={`inline-flex items-center justify-center w-6 h-6 ${pathname === `/super-admin-panel/${item.path}`
-                    ? "text-white"
-                    : "text-gray-300 group-hover:text-white"
-                    }`}
+          {accessibleRoutes.map((item) => {
+            if (item.children && item.children.length > 0) {
+              return (
+                <Menu.SubMenu
+                  key={item.label}
+                  title={item.label}
+                  icon={item.icon}
                 >
-                  {item.icon}
-                </span>
-              }
-              className="group"
-            >
-              <NavLink
-                to={`/super-admin-panel/${item.path}`}
-                className={({ isActive }) =>
-                  `block w-full text-[18px] no-underline transition-colors duration-200 py-2 px-4 items-center ${isActive
-                    ? "text-sky-500 bg-[#001529] font-semibold"
-                    : "text-gray-300 hover:text-white hover:bg-[#1f1f1f]"
-                  }`
-                }
-              >
-                {item.label}
-              </NavLink>
-            </Item>
-          ))}
+                  {item.children
+                    .filter(child => hasPermission(child.permissions))
+                    .map(child => {
+                      const fullPath = `/super-admin-panel/${child.path}`
+                      return (
+                        <Menu.Item key={fullPath} icon={child.icon}>
+                          <NavLink state={{
+                            display: "flex",
+                            gap: "10px"
+                          }} to={fullPath}>{child.label}</NavLink>
+                        </Menu.Item>
+                      )
+                    })}
+                </Menu.SubMenu>
+              )
+            }
+
+            // Parent route uchun
+            const fullPath = `/super-admin-panel/${item.path}`
+
+            return (
+              <Menu.Item key={fullPath} icon={item.icon}>
+                <NavLink to={fullPath}>{item.label}</NavLink>
+              </Menu.Item>
+            )
+          })}
         </Menu>
+
       </Sider>
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }}>
