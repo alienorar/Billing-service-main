@@ -1,4 +1,4 @@
-import { Modal, Descriptions, Typography, Divider } from "antd";
+import { Modal, Descriptions, Typography } from "antd";
 import { Dispatch, SetStateAction } from "react";
 
 const { Title, Text } = Typography;
