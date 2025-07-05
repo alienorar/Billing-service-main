@@ -9,6 +9,7 @@ import { useGetDebtList } from "../hooks/queries";
 import {  downloadDebtReason } from "../service";
 import DebtsModal from "./modal";
 import { useDeactivateDebt } from "../hooks/mutations";
+import { openNotification } from "@utils";
 
 interface StudentDebtsTableProps {
   studentId?: string; 
@@ -16,24 +17,26 @@ interface StudentDebtsTableProps {
 
 const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
 
+    
     //Pagination
     const [searchParams, setSearchParams] = useSearchParams();
-
+    
     const [currentPage, setCurrentPage] = useState(() => {
-    const page = parseInt(searchParams.get("page") || "1", 10);
-    return isNaN(page) || page < 1 ? 1 : page;
+        const page = parseInt(searchParams.get("page") || "1", 10);
+        return isNaN(page) || page < 1 ? 1 : page;
     });
     const [pageSize, setPageSize] = useState(() => {
         const size = parseInt(searchParams.get("size") || "10", 10);
         return isNaN(size) || ![10, 20, 50].includes(size) ? 10 : size;
     });
-
-
-    const { data, isLoading } = useGetDebtList({
+    const { data, isLoading, error } = useGetDebtList({
         studentId,
         page: currentPage - 1,
         size: pageSize,
     });
+    
+    error?.message? openNotification("error", "Xatolik yuz berdi", error.message): ""
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [update, setUpdate] = useState<any | null>(null);
     const debts = data?.data?.content || [];
