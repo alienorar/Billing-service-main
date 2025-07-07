@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined ,LogoutOutlined, DownOutlined, UpOutlined } from "@ant-design/icons"
+import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined, LogoutOutlined, DownOutlined, UpOutlined } from "@ant-design/icons"
 import { Button, Layout, Menu, Dropdown, theme } from "antd"
 import { NavLink, useLocation, Outlet } from "react-router-dom"
 import { getUserPermissions, logout } from "../../utils/token-service"
@@ -32,7 +32,7 @@ const AdminPanel = () => {
   const handleLogout = () => {
     logout();
   }
-  
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken()
@@ -120,20 +120,15 @@ const AdminPanel = () => {
             <div className="flex h-9 justify-end p-3 items-center  text-blact mr-5">
               <Dropdown overlay={menu} trigger={['click']} onOpenChange={setMenuOpen}>
                 <div className="cursor-pointer flex items-center gap-[6px] text-[#050556]">
-                  <UserOutlined style={{ fontSize: "18px", width: "35px", height: "35px", backgroundColor:"#3333", borderRadius: "50%", display:"flex", justifyContent:"center", color:"#212121" }}  />
+                  <UserOutlined style={{ fontSize: "18px", width: "35px", height: "35px", backgroundColor: "#3333", borderRadius: "50%", display: "flex", justifyContent: "center", color: "#212121" }} />
                   <span className="uppercase font-bold">{Firstname} {Lastname}</span>
                   <span style={{ fontSize: "16px", marginLeft: "4px" }}>
-                    {menuOpen ? <UpOutlined style={{color:"#212121"}} /> : <DownOutlined style={{color:"#212121"}}  />}
+                    {menuOpen ? <UpOutlined style={{ color: "#212121" }} /> : <DownOutlined style={{ color: "#212121" }} />}
                   </span>
 
                 </div>
               </Dropdown>
             </div>
-
-
-
-            
-
           </div>
         </Header>
         <Content
