@@ -203,7 +203,7 @@ const StudentDetails: React.FC = () => {
           checked={active}
           checkedChildren={<CheckOutlined />}
           unCheckedChildren={<CloseOutlined />}
-          onChange={() => handleToggle(record.id)} // faqat ID yuboriladi
+          onChange={() => handleToggle(record.id)} 
           style={{
             backgroundColor: active ? "green" : "#999",
           }}

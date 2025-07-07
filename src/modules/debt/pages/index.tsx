@@ -126,7 +126,6 @@ const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
             render: (amount: number) => <span className="text-red-500">{amount.toLocaleString()} UZS</span>,
         },
           {
-
                 title: "Active",
                 dataIndex: "active",
                 // sorter: false,
