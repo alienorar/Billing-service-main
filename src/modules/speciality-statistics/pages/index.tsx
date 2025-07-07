@@ -185,7 +185,7 @@ const Index = () => {
                     placeholder="Yo'nalish nomi"
                     value={name}
                     onChange={(e) => updateParams({ name: e.target.value })}
-                    style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px",maxWidth:"200px" }}
+                    style={{ padding: "5px", border: "1px solid #d9d9d9", borderRadius: "6px", }}
                 />
                 <Select
                     allowClear
