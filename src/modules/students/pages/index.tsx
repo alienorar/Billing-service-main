@@ -195,10 +195,10 @@ const Index = () => {
       title: "Ta'lim shakli/turi",
       key: "education",
       render: (_: any, record: any) => {
-        const type = record.educationType
+        const type = record?.educationType
           ? record.educationType.charAt(0).toUpperCase() + record.educationType.slice(1).toLowerCase()
           : "-"
-        const form = record.educationForm
+        const form = record?.educationForm
           ? record.educationForm.charAt(0).toUpperCase() + record.educationForm.slice(1).toLowerCase()
           : "-"
 
