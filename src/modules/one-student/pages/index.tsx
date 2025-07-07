@@ -2,12 +2,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useGetStudentById, useGetStudentsDiscounts, useGetStudentsTrInfo } from "../hooks/queries";
 import { useToggleDebtActive } from "../hooks/mutations";
 import { Card, Descriptions, Image, Typography, Table, Button, Tabs, Space, Tooltip, message, Switch } from "antd";
-import { ArrowLeftOutlined, EditOutlined, DownloadOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, EditOutlined, DownloadOutlined, CheckOutlined, CloseOutlined, } from "@ant-design/icons";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { FiEye } from "react-icons/fi";
 import { downloadDiscountReason } from "../service";
 import DiscountsModal from "./modal";
 import StudentDebtsTable from "../../debt/pages";
+import AuditModal from "./auditModal";
 
 const { Title, Text } = Typography;
 
@@ -31,6 +33,10 @@ interface StudentDetails {
 }
 
 const StudentDetails: React.FC = () => {
+  //audit modal
+  const [audetModalOpen, setAudetModalOpen] = useState<boolean>(false);
+  const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
+
   const { mutate: toggleActive } = useToggleDebtActive();
 
   const handleToggle = (id: string | number) => {
@@ -68,6 +74,11 @@ const StudentDetails: React.FC = () => {
     setUpdate(item);
     showModal();
   };
+
+  const audetModal: () => void = () => {
+  setAudetModalOpen(true);
+}
+
 
   // Mutation for downloading the discount reason file
   const { mutate: downloadFile, isPending: isDownloading } = useMutation({
@@ -174,28 +185,6 @@ const StudentDetails: React.FC = () => {
     },
 
     {
-      title: "Chegirma Sababi",
-      key: "download",
-      render: (record: any) => (
-        <Space size="middle">
-          {record.reasonFile && (
-            <Tooltip title="Faylni yuklab olish">
-              <Button
-                onClick={() => {
-                  console.log("[Button] Download button clicked for record:", record);
-                  handleDownload(record?.reasonFile);
-                }}
-                loading={isDownloading}
-                disabled={isDownloading}
-              >
-                <DownloadOutlined />
-              </Button>
-            </Tooltip>
-          )}
-        </Space>
-      ),
-    },
-    {
       title: "Active",
       dataIndex: "active",
       render: (active: boolean, record: any) => (
@@ -211,18 +200,50 @@ const StudentDetails: React.FC = () => {
       ),
     },
     {
-      title: "Action",
+      title: "Amallar",
       key: "action",
       render: (record: any) => (
         <Space size="middle">
+          
           <Tooltip title="Tahrirlash">
             <Button onClick={() => editData(record)}>
               <EditOutlined />
             </Button>
           </Tooltip>
+
+          
+          {record?.reasonFile && (
+            <Tooltip title="Faylni yuklab olish">
+              <Button
+                onClick={() => {
+                  console.log("[Button] Download button clicked for record:", record);
+                  handleDownload(record?.reasonFile);
+                }}
+                loading={isDownloading}
+                disabled={isDownloading}
+              >
+                <DownloadOutlined />
+              </Button>
+            </Tooltip>
+          )}
+          {record?.id && (
+            <Tooltip title="Ko'rish">
+              <Button
+                onClick={() => {
+                  setSelectedRecord(record);
+                  audetModal();
+                }}
+              >
+                <FiEye size={18} />
+              </Button>
+            </Tooltip>
+          )}
+
+          
         </Space>
       ),
-    },
+    }
+
   ];
 
   return (
@@ -512,6 +533,11 @@ const StudentDetails: React.FC = () => {
           />
         </Card>
       </div>
+      <AuditModal
+        audetModalOpen={audetModalOpen}
+        setAudetModalOpen={setAudetModalOpen}
+        record={selectedRecord}
+      />
     </>
   );
 };
