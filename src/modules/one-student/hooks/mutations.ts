@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { StudentDiscount } from "@types";
-import { createStudentsDiscounts, updateStudentsDiscounts, uploadDiscountReason } from "../service";
+import { createStudentsDiscounts, updateStudentsDiscounts, uploadDiscountReason, toggleDebtActive } from "../service";
 import { openNotification } from "@utils";
 
 // ============ CREATE ROLES ===========
@@ -47,5 +47,28 @@ export function useUploadDiscountReason() {
         }
     })
 }
+
+
+
+// ======= discaount active =======
+import { message } from "antd";
+
+
+
+export function useToggleDebtActive() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: toggleDebtActive,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["discounts"] });
+    },
+    onError: (error: any) => {
+      const msg = error?.response?.data?.errorMessage || error.message || "Xatolik yuz berdi.";
+      message.error(msg);
+    },
+  });
+}
+
 
 

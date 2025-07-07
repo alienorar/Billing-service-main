@@ -1,7 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetStudentById, useGetStudentsDiscounts, useGetStudentsTrInfo } from "../hooks/queries";
-import { Card, Descriptions, Image, Typography, Table, Button, Tabs, Space, Tooltip, message } from "antd";
-import { ArrowLeftOutlined, EditOutlined, DownloadOutlined } from "@ant-design/icons";
+import { useToggleDebtActive } from "../hooks/mutations";
+import { Card, Descriptions, Image, Typography, Table, Button, Tabs, Space, Tooltip, message, Switch } from "antd";
+import { ArrowLeftOutlined, EditOutlined, DownloadOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { downloadDiscountReason } from "../service";
@@ -30,6 +31,13 @@ interface StudentDetails {
 }
 
 const StudentDetails: React.FC = () => {
+  const { mutate: toggleActive } = useToggleDebtActive();
+
+  const handleToggle = (id: string | number) => {
+    toggleActive(id); 
+  };
+
+
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { data: studentResponse } = useGetStudentById(id);
@@ -188,6 +196,21 @@ const StudentDetails: React.FC = () => {
       ),
     },
     {
+      title: "Active",
+      dataIndex: "active",
+      render: (active: boolean, record: any) => (
+        <Switch
+          checked={active}
+          checkedChildren={<CheckOutlined />}
+          unCheckedChildren={<CloseOutlined />}
+          onChange={() => handleToggle(record.id)} // faqat ID yuboriladi
+          style={{
+            backgroundColor: active ? "green" : "#999",
+          }}
+        />
+      ),
+    },
+    {
       title: "Action",
       key: "action",
       render: (record: any) => (
@@ -323,7 +346,7 @@ const StudentDetails: React.FC = () => {
                   Shartnoma summasi :
                 </span>
                 <span className="text-sm font-bold text-gray-800">
-                  {trInfo?.totalContractAmount ? Number(trInfo?.paymentDetails.studentContractAmount).toLocaleString() : "0"} UZS
+                  {trInfo?.paymentDetails.studentContractAmount ? Number(trInfo?.paymentDetails.studentContractAmount).toLocaleString() : "0"} UZS
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -345,7 +368,7 @@ const StudentDetails: React.FC = () => {
                   Chegirma summasi
                 </span>
                 <span className="text-sm font-bold text-green-600">
-                  {trInfo?.totalDiscountAmount ? Number(trInfo?.paymentDetails.studentDiscountAmount).toLocaleString() : "0"} UZS
+                  {trInfo?.paymentDetails.studentDiscountAmount ? Number(trInfo?.paymentDetails.studentDiscountAmount).toLocaleString() : "0"} UZS
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -367,7 +390,7 @@ const StudentDetails: React.FC = () => {
                   To'langan summa
                 </span>
                 <span className="text-sm font-bold text-blue-600">
-                  {trInfo?.totalPaidAmount ? Number(trInfo?.paymentDetails.studentPaidAmount).toLocaleString() : "0"} UZS
+                  {trInfo?.paymentDetails.studentPaidAmount ? Number(trInfo?.paymentDetails.studentPaidAmount).toLocaleString() : "0"} UZS
                 </span>
               </div>
               <div className="flex justify-between items-center">
