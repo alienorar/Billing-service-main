@@ -62,7 +62,6 @@ export function useToggleDebtActive() {
     mutationFn: toggleDebtActive,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["discounts"] });
-      
       openNotification("success", "Success", data?.data?.message)
         
     },

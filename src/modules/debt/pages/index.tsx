@@ -6,21 +6,23 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useGetDebtList } from "../hooks/queries";
-import {  downloadDebtReason } from "../service";
+import { downloadDebtReason } from "../service";
 import DebtsModal from "./modal";
 import { useDeactivateDebt } from "../hooks/mutations";
 import { openNotification } from "@utils";
+import { FiEye } from "react-icons/fi";
+import AuditModal from "./auditModal";
 
 interface StudentDebtsTableProps {
-  studentId?: string; 
+    studentId?: string;
 }
 
 const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
 
-    
+
     //Pagination
     const [searchParams, setSearchParams] = useSearchParams();
-    
+
     const [currentPage, setCurrentPage] = useState(() => {
         const page = parseInt(searchParams.get("page") || "1", 10);
         return isNaN(page) || page < 1 ? 1 : page;
@@ -34,8 +36,10 @@ const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
         page: currentPage - 1,
         size: pageSize,
     });
-    
-    error?.message? openNotification("error", "Xatolik yuz berdi", error.message): ""
+
+    error?.message ? openNotification("error", "Xatolik yuz berdi", error.message) : ""
+    const [audetModalOpen, setAudetModalOpen] = useState(false);
+    const [selectedRecord, setSelectedRecord] = useState<any | null>(null)
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [update, setUpdate] = useState<any | null>(null);
@@ -47,9 +51,12 @@ const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
         setIsModalOpen(false);
         setUpdate(null);
     };
+    const showAuditModal = () => {
+        setAudetModalOpen(true)
+    }
 
-    
-    
+
+
 
 
     const totalItems = data?.data?.paging?.totalItems || 0;
@@ -61,7 +68,7 @@ const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
 
     useEffect(() => {
         if (totalItems > 0 && currentPage > Math.ceil(totalItems / pageSize)) {
-        setCurrentPage(1);
+            setCurrentPage(1);
         }
     }, [totalItems, currentPage, pageSize]);
 
@@ -92,7 +99,7 @@ const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
             message.error({ content: "Faylni yuklashda xatolik yuz berdi!", key: "download" });
         },
     });
-   const handleToggleVisibility = (id: number | string, isVisible: boolean) => {
+    const handleToggleVisibility = (id: number | string, isVisible: boolean) => {
         if (isVisible) {
             deactivateDebt.mutate(id);
         } else {
@@ -125,48 +132,59 @@ const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
             key: "amount",
             render: (amount: number) => <span className="text-red-500">{amount.toLocaleString()} UZS</span>,
         },
-          {
-                title: "Active",
-                dataIndex: "active",
-                // sorter: false,
-                render: (visible: boolean, record: any) => (
-                    <Switch
-                        checked={visible}
-                        checkedChildren={<CheckOutlined />}
-                        unCheckedChildren={<CloseOutlined />}
-                        onChange={() => handleToggleVisibility(record.id, visible)}
-                        style={{
-                            backgroundColor: visible ? "green" : "#999",
-                        }}
-                    />
-                ),
-            },
+        {
+
+            title: "Active",
+            dataIndex: "active",
+            // sorter: false,
+            render: (visible: boolean, record: any) => (
+                <Switch
+                    checked={visible}
+                    checkedChildren={<CheckOutlined />}
+                    unCheckedChildren={<CloseOutlined />}
+                    onChange={() => handleToggleVisibility(record.id, visible)}
+                    style={{
+                        backgroundColor: visible ? "green" : "#999",
+                    }}
+                />
+            ),
+        },
 
         {
-        title: "Amallar",
-        key: "actions",
-        render: (record: any) => (
-            <Space>
-            {record.reasonFile && (
-                <Tooltip title="Yuklab olish">
-                <Button
-                    onClick={() => handleDownload(record.reasonFile)}
-                    loading={isDownloading}
-                    icon={<DownloadOutlined />}
-                />
-                </Tooltip>
-            )}
-            <Tooltip title="Tahrirlash">
-                <Button
-                onClick={() => {
-                    setUpdate(record);
-                    showModal();
-                }}
-                icon={<EditOutlined />}
-                />
-            </Tooltip>
-            </Space>
-        ),
+            title: "Amallar",
+            key: "actions",
+            render: (record: any) => (
+                <Space>
+                    {record.reasonFile && (
+                        <Tooltip title="Yuklab olish">
+                            <Button
+                                onClick={() => handleDownload(record.reasonFile)}
+                                loading={isDownloading}
+                                icon={<DownloadOutlined />}
+                            />
+                        </Tooltip>
+                    )}
+                    <Tooltip title="Tahrirlash">
+                        <Button
+                            onClick={() => {
+                                setUpdate(record);
+                                showModal();
+                            }}
+                            icon={<EditOutlined />}
+                        />
+                    </Tooltip>
+                    <Tooltip title="Ko'rish">
+                        <Button
+                            onClick={() => {
+                                setSelectedRecord(record);
+                                showAuditModal();
+                            }}
+                        >
+                            <FiEye size={18} />
+                        </Button>
+                    </Tooltip>
+                </Space>
+            ),
         }
 
     ];
@@ -174,6 +192,11 @@ const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
     return (
         <>
             <DebtsModal open={isModalOpen} handleClose={handleClose} studentId={studentId} update={update} />
+            <AuditModal
+                audetModalOpen={audetModalOpen}
+                setAudetModalOpen={setAudetModalOpen}
+                record={selectedRecord}
+            />
             <div className="flex justify-end py-4">
                 <Button type="primary" onClick={showModal} style={{
                     maxWidth: 80,

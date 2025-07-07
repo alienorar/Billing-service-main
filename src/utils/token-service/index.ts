@@ -13,6 +13,8 @@ export const setRefreshToken = (token: string) => {
 export const logout = () => {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("username")
+  localStorage.removeItem("Firstname")
+  localStorage.removeItem("Lastname")
   clearPermissions()
   window.location.href = "/";
 };
