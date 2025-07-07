@@ -1,8 +1,9 @@
 
 // components/StudentDebtsTable.tsx
-import { Table, Button, Tooltip, message, Switch } from "antd";
+import { Table, Button, Tooltip, message, Switch, Space } from "antd";
 import { CheckOutlined, CloseOutlined, DownloadOutlined, EditOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useGetDebtList } from "../hooks/queries";
 import {  downloadDebtReason } from "../service";
@@ -14,7 +15,25 @@ interface StudentDebtsTableProps {
 }
 
 const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
-    const { data, isLoading } = useGetDebtList({ studentId });
+
+    //Pagination
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const [currentPage, setCurrentPage] = useState(() => {
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    return isNaN(page) || page < 1 ? 1 : page;
+    });
+    const [pageSize, setPageSize] = useState(() => {
+        const size = parseInt(searchParams.get("size") || "10", 10);
+        return isNaN(size) || ![10, 20, 50].includes(size) ? 10 : size;
+    });
+
+
+    const { data, isLoading } = useGetDebtList({
+        studentId,
+        page: currentPage - 1,
+        size: pageSize,
+    });
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [update, setUpdate] = useState<any | null>(null);
     const debts = data?.data?.content || [];
@@ -25,6 +44,30 @@ const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
         setIsModalOpen(false);
         setUpdate(null);
     };
+
+    
+    
+
+
+    const totalItems = data?.data?.paging?.totalItems || 0;
+
+
+    useEffect(() => {
+        setSearchParams({ page: currentPage.toString(), size: pageSize.toString() });
+    }, [currentPage, pageSize, setSearchParams]);
+
+    useEffect(() => {
+        if (totalItems > 0 && currentPage > Math.ceil(totalItems / pageSize)) {
+        setCurrentPage(1);
+        }
+    }, [totalItems, currentPage, pageSize]);
+
+    const handleTableChange = (pagination: any) => {
+        setCurrentPage(pagination.current);
+        setPageSize(pagination.pageSize);
+    };
+
+
 
 
     const { mutate: downloadFile, isPending: isDownloading } = useMutation({
@@ -61,6 +104,16 @@ const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
 
     const columns = [
         { title: "ID", dataIndex: "id", key: "id" },
+        {
+            title: "Talaba",
+            key: "studentFullName",
+            render: (record: any) => record.student?.fullName || "—",
+        },
+        {
+            title: "Guruh",
+            key: "studentGroup",
+            render: (record: any) => record.student?.group || "—",
+        },
         { title: "Tarif", dataIndex: "description", key: "description" },
         { title: "Turi", dataIndex: "debtType", key: "debtType" },
         {
@@ -88,28 +141,32 @@ const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
             },
 
         {
-            title: "Fayl",
-            key: "download",
-            render: (record: any) =>
-                record.reasonFile && (
-                    <Tooltip title="Yuklab olish">
-                        <Button onClick={() => handleDownload(record.reasonFile)} loading={isDownloading}>
-                            <DownloadOutlined />
-                        </Button>
-                    </Tooltip>
-                ),
-        },
-        {
-            title: "Amallar",
-            key: "action",
-            render: (record: any) => (
-                <Tooltip title="Tahrirlash">
-                    <Button onClick={() => { setUpdate(record); showModal(); }}>
-                        <EditOutlined />
-                    </Button>
+        title: "Amallar",
+        key: "actions",
+        render: (record: any) => (
+            <Space>
+            {record.reasonFile && (
+                <Tooltip title="Yuklab olish">
+                <Button
+                    onClick={() => handleDownload(record.reasonFile)}
+                    loading={isDownloading}
+                    icon={<DownloadOutlined />}
+                />
                 </Tooltip>
-            ),
-        },
+            )}
+            <Tooltip title="Tahrirlash">
+                <Button
+                onClick={() => {
+                    setUpdate(record);
+                    showModal();
+                }}
+                icon={<EditOutlined />}
+                />
+            </Tooltip>
+            </Space>
+        ),
+        }
+
     ];
 
     return (
@@ -133,8 +190,17 @@ const StudentDebtsTable: React.FC<StudentDebtsTableProps> = ({ studentId }) => {
                     columns={columns}
                     dataSource={debts}
                     rowKey="id"
-                    pagination={false}
+                    pagination={{
+                        current: currentPage,
+                        pageSize: pageSize,
+                        total: totalItems,
+                        showSizeChanger: true,
+                        pageSizeOptions: ["10", "20", "50"],
+                        showTotal: (total) => `Jami: ${total} qarzdorlik`,
+                        onChange: (page, pageSize) => handleTableChange({ current: page, pageSize }),
+                    }}
                 />
+
             )}
         </>
     );
