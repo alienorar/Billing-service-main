@@ -454,8 +454,8 @@ const StudentDetails: React.FC = () => {
                   </svg>
                   Qo'shimcha qarzdorlik
                 </span>
-                <span className={Number(trInfo?.paymentDetails.studentAdditionalDebtAmount) < 0 ? "text-sm font-bold text-red-600" : "text-sm font-bold text-green-600"}>
-                  {Number(trInfo?.paymentDetails.studentAdditionalDebtAmount) > 0 ? "+" : ""}{trInfo ? Number(trInfo?.paymentDetails.studentAdditionalDebtAmount).toLocaleString() : "0"} UZS
+                <span className={Number(trInfo?.paymentDetails.studentAdditionalDebtAmount) >  0 ? "text-sm font-bold text-red-600" : "text-sm font-bold text-green-600"}>
+                  {Number(trInfo?.paymentDetails.studentAdditionalDebtAmount) > 0 ? "-" : ""}{trInfo ? Number(trInfo?.paymentDetails.studentAdditionalDebtAmount).toLocaleString() : "0"} UZS
                 </span>
               </div>
             </div>
