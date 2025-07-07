@@ -27,6 +27,8 @@ import {
   Role,
   Debt,
   Discount,
+  UniversityStatistics,
+  SpecialityStatistics,
 } from "@modules"
 
 export const routesConfig = [
@@ -158,11 +160,27 @@ export const routesConfig = [
     showInSidebar: false,
   },
   {
-    label: "Statistics",
+    label: "Statistikalar",
     icon: <FaSignal style={{ fontSize: "22px" }} />,
     showInSidebar: true,
     permissions: ["GROUP_STATISTICS_MENU", "STUDENT_STATISTICS_MENU"],
     children: [
+      {
+        path: "university-statistics",
+        label: "Universitet statistikasi",
+        icon: <FaSignal style={{ fontSize: "22px" }} />,
+        element: <UniversityStatistics />,
+        permissions: ["UNIVERSITY_STATISTICS"],
+        showInSidebar: true,
+      },
+      {
+        path: "speciality-statistics",
+        label: "Yo'nalishlar statistikasi",
+        icon: <FaSignal style={{ fontSize: "22px" }} />,
+        element: <SpecialityStatistics />,
+        permissions: ["SPECIALITY_FORM_STATISTICS_PAGEABLE"],
+        showInSidebar: true,
+      },
       {
         path: "group-statistics",
         label: "Guruhlar statistikasi",
