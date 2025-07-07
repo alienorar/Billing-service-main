@@ -48,7 +48,7 @@ export const routesConfig = [
       {
         path: "admin-page",
         icon: <FaUserShield style={{ fontSize: "22px" }} />,
-        label: "Admin User", 
+        label: "Admin User",
         element: <AdminPage />,
         permissions: ["ADMIN_USER_MENU"],
         showInSidebar: true,
@@ -109,6 +109,14 @@ export const routesConfig = [
         showInSidebar: true,
       },
       {
+        path: "payment-history",
+        icon: <FaRegCreditCard style={{ fontSize: "22px" }} />,
+        label: "Click",
+        element: <PaymentHistory />,
+        permissions: ["CLICK_PAYMENT_HISTORY"],
+        showInSidebar: true,
+      },
+      {
         path: "debt",
         icon: <FaHandshake style={{ fontSize: "22px" }} />,
         label: "Qo'shimcha qarzdorlik",
@@ -142,7 +150,7 @@ export const routesConfig = [
     permissions: ["PAYMENT_MENU"],
     showInSidebar: true,
   },
-  
+
   {
     path: "transaction-history/:id",
     element: <PaymentDetails />,
@@ -173,12 +181,12 @@ export const routesConfig = [
       },
     ],
   },
-  
+
   {
     path: "group-statistics/:id",
     element: <GroupStudents />,
     permissions: ["GROUP_STATISTICS_MENU"],
     showInSidebar: false,
   },
-  
+
 ]
