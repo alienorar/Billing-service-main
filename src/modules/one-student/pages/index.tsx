@@ -452,7 +452,7 @@ const StudentDetails: React.FC = () => {
                       d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                     ></path>
                   </svg>
-                  Qo'shimcha qarzdorlik
+                  "Qo'shimcha qarzdorlik"
                 </span>
                 <span className={Number(trInfo?.paymentDetails.studentAdditionalDebtAmount) >  0 ? "text-sm font-bold text-red-600" : "text-sm font-bold text-green-600"}>
                   {Number(trInfo?.paymentDetails.studentAdditionalDebtAmount) > 0 ? "-" : ""}{trInfo ? Number(trInfo?.paymentDetails.studentAdditionalDebtAmount).toLocaleString() : "0"} UZS
