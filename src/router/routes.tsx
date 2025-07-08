@@ -1,4 +1,6 @@
 import {
+  FaHandHoldingUsd,
+  FaHandshake,
   FaHourglassEnd,
   FaRegCreditCard,
   FaSignal,
@@ -7,7 +9,7 @@ import {
   FaUsers,
   FaUserShield,
 } from "react-icons/fa"
-import { FaUserGear, FaUsersViewfinder } from "react-icons/fa6"
+import { FaUserGear, FaUsersViewfinder, FaUser } from "react-icons/fa6"
 import {
   AdminPage,
   Students,
@@ -23,25 +25,39 @@ import {
   GroupList,
   GroupStudents,
   Role,
+  Debt,
+  Discount,
+  UniversityStatistics,
+  SpecialityStatistics,
 } from "@modules"
 
 export const routesConfig = [
+
   {
-    path: "role",
-    label: "Rol va ruxsatlar",
-    icon: <FaUserGear style={{ fontSize: "22px" }} />,
-    element: <Role />,
-    permissions: ["ADMIN_ROLE_MENU"],
+    label: "Admin va ruxsatlar",
+    icon: <FaUser style={{ fontSize: "22px" }} />,
     showInSidebar: true,
+    permissions: ["ADMIN_ROLE_MENU", "ADMIN_USER_MENU"],
+    children: [
+      {
+        path: "admin-permissions",
+        icon: <FaUserGear style={{ fontSize: "22px" }} />,
+        label: "Rol va ruxsatlar",
+        element: <Role />,
+        permissions: ["ADMIN_ROLE_MENU"],
+        showInSidebar: true,
+      },
+      {
+        path: "admin-page",
+        icon: <FaUserShield style={{ fontSize: "22px" }} />,
+        label: "Admin User",
+        element: <AdminPage />,
+        permissions: ["ADMIN_USER_MENU"],
+        showInSidebar: true,
+      },
+    ],
   },
-  {
-    path: "admin-page",
-    label: "Admin User",
-    icon: <FaUserShield style={{ fontSize: "22px" }} />,
-    element: <AdminPage />,
-    permissions: ["ADMIN_USER_MENU"],
-    showInSidebar: true,
-  },
+
   {
     path: "students",
     label: "Studentlar",
@@ -73,13 +89,55 @@ export const routesConfig = [
     showInSidebar: true,
   },
   {
-    path: "pmgroup-controller",
-    label: "To'lov guruhlari",
-    icon: <FaUsersViewfinder style={{ fontSize: "22px" }} />,
-    element: <PmGroupController />,
-    permissions: ["PAYMENT_GROUP_MENU"],
+    label: "To'lovlar",
+    icon: <FaRegCreditCard style={{ fontSize: "22px" }} />,
     showInSidebar: true,
+    permissions: ["PAYMENT_GROUP_MENU", "TRANSACTION_MENU", "DISCOUNT_PAGEABLE"],
+    children: [
+      {
+        path: "pmgroup-controller",
+        icon: <FaUsersViewfinder style={{ fontSize: "22px" }} />,
+        label: "To'lov guruhlari",
+        element: <PmGroupController />,
+        permissions: ["PAYMENT_GROUP_MENU"],
+        showInSidebar: true,
+      },
+      {
+        path: "transaction-history",
+        icon: <FaHourglassEnd style={{ fontSize: "22px" }} />,
+        label: "Tranzaksiyalar ro'yxati",
+        element: <TransactionHistory />,
+        permissions: ["TRANSACTION_MENU"],
+        showInSidebar: true,
+      },
+      {
+        path: "payment-history",
+        icon: <FaRegCreditCard style={{ fontSize: "22px" }} />,
+        label: "Click",
+        element: <PaymentHistory />,
+        permissions: ["CLICK_PAYMENT_HISTORY"],
+        showInSidebar: true,
+      },
+      {
+        path: "debt",
+        icon: <FaHandshake style={{ fontSize: "22px" }} />,
+        label: "Qo'shimcha qarzdorlik",
+        element: <Debt />,
+        permissions: ["DISCOUNT_PAGEABLE"],
+        showInSidebar: true,
+      },
+      {
+        path: "discounts",
+        icon: <FaHandHoldingUsd style={{ fontSize: "22px" }} />,
+        label: "Chegirmalar",
+        element: <Discount />,
+        permissions: ["DISCOUNT_PAGEABLE"],
+        showInSidebar: true,
+      },
+    ],
   },
+
+
   {
     path: "pmgroup-controller/:id",
     element: <OnePaymentGroup />,
@@ -94,14 +152,7 @@ export const routesConfig = [
     permissions: ["PAYMENT_MENU"],
     showInSidebar: true,
   },
-  {
-    path: "transaction-history",
-    label: "Tranzaksiyalar ro'yxati",
-    icon: <FaHourglassEnd style={{ fontSize: "22px" }} />,
-    element: <TransactionHistory />,
-    permissions: ["TRANSACTION_MENU"],
-    showInSidebar: true,
-  },
+
   {
     path: "transaction-history/:id",
     element: <PaymentDetails />,
@@ -109,25 +160,51 @@ export const routesConfig = [
     showInSidebar: false,
   },
   {
-    path: "students-statistics",
-    label: "Studentlar statistikasi",
+    label: "Statistikalar",
     icon: <FaSignal style={{ fontSize: "22px" }} />,
-    element: <StudentStatistics />,
-    permissions: ["STUDENT_STATISTICS_MENU"],
     showInSidebar: true,
+    permissions: ["GROUP_STATISTICS_MENU", "STUDENT_STATISTICS_MENU"],
+    children: [
+      {
+        path: "university-statistics",
+        label: "Universitet statistikasi",
+        icon: <FaSignal style={{ fontSize: "22px" }} />,
+        element: <UniversityStatistics />,
+        permissions: ["UNIVERSITY_STATISTICS"],
+        showInSidebar: true,
+      },
+      {
+        path: "speciality-statistics",
+        label: "Yo'nalishlar statistikasi",
+        icon: <FaSignal style={{ fontSize: "22px" }} />,
+        element: <SpecialityStatistics />,
+        permissions: ["SPECIALITY_FORM_STATISTICS_PAGEABLE"],
+        showInSidebar: true,
+      },
+      {
+        path: "group-statistics",
+        label: "Guruhlar statistikasi",
+        icon: <FaSignal style={{ fontSize: "22px" }} />,
+        element: <GroupStatistics />,
+        permissions: ["GROUP_STATISTICS_MENU"],
+        showInSidebar: true,
+      },
+      {
+        path: "students-statistics",
+        label: "Studentlar statistikasi",
+        icon: <FaSignal style={{ fontSize: "22px" }} />,
+        element: <StudentStatistics />,
+        permissions: ["STUDENT_STATISTICS_MENU"],
+        showInSidebar: true,
+      },
+    ],
   },
-  {
-    path: "group-statistics",
-    label: "Guruhlar statistikasi",
-    icon: <FaSignal style={{ fontSize: "22px" }} />,
-    element: <GroupStatistics />,
-    permissions: ["GROUP_STATISTICS_MENU"],
-    showInSidebar: true,
-  },
+
   {
     path: "group-statistics/:id",
     element: <GroupStudents />,
     permissions: ["GROUP_STATISTICS_MENU"],
     showInSidebar: false,
   },
+
 ]

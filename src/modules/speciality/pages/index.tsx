@@ -59,9 +59,9 @@ const Index = () => {
     { title: "Mutaxasislik nomi", dataIndex: "name", width: 340 },
     { title: "Ta'lim shakli", dataIndex: "educationType" },
     {
-      title: "Visible",
-      dataIndex: "isVisible",
-      sorter: false,
+      title: "Active",
+      dataIndex: "active",
+      // sorter: false,
       render: (visible: boolean, record: any) => (
         <Switch
           checked={visible}
@@ -69,7 +69,7 @@ const Index = () => {
           unCheckedChildren={<CloseOutlined />}
           onChange={() => handleToggleVisibility(record.id, visible)}
           style={{
-            backgroundColor: visible ? "#050556" : "#ababab",
+            backgroundColor: visible ? "green" : "#999",
           }}
         />
       ),

@@ -50,6 +50,19 @@ const GroupStudents = loadable(() => import('./group-students/pages'), {
   fallback: <Loading />
 });
 
+const Debt= loadable(() => import('./debt/pages'), {
+  fallback: <Loading />
+});
+const Discount= loadable(() => import('./discount/pages'), {
+  fallback: <Loading />
+});
+const UniversityStatistics = loadable(() => import('./university-statistics/pages'), {
+  fallback: <Loading />
+});
+const SpecialityStatistics = loadable(() => import('./speciality-statistics/pages'), {
+  fallback: <Loading />
+});
+
 const NotFound = loadable(() => import('./not-found'), {
   fallback: <Loading />
 });
@@ -74,6 +87,10 @@ export {
   GroupStatistics,
   GroupList,
   GroupStudents,
+  Debt,
+  Discount,
+  UniversityStatistics,
+  SpecialityStatistics,
   NotFound,
   AccessDenied
 }

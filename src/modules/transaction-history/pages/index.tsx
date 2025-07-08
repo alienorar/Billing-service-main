@@ -227,9 +227,10 @@ const TransactionHistory: React.FC = () => {
     /* ---------- Options ---------- */
     const providerOptions = [
         { value: "", label: "All" },
-        { value: "PAYME", label: "Payme" },
         { value: "CLICK", label: "Click" },
-        { value: "UPAY", label: "Upay" },
+        { value: "PAYME", label: "Payme" },
+        { value: "XAZNA", label: "Xazna" },
+        { value: "UZUM", label: "Uzum" },
         { value: "BANK", label: "Bank" },
     ];
 

@@ -1,10 +1,12 @@
-import {AnyObject }  from "antd/es/_util/type";
+import { AnyObject } from "antd/es/_util/type";
 import { ColumnsType, TablePaginationConfig, TableProps } from "antd/es/table";
 
 // ========== PARAMS TYPE ==========
 export interface ParamsType {
-  size?: number|string|undefined,
-  page?: number|string|undefined,
+    studentId?: number|string;
+    passport?:string;
+  size?: number | string | undefined,
+  page?: number | string | undefined,
   search?: string,
   phone?: number | string,
   firstName?: string;
@@ -20,7 +22,7 @@ export interface ParamsType {
   educationType?: string | undefined;
   educationLang?: string | undefined;
   active?: string | undefined;
-  showDebt?:string
+  showDebt?: string
 }
 
 export interface PagingType {
@@ -116,6 +118,7 @@ export interface AdminType {
   phone?: string;
   firstName?: string;
   lastName?: string;
+  
 }
 
 
@@ -207,10 +210,30 @@ export interface PmtGroupFormValues {
 
 
 export interface StudentDiscount {
-  id?:number|string
+  id?: number | string
   studentId?: number;
   description?: string;
   discountType?: "SUM";
   studentLevel?: number;
   amount?: number;
 };
+
+export interface DebtRecord {
+  id?: number;
+  firstName?: string;
+  lastName?: string;
+  paymentDetails?: {
+    studentDebtAmount?: number;
+    studentContractAmount?: number;
+    studentPaidAmount?: number;
+    studentDiscountAmount?: number;
+  };
+
+  studentId?: number|string;
+  description?: string;
+  reasonFile?: string;
+  debtType?: string;
+  studentLevel?: number;
+  amount?: number;
+
+}

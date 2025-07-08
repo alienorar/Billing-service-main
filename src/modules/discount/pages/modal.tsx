@@ -10,7 +10,7 @@ import { StudentDiscount } from "@types";
 
 const { Option } = Select;
 
-const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
+const DiscountsModal = ({ open, handleClose, update}: any) => {
     const [form] = Form.useForm();
     const [reasonFileUuid, setReasonFileUuid] = useState<string | null>(null);
     const [initialFileInfo, setInitialFileInfo] = useState<string | null>(null);
@@ -83,7 +83,7 @@ const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
 
         const payload: StudentDiscount & { reasonFile: string } = {
             id: update?.id,
-            studentId: studentId,
+            studentId: value.studentId,
             description: value.description,
             discountType: value.discountType,
             studentLevel: value.studentLevel,
@@ -108,6 +108,13 @@ const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
             footer={null}
         >
             <Form form={form} name="discount_form" layout="vertical" onFinish={onFinish}>
+                <Form.Item
+                    label="Student Id"
+                    name="studentId"
+                    rules={[{ required: true, message: "Student Id sini kiriting!" }]}
+                >
+                    <Input style={{ padding: "6px", border: "1px solid #d9d9d9", borderRadius: "6px" }} />
+                </Form.Item>
                 <Form.Item
                     label="Tarif"
                     name="description"
