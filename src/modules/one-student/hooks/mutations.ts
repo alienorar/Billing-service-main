@@ -60,8 +60,10 @@ export function useToggleDebtActive() {
 
   return useMutation({
     mutationFn: toggleDebtActive,
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["discounts"] });
+      openNotification("success", "Success", data?.data?.message)
+        
     },
     onError: (error: any) => {
       const msg = error?.response?.data?.errorMessage || error.message || "Xatolik yuz berdi.";
