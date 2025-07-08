@@ -1,9 +1,11 @@
+import {FiDownload } from "react-icons/fi"
 import { useEffect, useMemo, useState } from "react";
 import { TablePaginationConfig, Spin, Alert, Button, Input } from "antd";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { GlobalTable } from "@components";
+import { useExportStudentList } from "../hooks/mutations"; 
 import { useGetStudents } from "../hooks/queries";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined,  } from "@ant-design/icons";
 
 interface StudentRecord {
     id: number;
@@ -30,6 +32,7 @@ interface DebtAmout {
 
 
 const GroupSinglePage: React.FC = () => {
+    const exportStudentsMutation = useExportStudentList();
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
@@ -97,6 +100,24 @@ const GroupSinglePage: React.FC = () => {
             showDebt,
         });
     };
+
+    const handleExportStudents = () => {
+        const exportParams = {
+            phone: phone ? Number(phone) : undefined,
+            firstName,
+            lastName,
+            showDebt: true,
+            groupId, 
+        };
+
+        
+        const cleanParams = Object.fromEntries(
+            Object.entries(exportParams).filter(([_, value]) => value !== undefined && value !== "")
+        );
+
+        exportStudentsMutation.mutate(cleanParams);
+    };
+
 
 
     const columns = useMemo(
@@ -182,6 +203,28 @@ const GroupSinglePage: React.FC = () => {
                     Ortga
                 </Button>
                 <div className="flex items-center justify-between gap-3">
+                    <Button
+                        type="primary"
+                        size="large"
+                        icon={<FiDownload size={16} />}
+                        style={{
+                            maxWidth: 246,
+                            minWidth: 80,
+                            backgroundColor: "#28a745",
+                            borderColor: "#28a745",
+                            color: "white",
+                            height: 32,
+                            paddingRight: "8px",
+                            paddingLeft: "8px",
+                        }}
+                        className="text-[16px] mx-2"
+                        onClick={handleExportStudents} 
+                        loading={exportStudentsMutation.isPending} 
+                        >
+                        Studentlar ro'yhatini yuklash
+                    </Button>
+
+
                     <Input
                         placeholder="Tel"
                         value={phone}
