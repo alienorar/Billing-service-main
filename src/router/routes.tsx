@@ -1,4 +1,6 @@
 import {
+  FaBuilding,
+  FaGraduationCap,
   FaHandHoldingUsd,
   FaHandshake,
   FaHourglassEnd,
@@ -9,7 +11,7 @@ import {
   FaUsers,
   FaUserShield,
 } from "react-icons/fa"
-import { FaUserGear, FaUsersViewfinder, FaUser } from "react-icons/fa6"
+import { FaUserGear, FaUsersViewfinder, FaUser, FaUserGroup } from "react-icons/fa6"
 import {
   AdminPage,
   Students,
@@ -30,6 +32,7 @@ import {
   UniversityStatistics,
   SpecialityStatistics,
 } from "@modules"
+import { FiSlack } from "react-icons/fi"
 
 export const routesConfig = [
 
@@ -168,7 +171,7 @@ export const routesConfig = [
       {
         path: "university-statistics",
         label: "Universitet statistikasi",
-        icon: <FaSignal style={{ fontSize: "22px" }} />,
+        icon: <FaBuilding style={{ fontSize: "22px" }} />,
         element: <UniversityStatistics />,
         permissions: ["UNIVERSITY_STATISTICS"],
         showInSidebar: true,
@@ -176,7 +179,7 @@ export const routesConfig = [
       {
         path: "speciality-statistics",
         label: "Yo'nalishlar statistikasi",
-        icon: <FaSignal style={{ fontSize: "22px" }} />,
+        icon: <FiSlack style={{ fontSize: "22px" }} />,
         element: <SpecialityStatistics />,
         permissions: ["SPECIALITY_FORM_STATISTICS_PAGEABLE"],
         showInSidebar: true,
@@ -184,7 +187,7 @@ export const routesConfig = [
       {
         path: "group-statistics",
         label: "Guruhlar statistikasi",
-        icon: <FaSignal style={{ fontSize: "22px" }} />,
+        icon: <FaUserGroup style={{ fontSize: "22px" }} />,
         element: <GroupStatistics />,
         permissions: ["GROUP_STATISTICS_MENU"],
         showInSidebar: true,
@@ -192,7 +195,7 @@ export const routesConfig = [
       {
         path: "students-statistics",
         label: "Studentlar statistikasi",
-        icon: <FaSignal style={{ fontSize: "22px" }} />,
+        icon: <FaGraduationCap style={{ fontSize: "22px" }} />,
         element: <StudentStatistics />,
         permissions: ["STUDENT_STATISTICS_MENU"],
         showInSidebar: true,

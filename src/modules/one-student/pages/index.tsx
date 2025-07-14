@@ -79,7 +79,14 @@ const StudentDetails: React.FC = () => {
   setAudetModalOpen(true);
 }
 
-
+const handleBack = () => {
+    const queryParams = new URLSearchParams(location.search);
+    const page = queryParams.get("page") || "1";
+    const size = queryParams.get("size") || "10";
+    const backUrl = `/super-admin-panel/students?page=${page}&size=${size}`;
+    console.log("[handleBack] Navigating to:", backUrl);
+    navigate(backUrl);
+  };
   // Mutation for downloading the discount reason file
   const { mutate: downloadFile, isPending: isDownloading } = useMutation({
     mutationFn: downloadDiscountReason,
@@ -260,7 +267,7 @@ const StudentDetails: React.FC = () => {
             className="text-green-500 font-medium"
             type="default"
             icon={<ArrowLeftOutlined />}
-            onClick={() => navigate(-1)}
+            onClick={handleBack}
           >
             Ortga
           </Button>
@@ -452,7 +459,7 @@ const StudentDetails: React.FC = () => {
                       d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                     ></path>
                   </svg>
-                  Qo'shimcha qarzdorlik
+                  "Qo'shimcha qarzdorlik"
                 </span>
                 <span className={Number(trInfo?.paymentDetails.studentAdditionalDebtAmount) >  0 ? "text-sm font-bold text-red-600" : "text-sm font-bold text-green-600"}>
                   {Number(trInfo?.paymentDetails.studentAdditionalDebtAmount) > 0 ? "-" : ""}{trInfo ? Number(trInfo?.paymentDetails.studentAdditionalDebtAmount).toLocaleString() : "0"} UZS
