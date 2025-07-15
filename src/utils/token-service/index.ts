@@ -12,11 +12,10 @@ export const setRefreshToken = (token: string) => {
 
 export const logout = () => {
   localStorage.removeItem("accessToken");
-  localStorage.removeItem("username")
+  localStorage.removeItem("refreshToken");
+  window.location.href = "/";
   localStorage.removeItem("Firstname")
   localStorage.removeItem("Lastname")
-  clearPermissions()
-  window.location.href = "/";
 };
 
 export const setFirstname = (data:any) => {

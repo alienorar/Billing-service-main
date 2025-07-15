@@ -16,7 +16,6 @@ const AdminPanel = () => {
   const [collapsed, setCollapsed] = useState(false)
 
   const [menuOpen, setMenuOpen] = useState(false);
-  // const navigate = useNavigate()
   const { pathname } = useLocation()
   const permissions = getUserPermissions()
 
@@ -39,7 +38,7 @@ const AdminPanel = () => {
 
   const Firstname = localStorage.getItem("Firstname")
   const Lastname = localStorage.getItem("Lastname")
-
+  const accesToken = localStorage.getItem("accessToken")
 
   const menu = (
     <Menu className="px-3 mr-4">
@@ -49,7 +48,9 @@ const AdminPanel = () => {
     </Menu>
   );
 
+  if (accesToken) {
 
+ 
 
   return (
     <Layout>
@@ -143,6 +144,6 @@ const AdminPanel = () => {
       </Layout>
     </Layout>
   )
-}
+}   handleLogout () }
 
 export default AdminPanel
