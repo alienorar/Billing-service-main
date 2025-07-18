@@ -45,6 +45,8 @@ export interface RolesResponse {
   };
 }
 
+
+
 export interface AdminsResponse {
   message?: string | any;
   data: {
@@ -83,6 +85,9 @@ export interface ConfirmType {
   id: number | undefined,
   title: string
 }
+
+
+
 
 
 // ============GLOBAL SEARCH=============

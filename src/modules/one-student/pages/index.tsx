@@ -478,7 +478,7 @@ const StudentDetails: React.FC = () => {
                           style={{ marginBottom: 16 }}
                         />
                         <Text strong style={{ fontSize: 16 }}>
-                          Jami to'langan: {trInfo?.total.toLocaleString()} UZS
+                          Jami to'langan: {(Number(trInfo?.paymentDetails.studentPaidAmount) || 0).toLocaleString()} UZS
                         </Text>
                       </>
                     ) : (
