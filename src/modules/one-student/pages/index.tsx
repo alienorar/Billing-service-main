@@ -79,14 +79,7 @@ const StudentDetails: React.FC = () => {
   setAudetModalOpen(true);
 }
 
-const handleBack = () => {
-    const queryParams = new URLSearchParams(location.search);
-    const page = queryParams.get("page") || "1";
-    const size = queryParams.get("size") || "10";
-    const backUrl = `/super-admin-panel/students?page=${page}&size=${size}`;
-    console.log("[handleBack] Navigating to:", backUrl);
-    navigate(backUrl);
-  };
+
   // Mutation for downloading the discount reason file
   const { mutate: downloadFile, isPending: isDownloading } = useMutation({
     mutationFn: downloadDiscountReason,
@@ -267,7 +260,7 @@ const handleBack = () => {
             className="text-green-500 font-medium"
             type="default"
             icon={<ArrowLeftOutlined />}
-            onClick={handleBack}
+            onClick={() => navigate(-1)}
           >
             Ortga
           </Button>
@@ -485,7 +478,7 @@ const handleBack = () => {
                           style={{ marginBottom: 16 }}
                         />
                         <Text strong style={{ fontSize: 16 }}>
-                          Jami to'langan: {trInfo?.total.toLocaleString()} UZS
+                          Jami to'langan: {(Number(trInfo?.paymentDetails.studentPaidAmount) || 0).toLocaleString()} UZS
                         </Text>
                       </>
                     ) : (
