@@ -31,6 +31,7 @@ import {
   Discount,
   UniversityStatistics,
   SpecialityStatistics,
+  PaymentHistoryChart,
 } from "@modules"
 import { FiSlack } from "react-icons/fi"
 
@@ -190,6 +191,14 @@ export const routesConfig = [
         icon: <FaUserGroup style={{ fontSize: "22px" }} />,
         element: <GroupStatistics />,
         permissions: ["GROUP_STATISTICS_MENU"],
+        showInSidebar: true,
+      },
+      {
+        path: "payment-chart",
+        label: "To'lov statistikasi",
+        icon: <FaUserGroup style={{ fontSize: "22px" }} />,
+        element: <PaymentHistoryChart/>,
+        permissions: ["TRANSACTION_STATISTICS_GRAPH_MENU"],
         showInSidebar: true,
       },
       {

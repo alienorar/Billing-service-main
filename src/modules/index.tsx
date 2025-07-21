@@ -62,6 +62,9 @@ const UniversityStatistics = loadable(() => import('./university-statistics/page
 const SpecialityStatistics = loadable(() => import('./speciality-statistics/pages'), {
   fallback: <Loading />
 });
+const PaymentHistoryChart = loadable(() => import('./payment-chart/pages'), {
+  fallback: <Loading />
+});
 
 const NotFound = loadable(() => import('./not-found'), {
   fallback: <Loading />
@@ -91,6 +94,7 @@ export {
   Discount,
   UniversityStatistics,
   SpecialityStatistics,
+  PaymentHistoryChart,
   NotFound,
   AccessDenied
 }
