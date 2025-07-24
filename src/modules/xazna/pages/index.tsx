@@ -123,11 +123,7 @@ const PaymentHistory: React.FC = () => {
         key: "id",
         width: 80,
       },
-      {
-        title: "Tranzaksiya ID",
-        dataIndex: "clickTransId",
-        key: "clickTransId",
-      },
+    
       {
         title: "Miqdori",
         dataIndex: "amount",
