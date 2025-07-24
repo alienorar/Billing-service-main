@@ -152,9 +152,13 @@ const PaymentDashboard = () => {
       const toDate = item.to.split(" ")[0];
       const label = `${fromDate.slice(0, 5)} - ${toDate.slice(0, 5)}`;
 
+      // Convert amount to millions and format with 1 decimal place
+      const amountInMillions = (item.allPaymentAmount / 1000000).toFixed(1);
+
       return {
         date: label,
-        amount: item.allPaymentAmount.toLocaleString(),
+        amount: amountInMillions,
+        rawAmount: `${item.allPaymentAmount} mln so'm` // Keep original value for tooltips if needed
       };
     });
   }, [payments, filterCount]);
@@ -266,17 +270,20 @@ const PaymentDashboard = () => {
                 point={{ size: 5, shape: "circle" }}
                 color="#1890ff"
                 smooth
-                xAxis={{ title: { text: filterType === "DAILY" ? "Kunlar" : filterType === "WEEKLY" ? "Haftalar" : "Oyliklar" } }}
+                xAxis={{
+                  title: {
+                    text: filterType === "DAILY" ? "Kunlar" :
+                      filterType === "WEEKLY" ? "Haftalar" :
+                        "Oyliklar"
+                  }
+                }}
                 yAxis={{
-                  title: { text: "To'lov miqdori (so'm)" },
-                  label: {
-                    formatter: (val: string) => `${(+val / 1000000).toFixed(1)}M`,
-                  },
+                  title: { text: "To'lov miqdori (mln sum)" },
                 }}
                 tooltip={{
-                  formatter: (datum: { amount: number }) => ({
+                  formatter: (datum: { rawAmount: number }) => ({
                     name: "To'lov",
-                    value: `${datum.amount.toLocaleString()} so'm`,
+                    value: `${datum.rawAmount.toLocaleString()} so'm`,
                   }),
                 }}
               />

@@ -32,6 +32,7 @@ import {
   UniversityStatistics,
   SpecialityStatistics,
   PaymentHistoryChart,
+  Xazna,
 } from "@modules"
 import { FiSlack } from "react-icons/fi"
 
@@ -123,6 +124,14 @@ export const routesConfig = [
         showInSidebar: true,
       },
       {
+        path: "xazna",
+        label: "Xazna",
+        icon: <FaRegCreditCard style={{ fontSize: "22px" }} />,
+        element: <Xazna />,
+        permissions: ["XAZNA_PAYMENT_HISTORY"],
+        showInSidebar: true,
+      },
+      {
         path: "debt",
         icon: <FaHandshake style={{ fontSize: "22px" }} />,
         label: "Qo'shimcha qarzdorlik",
@@ -156,6 +165,7 @@ export const routesConfig = [
     permissions: ["PAYMENT_MENU"],
     showInSidebar: true,
   },
+
 
   {
     path: "transaction-history/:id",
@@ -197,7 +207,7 @@ export const routesConfig = [
         path: "payment-chart",
         label: "To'lov statistikasi",
         icon: <FaUserGroup style={{ fontSize: "22px" }} />,
-        element: <PaymentHistoryChart/>,
+        element: <PaymentHistoryChart />,
         permissions: ["TRANSACTION_STATISTICS_GRAPH_MENU"],
         showInSidebar: true,
       },
