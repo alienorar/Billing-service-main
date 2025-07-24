@@ -14,13 +14,13 @@ import {
 import { ArrowUpOutlined } from "@ant-design/icons";
 import { Line } from "@ant-design/charts";
 import { useGetPaymentChart } from "../hooks/queries";
-import { ProcessedData, PaymentItem} from "../types";
+import { ProcessedData, PaymentItem } from "../types";
 
 const { Option } = Select;
 const { Title, Text } = Typography;
 
 const PaymentDashboard = () => {
-    
+
   // We create a state limit initialized with 10
   const getInitialFilterCount = (): number => {
     try {
@@ -31,7 +31,7 @@ const PaymentDashboard = () => {
         if (!isNaN(parsed)) return parsed;
       }
     } catch {
-      
+
     }
     return 10;
   };
@@ -53,31 +53,31 @@ const PaymentDashboard = () => {
 
   const getMaxLimit = (type: string): number => {
     switch (type) {
-        case "DAILY":
-            return 30;
-        case "MONTHLY":
-            return 12;
-        case "WEEKLY":
-            return 15;
-        case "YEARLY":
-            return 5;
-        default:
-            return 10;
-        }
-    };
+      case "DAILY":
+        return 30;
+      case "MONTHLY":
+        return 12;
+      case "WEEKLY":
+        return 15;
+      case "YEARLY":
+        return 5;
+      default:
+        return 10;
+    }
+  };
   const [tempFilterCount, setTempFilterCount] = useState<number>(filterCount)
 
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            
-            setFilterCount(tempFilterCount);
-        }, 1000);
+  useEffect(() => {
+    const handler = setTimeout(() => {
 
-        
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [tempFilterCount]);
+      setFilterCount(tempFilterCount);
+    }, 1000);
+
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [tempFilterCount]);
 
   // Update URL whenever filterType or filterCount changes
 
@@ -152,9 +152,13 @@ const PaymentDashboard = () => {
       const toDate = item.to.split(" ")[0];
       const label = `${fromDate.slice(0, 5)} - ${toDate.slice(0, 5)}`;
 
+      // Convert amount to millions and format with 1 decimal place
+      const amountInMillions = (item.allPaymentAmount / 1000000).toFixed(1);
+
       return {
         date: label,
-        amount: item.allPaymentAmount,
+        amount: amountInMillions,
+        rawAmount: `${item.allPaymentAmount} mln so'm` // Keep original value for tooltips if needed
       };
     });
   }, [payments, filterCount]);
@@ -205,10 +209,10 @@ const PaymentDashboard = () => {
                 max={getMaxLimit(filterType)}
                 value={tempFilterCount}
                 onChange={(val) => {
-                    if (!val) return;
-                    const maxLimit = getMaxLimit(filterType);
-                    const newVal = val > maxLimit ? maxLimit : val;
-                    setTempFilterCount(newVal);
+                  if (!val) return;
+                  const maxLimit = getMaxLimit(filterType);
+                  const newVal = val > maxLimit ? maxLimit : val;
+                  setTempFilterCount(newVal);
                 }}
                 size="large"
                 style={{ width: 100 }}
@@ -266,17 +270,20 @@ const PaymentDashboard = () => {
                 point={{ size: 5, shape: "circle" }}
                 color="#1890ff"
                 smooth
-                xAxis={{ title: { text: filterType === "DAILY" ? "Kunlar" : filterType === "WEEKLY" ? "Haftalar" : "Oyliklar" } }}
+                xAxis={{
+                  title: {
+                    text: filterType === "DAILY" ? "Kunlar" :
+                      filterType === "WEEKLY" ? "Haftalar" :
+                        "Oyliklar"
+                  }
+                }}
                 yAxis={{
-                  title: { text: "To'lov miqdori (so'm)" },
-                  label: {
-                    formatter: (val: string) => `${(+val / 1000000).toFixed(1)}M`,
-                  },
+                  title: { text: "To'lov miqdori (mln sum)" },
                 }}
                 tooltip={{
-                  formatter: (datum: { amount: number }) => ({
+                  formatter: (datum: { rawAmount: number }) => ({
                     name: "To'lov",
-                    value: `${datum.amount.toLocaleString()} so'm`,
+                    value: `${datum.rawAmount.toLocaleString()} so'm`,
                   }),
                 }}
               />

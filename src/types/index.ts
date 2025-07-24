@@ -87,9 +87,6 @@ export interface ConfirmType {
 }
 
 
-
-
-
 // ============GLOBAL SEARCH=============
 export interface SearchType {
   updateParams: (params: ParamsType) => void;
