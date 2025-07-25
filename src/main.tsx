@@ -22,9 +22,7 @@ createRoot(document.getElementById('root')!).render(
           },
         }}
       >
-      
           <Root />
-    
       </ConfigProvider>
     </QueryClientProvider>
   // </BrowserRouter>

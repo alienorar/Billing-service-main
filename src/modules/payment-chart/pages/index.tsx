@@ -15,15 +15,15 @@ import { ArrowUpOutlined } from "@ant-design/icons";
 import { Line } from "@ant-design/charts";
 import { useGetPaymentChart, useGetPaymentStatistics } from "../hooks/queries";
 import { ProcessedData, PaymentItem} from "../types";
+import {Button} from "antd"
 import dayjs from "dayjs";
-import { Button } from "antd";
 
 const { Option } = Select;
 const { Title, Text } = Typography;
 
 const PaymentDashboard = () => {
-    
-  // We create a state limit initialized with 10
+
+  
   
   const [year, setYear] = useState<"THIS_YEAR" | "LAST_YEAR">("THIS_YEAR");
 
@@ -38,7 +38,7 @@ const PaymentDashboard = () => {
         if (!isNaN(parsed)) return parsed;
       }
     } catch {
-      
+
     }
     return 10;
   };
@@ -76,31 +76,31 @@ const PaymentDashboard = () => {
 
   const getMaxLimit = (type: string): number => {
     switch (type) {
-        case "DAILY":
-            return 30;
-        case "MONTHLY":
-            return 12;
-        case "WEEKLY":
-            return 15;
-        case "YEARLY":
-            return 5;
-        default:
-            return 10;
-        }
-    };
+      case "DAILY":
+        return 30;
+      case "MONTHLY":
+        return 12;
+      case "WEEKLY":
+        return 15;
+      case "YEARLY":
+        return 5;
+      default:
+        return 10;
+    }
+  };
   const [tempFilterCount, setTempFilterCount] = useState<number>(filterCount)
 
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            
-            setFilterCount(tempFilterCount);
-        }, 1000);
+  useEffect(() => {
+    const handler = setTimeout(() => {
 
-        
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [tempFilterCount]);
+      setFilterCount(tempFilterCount);
+    }, 1000);
+
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [tempFilterCount]);
 
   // Update URL whenever filterType or filterCount changes
 
@@ -219,9 +219,13 @@ const PaymentDashboard = () => {
         return `${day}-${month}`;
       };
 
+      // Convert amount to millions and format with 1 decimal place
+      const amountInMillions = (item.allPaymentAmount / 1000000).toFixed(1);
+
       return {
         date: `${formatDate(fromDate)} - ${formatDate(toDate)}`, 
-        amount: item.allPaymentAmount,
+        amount: amountInMillions,
+        rawAmount: `${item.allPaymentAmount} mln so'm` ,
         rawData: item 
       };
     });
@@ -408,10 +412,10 @@ const PaymentDashboard = () => {
                 max={getMaxLimit(filterType)}
                 value={tempFilterCount}
                 onChange={(val) => {
-                  if (!val) return;
-                  const maxLimit = getMaxLimit(filterType);
-                  const newVal = val > maxLimit ? maxLimit : val;
-                  setTempFilterCount(newVal);
+                    if (!val) return;
+                    const maxLimit = getMaxLimit(filterType);
+                    const newVal = val > maxLimit ? maxLimit : val;
+                    setTempFilterCount(newVal);
                 }}
                 size="large"
                 style={{ width: 100 }}
@@ -477,47 +481,21 @@ const PaymentDashboard = () => {
                 }}
                 color="#1890ff"
                 smooth
-                xAxis={{ 
-                  title: { 
-                    text: filterType === "DAILY" ? "Kunlar" : 
-                          filterType === "WEEKLY" ? "Haftalar" : "Oylar" 
-                  },
-                  label: {
-                    autoRotate: true,
+                xAxis={{
+                  title: {
+                    text: filterType === "DAILY" ? "Kunlar" :
+                      filterType === "WEEKLY" ? "Haftalar" :
+                        "Oyliklar"
                   }
                 }}
+                
                 yAxis={{
                   title: { text: "To'lov miqdori (so'm)" },
                   label: {
-                    formatter: (val: string) => `${Number(val).toLocaleString('en-US')}`,
+                    formatter: (val: string) => `${(+val / 1000000).toFixed(1)}M`,
                   },
-                  grid: {
-                    line: {
-                      style: {
-                        stroke: "#f0f0f0",
-                        lineDash: [4, 4]
-                      }
-                    }
-                  }
-                }}
-                label={{
-                  formatter: (datum: any) => ({
-                    content: `${datum.amount.toLocaleString('en-US')}`,
-                    style: {
-                      fill: '#333',
-                      fontSize: 12,
-                      fontWeight: 'bold',
-                      textAlign: 'center',
-                      textBaseline: 'bottom',
-                      shadowColor: '#fff',
-                      shadowBlur: 4
-                    },
-                  }),
-                  position: 'top',
-                  offsetY: -10
                 }}
                 
-
               />
             </Card>
 

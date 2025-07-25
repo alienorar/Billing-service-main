@@ -119,6 +119,14 @@ const StudentDetails: React.FC = () => {
   });
 
 
+const handleBack = () => {
+    const queryParams = new URLSearchParams(location.search);
+    const page = queryParams.get("page") || "1";
+    const size = queryParams.get("size") || "10";
+    const backUrl = `/super-admin-panel/students?page=${page}&size=${size}`;
+    console.log("[handleBack] Navigating to:", backUrl);
+    navigate(backUrl);
+  };
 
   const handleDownload = (reasonFile: string) => {
     console.log("[handleDownload] Download button clicked for reasonFile:", reasonFile);
@@ -260,7 +268,7 @@ const StudentDetails: React.FC = () => {
             className="text-green-500 font-medium"
             type="default"
             icon={<ArrowLeftOutlined />}
-            onClick={() => navigate(-1)}
+                  onClick={handleBack}
           >
             Ortga
           </Button>
