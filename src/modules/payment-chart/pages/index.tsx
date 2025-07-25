@@ -13,16 +13,23 @@ import {
 } from "antd";
 import { ArrowUpOutlined } from "@ant-design/icons";
 import { Line } from "@ant-design/charts";
-import { useGetPaymentChart } from "../hooks/queries";
-import { ProcessedData, PaymentItem } from "../types";
+import { useGetPaymentChart, useGetPaymentStatistics } from "../hooks/queries";
+import { ProcessedData, PaymentItem} from "../types";
+import {Button} from "antd"
+import dayjs from "dayjs";
 
 const { Option } = Select;
 const { Title, Text } = Typography;
 
 const PaymentDashboard = () => {
 
-  // We create a state limit initialized with 10
+  
+  
+  const [year, setYear] = useState<"THIS_YEAR" | "LAST_YEAR">("THIS_YEAR");
+
+
   const getInitialFilterCount = (): number => {
+    Title
     try {
       const params = new URLSearchParams(window.location.search);
       const countParam = params.get("limit");
@@ -37,13 +44,28 @@ const PaymentDashboard = () => {
   };
 
   const [payments, setPayments] = useState<PaymentItem[]>([]);
-  const [filterType, setFilterType] = useState<string>("WEEKLY");
+  const [filterType, setFilterType] = useState<string>("DAILY");
   const [filterCount, setFilterCount] = useState<number>(getInitialFilterCount());
 
   const { data: apiResponse, isLoading } = useGetPaymentChart({
     filterType,
     filterCount,
   });
+
+  const { data: statisticsData } = useGetPaymentStatistics({
+    filterType,
+    filterCount
+  });
+  
+
+  useEffect(() => {
+    if (statisticsData) {
+      console.log("Statistika ma'lumotlari:", statisticsData);
+    }
+  }, [statisticsData]);
+
+  
+  
 
   useEffect(() => {
     if (apiResponse?.data) {
@@ -58,7 +80,7 @@ const PaymentDashboard = () => {
       case "MONTHLY":
         return 12;
       case "WEEKLY":
-        return 15;
+        return 30;
       case "YEARLY":
         return 5;
       default:
@@ -84,7 +106,6 @@ const PaymentDashboard = () => {
   useEffect(() => {
     const maxLimit = getMaxLimit(filterType);
     let newCount = filterCount;
-
     if (filterCount > maxLimit) newCount = maxLimit;
     if (filterType === "WEEKLY" && filterCount < 1) newCount = 7;
 
@@ -131,10 +152,50 @@ const PaymentDashboard = () => {
     };
   };
 
+  const [days, getDays] = useState<"TODAY" | "YESTERDAY">("TODAY");
+  const [month, getMonth] = useState<"THIS_MONTH" | "LAST_MONTH">("THIS_MONTH");
+
+
+  const { data: todayStats } = useGetPaymentStatistics({
+    from: dayjs().format("YYYY-MM-DD"),
+    to: dayjs().format("YYYY-MM-DD"),
+  });
+
+  const { data: yesterdayStats } = useGetPaymentStatistics({
+    from: dayjs().subtract(1, "day").format("YYYY-MM-DD"),
+    to: dayjs().subtract(1, "day").format("YYYY-MM-DD"),
+  });
+
+  const { data: thisMonthStats } = useGetPaymentStatistics({
+    from: dayjs().startOf("month").format("YYYY-MM-DD"),
+    to: dayjs().endOf("month").format("YYYY-MM-DD"),
+  });
+
+  const { data: lastMonthStats } = useGetPaymentStatistics({
+    from: dayjs().subtract(1, "month").startOf("month").format("YYYY-MM-DD"),
+    to: dayjs().subtract(1, "month").endOf("month").format("YYYY-MM-DD"),
+  });
+  const { data: thisYearStats } = useGetPaymentStatistics({
+    from: dayjs().startOf("year").format("YYYY-MM-DD"),
+    to: dayjs().endOf("year").format("YYYY-MM-DD"),
+  });
+
+  const { data: lastYearStats } = useGetPaymentStatistics({
+    from: dayjs().subtract(1, "year").startOf("year").format("YYYY-MM-DD"),
+    to: dayjs().subtract(1, "year").endOf("year").format("YYYY-MM-DD"),
+  });
+
+
+
+
+
   const dashboardData = processedData();
 
   const chartData = useMemo(() => {
+    
     if (!payments || payments.length === 0) return [];
+
+    
 
     const parseDate = (dateStr: string): Date => {
       const [d, m, y] = dateStr.split(" ")[0].split("-");
@@ -148,17 +209,22 @@ const PaymentDashboard = () => {
     const filteredPayments = sortedPayments.slice(-filterCount);
 
     return filteredPayments.map((item) => {
-      const fromDate = item.from.split(" ")[0];
-      const toDate = item.to.split(" ")[0];
-      const label = `${fromDate.slice(0, 5)} - ${toDate.slice(0, 5)}`;
+      const fromDate = item.from.split(" ")[0]; 
+      const toDate = item.to.split(" ")[0];  
+
+      const formatDate = (dateStr: string) => {
+        const [day, month] = dateStr.split("-");
+        return `${day}-${month}`;
+      };
 
       // Convert amount to millions and format with 1 decimal place
-      const amountInMillions = (item.allPaymentAmount / 1000000).toFixed(1);
+      const amountInMillions = Number((item.allPaymentAmount / 1000000).toFixed(1));
 
       return {
-        date: label,
+        date: `${formatDate(fromDate)} - ${formatDate(toDate)}`, 
         amount: amountInMillions,
-        rawAmount: `${item.allPaymentAmount} mln so'm` // Keep original value for tooltips if needed
+        rawAmount: `${item.allPaymentAmount} mln so'm` ,
+        rawData: item 
       };
     });
   }, [payments, filterCount]);
@@ -184,18 +250,153 @@ const PaymentDashboard = () => {
   return (
     <div className="p-4">
       <Space direction="vertical" size="large" className="w-full">
+        
         <Card bordered={false}>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <Title level={3} className="mb-0">
-              To'lovlar Monitoringi
-            </Title>
-            <Space>
+            
+            <div className="flex-1">
+              <Row gutter={[16, 16]}>
+                <Col xs={5} md={8}>
+                  <Card style={{ background: "#fdfdfd", borderRadius: 8, boxShadow: "0 1px 3px rgba(0,0,0,0.1)" }}>
+                    <Button.Group>
+                      <Button
+                        type={days === "YESTERDAY" ? "primary" : "default"}
+                        onClick={() => getDays("YESTERDAY")}
+                        style={{
+                          borderRadius: "6px 0 0 6px",
+                          fontWeight: 500,
+                          padding: "4px 16px"
+                        }}
+                      >
+                        Kecha
+                      </Button>
+                      <Button
+                        type={days === "TODAY" ? "primary" : "default"}
+                        onClick={() => getDays("TODAY")}
+                        style={{
+                          borderRadius: "0 6px 6px 0",
+                          fontWeight: 500,
+                          padding: "4px 16px"
+                        }}
+                      >
+                        Bugun
+                      </Button>
+                    </Button.Group>
+
+
+                    <div style={{ marginTop: 20 }}>
+                      <Statistic
+                        title={days === "TODAY" ? "Bugungi to‘lovlar" : "Kechagi to‘lovlar"}
+                        value={
+                          days === "TODAY"
+                            ? todayStats?.data?.allPaymentAmount?.toLocaleString("en-US")
+                            : yesterdayStats?.data?.allPaymentAmount?.toLocaleString("en-US")
+                        }
+                        suffix="so'm"
+                        valueStyle={{ color: "#fa541c" }}
+                      />
+                    </div>
+                  </Card>
+                </Col>
+                <Col xs={5} md={8} >
+                  <Card style={{ background: "#fdfdfd", borderRadius: 8, boxShadow: "0 1px 3px rgba(0,0,0,0.1)" }}>
+                    <Button.Group>
+                      <Button
+                        type={month === "LAST_MONTH" ? "primary" : "default"}
+                        onClick={() => getMonth("LAST_MONTH")}
+                        style={{
+                          borderRadius: "6px 0 0 6px",
+                          fontWeight: 500,
+                          padding: "4px 16px"
+                        }}
+                      >
+                        O‘tgan oy
+                      </Button>
+                      <Button
+                        type={month === "THIS_MONTH" ? "primary" : "default"}
+                        onClick={() => getMonth("THIS_MONTH")}
+                        style={{
+                          borderRadius: "0 6px 6px 0",
+                          fontWeight: 500,
+                          padding: "4px 16px"
+                        }}
+                      >
+                        Bu oy
+                      </Button>
+                    </Button.Group>
+
+
+                    <div style={{ marginTop: 20 }}>
+                      <Statistic
+                    
+
+                        title={month === "THIS_MONTH" ? "Shu oy to'lovlari" : "O‘tgan oy to'lovlari"}
+                        value={
+                          month === "THIS_MONTH"
+                            ? thisMonthStats?.data?.allPaymentAmount?.toLocaleString("en-US")
+                            : lastMonthStats?.data?.allPaymentAmount?.toLocaleString("en-US")
+                        }
+                        suffix="so'm"
+                        valueStyle={{ color: "#3f8600" }}
+                      />
+                    </div>
+                  </Card>
+                </Col>
+
+                <Col xs={5} md={8}>
+                  <Card  style={{ background: "#fdfdfd", borderRadius: 8, boxShadow: "0 1px 3px rgba(0,0,0,0.1)" }}>
+                    <Button.Group>
+                      <Button
+                        type={year === "LAST_YEAR" ? "primary" : "default"}
+                        onClick={() => setYear("LAST_YEAR")}
+                        style={{
+                          borderRadius: "6px 0 0 6px",
+                          fontWeight: 500,
+                          padding: "4px 16px"
+                        }}
+                      >
+                        O‘tgan yil
+                      </Button>
+                      <Button
+                        type={year === "THIS_YEAR" ? "primary" : "default"}
+                        onClick={() => setYear("THIS_YEAR")}
+                        style={{
+                          borderRadius: "0 6px 6px 0",
+                          fontWeight: 500,
+                          padding: "4px 16px"
+                        }}
+                      >
+                        Bu yil
+                      </Button>
+                    </Button.Group>
+
+                    <div style={{ marginTop: 20 }}>
+                      <Statistic
+                        title={year === "THIS_YEAR" ? "Bu yildagi to‘lovlar" : "O‘tgan yildagi to‘lovlar"}
+                        value={
+                          year === "THIS_YEAR"
+                            ? thisYearStats?.data?.allPaymentAmount?.toLocaleString("en-US")
+                            : lastYearStats?.data?.allPaymentAmount?.toLocaleString("en-US")
+                        }
+                        suffix="so'm"
+                        valueStyle={{ color: "#722ed1" }}
+                      />
+                    </div>
+                  </Card>
+                </Col>
+                
+              </Row>
+
+
+            </div>
+
+            
+            {/* Filtrlash qismi */}
+            <Space size="middle" className="mt-4 md:mt-0">
               <Select<string>
                 style={{ width: 140 }}
                 value={filterType}
-                onChange={(val) => {
-                  setFilterType(val);
-                }}
+                onChange={setFilterType}
                 size="large"
               >
                 <Option value="DAILY">Kunlik</Option>
@@ -209,10 +410,10 @@ const PaymentDashboard = () => {
                 max={getMaxLimit(filterType)}
                 value={tempFilterCount}
                 onChange={(val) => {
-                  if (!val) return;
-                  const maxLimit = getMaxLimit(filterType);
-                  const newVal = val > maxLimit ? maxLimit : val;
-                  setTempFilterCount(newVal);
+                    if (!val) return;
+                    const maxLimit = getMaxLimit(filterType);
+                    const newVal = val > maxLimit ? maxLimit : val;
+                    setTempFilterCount(newVal);
                 }}
                 size="large"
                 style={{ width: 100 }}
@@ -262,12 +463,20 @@ const PaymentDashboard = () => {
               </Col>
             </Row>
 
-            <Card title={`${filterType} To'lovlar Grafigi`} bordered={false}>
+            <Card title={`${filterType} To'lovlar Grafigi Million`} bordered={false}>
               <Line
                 data={chartData}
                 xField="date"
                 yField="amount"
-                point={{ size: 5, shape: "circle" }}
+                point={{ 
+                  size: 5, 
+                  shape: "circle",
+                  style: {
+                    fill: "#1890ff",
+                    stroke: "#fff",
+                    lineWidth: 2
+                  }
+                }}
                 color="#1890ff"
                 smooth
                 xAxis={{
@@ -277,15 +486,14 @@ const PaymentDashboard = () => {
                         "Oyliklar"
                   }
                 }}
+                
                 yAxis={{
-                  title: { text: "To'lov miqdori (mln sum)" },
+                  title: { text: "To'lov miqdori (so'm)" },
+                  label: {
+                    formatter: (val: string) => `${(+val / 1000000).toFixed(1)}M`,
+                  },
                 }}
-                tooltip={{
-                  formatter: (datum: { rawAmount: number }) => ({
-                    name: "To'lov",
-                    value: `${datum.rawAmount.toLocaleString()} so'm`,
-                  }),
-                }}
+                
               />
             </Card>
 
