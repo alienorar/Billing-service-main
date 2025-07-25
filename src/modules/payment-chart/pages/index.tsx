@@ -44,14 +44,13 @@ const PaymentDashboard = () => {
   };
 
   const [payments, setPayments] = useState<PaymentItem[]>([]);
-  const [filterType, setFilterType] = useState<string>("WEEKLY");
+  const [filterType, setFilterType] = useState<string>("DAILY");
   const [filterCount, setFilterCount] = useState<number>(getInitialFilterCount());
 
   const { data: apiResponse, isLoading } = useGetPaymentChart({
     filterType,
     filterCount,
   });
-
 
   const { data: statisticsData } = useGetPaymentStatistics({
     filterType,
@@ -81,7 +80,7 @@ const PaymentDashboard = () => {
       case "MONTHLY":
         return 12;
       case "WEEKLY":
-        return 15;
+        return 30;
       case "YEARLY":
         return 5;
       default:
@@ -107,7 +106,6 @@ const PaymentDashboard = () => {
   useEffect(() => {
     const maxLimit = getMaxLimit(filterType);
     let newCount = filterCount;
-
     if (filterCount > maxLimit) newCount = maxLimit;
     if (filterType === "WEEKLY" && filterCount < 1) newCount = 7;
 
@@ -220,7 +218,7 @@ const PaymentDashboard = () => {
       };
 
       // Convert amount to millions and format with 1 decimal place
-      const amountInMillions = (item.allPaymentAmount / 1000000).toFixed(1);
+      const amountInMillions = Number((item.allPaymentAmount / 1000000).toFixed(1));
 
       return {
         date: `${formatDate(fromDate)} - ${formatDate(toDate)}`, 
@@ -465,7 +463,7 @@ const PaymentDashboard = () => {
               </Col>
             </Row>
 
-            <Card title={`${filterType} To'lovlar Grafigi`} bordered={false}>
+            <Card title={`${filterType} To'lovlar Grafigi Million`} bordered={false}>
               <Line
                 data={chartData}
                 xField="date"
