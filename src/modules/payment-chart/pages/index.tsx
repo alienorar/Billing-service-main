@@ -65,6 +65,14 @@ const PaymentDashboard = () => {
   }, [statisticsData]);
 
   
+  useEffect(() => {
+  const maxLimit = getMaxLimit(filterType);
+  if (tempFilterCount > maxLimit) {
+    setTempFilterCount(maxLimit);
+  }
+}, [filterType]);
+
+  
   
 
   useEffect(() => {
@@ -82,7 +90,7 @@ const PaymentDashboard = () => {
       case "WEEKLY":
         return 30;
       case "YEARLY":
-        return 5;
+        return 10;
       default:
         return 10;
     }
@@ -192,10 +200,7 @@ const PaymentDashboard = () => {
   const dashboardData = processedData();
 
   const chartData = useMemo(() => {
-    
     if (!payments || payments.length === 0) return [];
-
-    
 
     const parseDate = (dateStr: string): Date => {
       const [d, m, y] = dateStr.split(" ")[0].split("-");
@@ -209,21 +214,16 @@ const PaymentDashboard = () => {
     const filteredPayments = sortedPayments.slice(-filterCount);
 
     return filteredPayments.map((item) => {
-      const fromDate = item.from.split(" ")[0]; 
-      const toDate = item.to.split(" ")[0];  
+     
+      const [d, m, y] = item.from.split(" ")[0].split("-");
+      const formattedDate = `${d}.${m}.${y}`;
 
-      const formatDate = (dateStr: string) => {
-        const [day, month] = dateStr.split("-");
-        return `${day}-${month}`;
-      };
-
-      // Convert amount to millions and format with 1 decimal place
-      const amountInMillions = Number((item.allPaymentAmount / 1000000).toFixed(1));
-
+      
+      const amountInMillions = filterType == "DAILY" || filterType == "WEEKLY" ? Number((item.allPaymentAmount / 1000000).toFixed(2)): Number((item.allPaymentAmount / 1000000000).toFixed(3))
       return {
-        date: `${formatDate(fromDate)} - ${formatDate(toDate)}`, 
+        date: formattedDate, 
         amount: amountInMillions,
-        rawAmount: `${item.allPaymentAmount} mln so'm` ,
+        rawAmount: `${item.allPaymentAmount} mln so'm`,
         rawData: item 
       };
     });
@@ -463,7 +463,10 @@ const PaymentDashboard = () => {
               </Col>
             </Row>
 
-            <Card title={`${filterType} To'lovlar Grafigi Million`} bordered={false}>
+            <Card title={`${dashboardData.paymentCount} ${filterType === "DAILY" ? "Kunlik" :
+                      filterType === "WEEKLY" ? "Haftalik" :
+                      filterType === "MONTHLY"? "Oyliklik":
+                      "Yillik"} To'lovlar Grafigi ${filterType === "DAILY" || filterType === "WEEKLY"? "Million": "Milliard" } so'mda`} bordered={false}>
               <Line
                 data={chartData}
                 xField="date"
@@ -490,7 +493,7 @@ const PaymentDashboard = () => {
                 yAxis={{
                   title: { text: "To'lov miqdori (so'm)" },
                   label: {
-                    formatter: (val: string) => `${(+val / 1000000).toFixed(1)}M`,
+                    formatter: (val: string) => `${(+val / 100).toFixed(1)}M`,
                   },
                 }}
                 
