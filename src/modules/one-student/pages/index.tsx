@@ -1,330 +1,313 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { useGetStudentById, useGetStudentsDiscounts, useGetStudentsTrInfo } from "../hooks/queries";
-import { useToggleDebtActive } from "../hooks/mutations";
-import { Card, Descriptions, Image, Typography, Table, Button, Tabs, Space, Tooltip, message, Switch } from "antd";
-import { ArrowLeftOutlined, EditOutlined, DownloadOutlined, CheckOutlined, CloseOutlined, } from "@ant-design/icons";
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { FiEye } from "react-icons/fi";
-import { downloadDiscountReason } from "../service";
-import DiscountsModal from "./modal";
-import StudentDebtsTable from "../../debt/pages";
-import AuditModal from "./auditModal";
+"use client"
 
-const { Title, Text } = Typography;
+import type React from "react"
 
-interface StudentDetails {
-  studentIdNumber: string;
-  pinfl: string;
-  fullName: string;
-  phone: string | null;
-  birthDate: number;
-  genderName: string;
-  studentStatusName: string;
-  levelName: string;
-  specialtyName: string;
-  groupName: string;
-  educationTypeName: string;
-  countryName: string;
-  provinceName: string;
-  districtName: string;
-  image: string;
-  universityName: string;
-}
+import { useNavigate, useParams } from "react-router-dom"
+import { useGetStudentById, useGetStudentsDiscounts, useGetStudentsTrInfo } from "../hooks/queries"
+import { useToggleDebtActive } from "../hooks/mutations"
+import { Card, Descriptions, Image, Typography, Table, Button, Tabs, Space, Tooltip, message, Switch } from "antd"
+import {
+  ArrowLeftOutlined,
+  EditOutlined,
+  DownloadOutlined,
+  CheckOutlined,
+  CloseOutlined,
+  UserOutlined,
+  DollarOutlined,
+  CreditCardOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons"
+import { useState } from "react"
+import { useMutation } from "@tanstack/react-query"
+import { FiEye } from "react-icons/fi"
+import { downloadDiscountReason } from "../service"
+import DiscountsModal from "./modal"
+import StudentDebtsTable from "../../debt/pages"
+import AuditModal from "./auditModal"
+
+const { Title, Text } = Typography
 
 const StudentDetails: React.FC = () => {
-  //audit modal
-  const [audetModalOpen, setAudetModalOpen] = useState<boolean>(false);
-  const [selectedRecord, setSelectedRecord] = useState<any | null>(null);
+  const [audetModalOpen, setAudetModalOpen] = useState<boolean>(false)
+  const [selectedRecord, setSelectedRecord] = useState<any | null>(null)
 
-  const { mutate: toggleActive } = useToggleDebtActive();
+  const { mutate: toggleActive } = useToggleDebtActive()
 
   const handleToggle = (id: string | number) => {
-    toggleActive(id); 
-  };
+    toggleActive(id)
+  }
 
+  const navigate = useNavigate()
+  const { id } = useParams<{ id: string }>()
+  const { data: studentResponse } = useGetStudentById(id)
+  const student = studentResponse?.data
 
-  const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
-  const { data: studentResponse } = useGetStudentById(id);
-  const student = studentResponse?.data;
+  const { data: trInfoResponse } = useGetStudentsTrInfo({ id })
+  const { data: studentsDiscounts } = useGetStudentsDiscounts({ studentId: id })
 
-  const { data: trInfoResponse } = useGetStudentsTrInfo({ id });
-  const { data: studentsDiscounts } = useGetStudentsDiscounts({ studentId: id });
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [update, setUpdate] = useState<any | null>(null)
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [update, setUpdate] = useState<any | null>(null);
+  const trInfo = trInfoResponse?.data
+  const discounts = studentsDiscounts?.data?.content
 
-  const trInfo = trInfoResponse?.data;
-
-  console.log(trInfoResponse?.data.paymentDetails);
-  
-  const discounts = studentsDiscounts?.data?.content;
-
-  // console.log("[StudentDetails] Component rendered, id:", id);
-  // console.log("[StudentDetails] Discounts data:", discounts);
-
-  const showModal = () => setIsModalOpen(true);
+  const showModal = () => setIsModalOpen(true)
   const handleClose = () => {
-    setIsModalOpen(false);
-    setUpdate(null);
-  };
+    setIsModalOpen(false)
+    setUpdate(null)
+  }
 
   const editData = (item: any) => {
-    setUpdate(item);
-    showModal();
-  };
+    setUpdate(item)
+    showModal()
+  }
 
   const audetModal: () => void = () => {
-  setAudetModalOpen(true);
-}
+    setAudetModalOpen(true)
+  }
 
-
-  // Mutation for downloading the discount reason file
   const { mutate: downloadFile, isPending: isDownloading } = useMutation({
     mutationFn: downloadDiscountReason,
     onMutate: (reasonFile) => {
-      console.log("[useMutation] Initiating download for reasonFile:", reasonFile);
-      message.loading({ content: "Fayl yuklanmoqda...", key: "download" });
+      message.loading({ content: "Fayl yuklanmoqda...", key: "download" })
     },
     onSuccess: (data, reasonFile) => {
-      console.log("[useMutation] Download successful for reasonFile:", reasonFile);
-      const url = window.URL.createObjectURL(data);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `discount_reason_${reasonFile}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-      message.success({ content: "Fayl yuklab olindi!", key: "download" });
+      const url = window.URL.createObjectURL(data)
+      const link = document.createElement("a")
+      link.href = url
+      link.download = `discount_reason_${reasonFile}.pdf`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+      message.success({ content: "Fayl yuklab olindi!", key: "download" })
     },
     onError: (error: any) => {
-      console.error("[useMutation] Download failed:", {
-        message: error.message,
-        response: error.response ? {
-          status: error.response.status,
-          data: error.response.data,
-        } : "No response",
-      });
       if (error.message === "Authentication token not found") {
-        message.error({ content: "Tizimga kirish uchun token topilmadi! Iltimos, qayta kiring.", key: "download" });
-        navigate("/login");
-      } else if (error.message === "target must be an object") {
-        message.error({ content: "Faylni yuklashda xato: Noto'g'ri so'rov formati!", key: "download" });
+        message.error({ content: "Tizimga kirish uchun token topilmadi! Iltimos, qayta kiring.", key: "download" })
+        navigate("/login")
       } else {
-        message.error({ content: "Faylni yuklashda xatolik yuz berdi!", key: "download" });
+        message.error({ content: "Faylni yuklashda xatolik yuz berdi!", key: "download" })
       }
     },
-  });
+  })
 
-
-const handleBack = () => {
-    const queryParams = new URLSearchParams(location.search);
-    const page = queryParams.get("page") || "1";
-    const size = queryParams.get("size") || "10";
-    const backUrl = `/super-admin-panel/students?page=${page}&size=${size}`;
-    console.log("[handleBack] Navigating to:", backUrl);
-    navigate(backUrl);
-  };
+  const handleBack = () => {
+    const queryParams = new URLSearchParams(location.search)
+    const page = queryParams.get("page") || "1"
+    const size = queryParams.get("size") || "10"
+    const backUrl = `/super-admin-panel/students?page=${page}&size=${size}`
+    navigate(backUrl)
+  }
 
   const handleDownload = (reasonFile: string) => {
-    console.log("[handleDownload] Download button clicked for reasonFile:", reasonFile);
     if (reasonFile) {
-      downloadFile(reasonFile);
+      downloadFile(reasonFile)
     } else {
-      console.error("[handleDownload] No reasonFile provided");
-      message.error({ content: "Fayl ID topilmadi!", key: "download" });
+      message.error({ content: "Fayl ID topilmadi!", key: "download" })
     }
-  };
+  }
 
   const transactionColumns = [
     {
-      title: "Date",
+      title: <span className="font-semibold text-gray-700">Sana</span>,
       dataIndex: "date",
       key: "date",
-      render: (date: string) => new Date(date).toLocaleDateString(),
+      render: (date: string) => <span className="text-gray-800">{new Date(date).toLocaleDateString()}</span>,
     },
     {
-      title: "Contract Number",
+      title: <span className="font-semibold text-gray-700">Shartnoma raqami</span>,
       dataIndex: "contractNumber",
       key: "contractNumber",
+      render: (text: string) => <span className="font-mono text-sm text-blue-600">{text}</span>,
     },
     {
-      title: "Amount",
+      title: <span className="font-semibold text-gray-700">Summa</span>,
       dataIndex: "amount",
       key: "amount",
-      render: (amount: number) => amount.toLocaleString(),
+      render: (amount: number) => <span className="font-semibold text-green-600">{amount.toLocaleString()} UZS</span>,
     },
     {
-      title: "Currency",
+      title: <span className="font-semibold text-gray-700">Valyuta</span>,
       dataIndex: "currencyCode",
       key: "currencyCode",
-      render: (code: string) => (code === "860" ? "UZS" : code),
+      render: (code: string) => (
+        <span className="px-2 py-1 bg-gray-100 rounded-lg text-sm font-medium">{code === "860" ? "UZS" : code}</span>
+      ),
     },
-  ];
+  ]
 
   const discountColumns = [
     {
-      title: "ID",
+      title: <span className="font-semibold text-gray-700">ID</span>,
       dataIndex: "id",
       key: "id",
+      render: (text: any) => <span className="font-medium text-gray-600">#{text}</span>,
     },
     {
-      title: "Chegirma tarifi",
+      title: <span className="font-semibold text-gray-700">Chegirma tarifi</span>,
       dataIndex: "description",
       key: "description",
+      render: (text: any) => <span className="font-medium text-gray-800">{text}</span>,
     },
     {
-      title: "Chegirma turi",
+      title: <span className="font-semibold text-gray-700">Chegirma turi</span>,
       dataIndex: "discountType",
       key: "discountType",
+      render: (text: any) => (
+        <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium">{text}</span>
+      ),
     },
     {
-      title: "Miqdori",
+      title: <span className="font-semibold text-gray-700">Miqdori</span>,
       dataIndex: "amount",
       key: "amount",
-      render: (amount: number) => amount.toLocaleString() + " UZS",
+      render: (amount: number) => <span className="font-semibold text-green-600">{amount.toLocaleString()} UZS</span>,
     },
     {
-      title: "Talaba kursi",
+      title: <span className="font-semibold text-gray-700">Talaba kursi</span>,
       dataIndex: "studentLevel",
       key: "studentLevel",
+      render: (text: any) => (
+        <span className="px-2 py-1 bg-purple-50 text-purple-700 rounded-lg text-sm font-medium">{text}</span>
+      ),
     },
-
     {
-      title: "Active",
+      title: <span className="font-semibold text-gray-700">Holat</span>,
       dataIndex: "active",
       render: (active: boolean, record: any) => (
         <Switch
           checked={active}
           checkedChildren={<CheckOutlined />}
           unCheckedChildren={<CloseOutlined />}
-          onChange={() => handleToggle(record.id)} 
-          style={{
-            backgroundColor: active ? "green" : "#999",
-          }}
+          onChange={() => handleToggle(record.id)}
+          className={active ? "bg-green-500" : "bg-gray-400"}
         />
       ),
     },
     {
-      title: "Amallar",
+      title: <span className="font-semibold text-gray-700">Amallar</span>,
       key: "action",
       render: (record: any) => (
-        <Space size="middle">
-          
+        <Space size="small">
           <Tooltip title="Tahrirlash">
-            <Button onClick={() => editData(record)}>
+            <Button
+              onClick={() => editData(record)}
+              className="bg-blue-50 border-blue-200 text-blue-600 hover:bg-blue-100 hover:border-blue-300 transition-all duration-200"
+              size="small"
+            >
               <EditOutlined />
             </Button>
           </Tooltip>
 
-          
           {record?.reasonFile && (
             <Tooltip title="Faylni yuklab olish">
               <Button
-                onClick={() => {
-                  console.log("[Button] Download button clicked for record:", record);
-                  handleDownload(record?.reasonFile);
-                }}
+                onClick={() => handleDownload(record?.reasonFile)}
                 loading={isDownloading}
                 disabled={isDownloading}
+                className="bg-green-50 border-green-200 text-green-600 hover:bg-green-100 hover:border-green-300 transition-all duration-200"
+                size="small"
               >
                 <DownloadOutlined />
               </Button>
             </Tooltip>
           )}
+
           {record?.id && (
             <Tooltip title="Ko'rish">
               <Button
                 onClick={() => {
-                  setSelectedRecord(record);
-                  audetModal();
+                  setSelectedRecord(record)
+                  audetModal()
                 }}
+                className="bg-purple-50 border-purple-200 text-purple-600 hover:bg-purple-100 hover:border-purple-300 transition-all duration-200"
+                size="small"
               >
-                <FiEye size={18} />
+                <FiEye size={16} />
               </Button>
             </Tooltip>
           )}
-
-          
         </Space>
       ),
-    }
-
-  ];
+    },
+  ]
 
   return (
-    <>
-      <DiscountsModal
-        open={isModalOpen}
-        handleClose={handleClose}
-        studentId={id}
-        update={update}
-      />
-      <div className="flex flex-col justify-center items-center py-10">
-        <div className="max-w-3xl flex justify-end items-end w-full">
+    <div className="min-h-screen bg-gradient-to-br from-teal-400 via-sky-400 to-blue-800 p-6">
+      <DiscountsModal open={isModalOpen} handleClose={handleClose} studentId={id} update={update} />
+
+      <div className="max-w-7xl mx-auto">
+        {/* Back Button */}
+        <div className="flex justify-end mb-6">
           <Button
-            className="text-green-500 font-medium"
-            type="default"
+            onClick={handleBack}
+            className="bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30 hover:border-white/50 transition-all duration-200 px-2"
             icon={<ArrowLeftOutlined />}
-                  onClick={handleBack}
           >
             Ortga
           </Button>
         </div>
+
+        {/* Main Card */}
         <Card
+          className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border-0 overflow-hidden"
           style={{
-            maxWidth: 1400,
-            margin: "20px auto",
-            padding: 20,
-            borderRadius: 10,
-            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+            background: "rgba(255, 255, 255, 0.95)",
+            backdropFilter: "blur(10px)",
           }}
         >
-          <div className="flex items-center gap-5 mb-5">
-            <Image
-              width={100}
-              height={120}
-              src={student?.image}
-              style={{ borderRadius: "50%", border: "2px solid #050556" }}
-              fallback="https://via.placeholder.com/100"
-            />
-            <div>
-              <Title level={3} style={{ color: "#050556", margin: 0 }}>
+          {/* Student Header */}
+          <div className="flex items-center gap-6 mb-8 p-6 bg-gradient-to-r from-teal-50 to-blue-50 rounded-2xl">
+            <div className="relative">
+              <Image
+                width={120}
+                height={140}
+                src={student?.image || "/placeholder.svg"}
+                className="rounded-2xl shadow-lg border-4 border-white"
+                fallback="https://via.placeholder.com/120x140"
+              />
+              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-br from-teal-400 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+                <UserOutlined className="text-white text-sm" />
+              </div>
+            </div>
+            <div className="flex-1">
+              <Title level={2} className="text-gray-800 mb-2">
                 {student?.fullName}
               </Title>
-              <Text type="secondary" style={{ fontSize: 16 }}>
-                {student?.universityName}
-              </Text>
+              <Text className="text-gray-600 text-lg">{student?.universityName}</Text>
+              <div className="flex items-center gap-4 mt-4">
+                <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm">
+                  <span className="text-sm font-medium text-gray-600">Student ID:</span>
+                  <span className="font-bold text-teal-600">{student?.studentIdNumber}</span>
+                </div>
+                <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm">
+                  <span className="text-sm font-medium text-gray-600">PINFL:</span>
+                  <span className="font-mono text-sm text-gray-800">{student?.pinfl || "-"}</span>
+                </div>
+              </div>
             </div>
           </div>
 
+          {/* Student Details */}
           <Descriptions
             bordered
             column={2}
             size="middle"
-            style={{ marginBottom: 20 }}
+            className="mb-8 bg-white rounded-2xl overflow-hidden shadow-sm"
+            labelStyle={{
+              fontWeight: "600",
+              backgroundColor: "#f8fafc",
+              color: "#374151",
+            }}
           >
-            <Descriptions.Item label="Student ID">
-              <Text strong style={{ color: "#050556" }}>
-                {student?.studentIdNumber}
-              </Text>
-            </Descriptions.Item>
-            <Descriptions.Item label="PINFL">
-              <Text strong style={{ color: "#050556" }}>
-                {student?.pinfl || "-"}
-              </Text>
-            </Descriptions.Item>
-            <Descriptions.Item label="Tel">
-              {student?.phone || "-"}
-            </Descriptions.Item>
-            <Descriptions.Item label="To'g'ilgan sanasi">
+            <Descriptions.Item label="Telefon">{student?.phone || "-"}</Descriptions.Item>
+            <Descriptions.Item label="Tug'ilgan sana">
               {(() => {
-                const date = new Date(student?.birthDate * 1000);
-                const year = date.getFullYear();
-                const month = date.getMonth();
-                const day = String(date.getDate()).padStart(2, "0");
+                const date = new Date(student?.birthDate * 1000)
+                const year = date.getFullYear()
+                const month = date.getMonth()
+                const day = String(date.getDate()).padStart(2, "0")
                 const monthNames = [
                   "yanvar",
                   "fevral",
@@ -338,8 +321,8 @@ const handleBack = () => {
                   "oktyabr",
                   "noyabr",
                   "dekabr",
-                ];
-                return `${year}-yil ${day}-${monthNames[month]}`;
+                ]
+                return `${year}-yil ${day}-${monthNames[month]}`
               })()}
             </Descriptions.Item>
             <Descriptions.Item label="Kursi">{student?.levelName}</Descriptions.Item>
@@ -348,134 +331,106 @@ const handleBack = () => {
             <Descriptions.Item label="Ta'lim shakli">{student?.educationTypeName}</Descriptions.Item>
             <Descriptions.Item label="Mamlakat">{student?.countryName}</Descriptions.Item>
             <Descriptions.Item label="Viloyat">{student?.provinceName}</Descriptions.Item>
-            <Descriptions.Item label="Tuman">{student?.districtName}</Descriptions.Item>
+            <Descriptions.Item label="Tuman" span={2}>
+              {student?.districtName}
+            </Descriptions.Item>
           </Descriptions>
 
-          <div className="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">
+          {/* Financial Report */}
+          <div className="bg-gradient-to-r from-teal-50 to-blue-50 rounded-2xl p-6 mb-8 border border-teal-100">
+            <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-teal-400 to-blue-600 rounded-lg flex items-center justify-center">
+                <DollarOutlined className="text-white text-sm" />
+              </div>
               Moliyaviy Hisobot
             </h3>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-600 flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5 text-blue-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    ></path>
-                  </svg>
-                  Shartnoma summasi :
-                </span>
-                <span className="text-sm font-bold text-gray-800">
-                  {trInfo?.paymentDetails.studentContractAmount ? Number(trInfo?.paymentDetails.studentContractAmount).toLocaleString() : "0"} UZS
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <div className="flex items-center gap-3 mb-2">
+                  <CreditCardOutlined className="text-blue-500 text-lg" />
+                  <span className="text-sm font-medium text-gray-600">Shartnoma summasi</span>
+                </div>
+                <span className="text-lg font-bold text-gray-800">
+                  {trInfo?.paymentDetails.studentContractAmount
+                    ? Number(trInfo?.paymentDetails.studentContractAmount).toLocaleString()
+                    : "0"}{" "}
+                  UZS
                 </span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-600 flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5 text-green-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                    ></path>
-                  </svg>
-                  Chegirma summasi
-                </span>
-                <span className="text-sm font-bold text-green-600">
-                  {trInfo?.paymentDetails.studentDiscountAmount ? Number(trInfo?.paymentDetails.studentDiscountAmount).toLocaleString() : "0"} UZS
+
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <div className="flex items-center gap-3 mb-2">
+                  <CheckOutlined className="text-green-500 text-lg" />
+                  <span className="text-sm font-medium text-gray-600">Chegirma summasi</span>
+                </div>
+                <span className="text-lg font-bold text-green-600">
+                  {trInfo?.paymentDetails.studentDiscountAmount
+                    ? Number(trInfo?.paymentDetails.studentDiscountAmount).toLocaleString()
+                    : "0"}{" "}
+                  UZS
                 </span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-600 flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5 text-blue-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M17 9V7a5 5 0 00-10 0v2m8 8H9a4 4 0 01-4-4V9h14v4a4 4 0 01-4 4z"
-                    ></path>
-                  </svg>
-                  To'langan summa
-                </span>
-                <span className="text-sm font-bold text-blue-600">
-                  {trInfo?.paymentDetails.studentPaidAmount ? Number(trInfo?.paymentDetails.studentPaidAmount).toLocaleString() : "0"} UZS
+
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <div className="flex items-center gap-3 mb-2">
+                  <DollarOutlined className="text-blue-500 text-lg" />
+                  <span className="text-sm font-medium text-gray-600">To'langan summa</span>
+                </div>
+                <span className="text-lg font-bold text-blue-600">
+                  {trInfo?.paymentDetails.studentPaidAmount
+                    ? Number(trInfo?.paymentDetails.studentPaidAmount).toLocaleString()
+                    : "0"}{" "}
+                  UZS
                 </span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-600 flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5 text-red-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    ></path>
-                  </svg>
-                  Qarzdorlik
-                </span>
-                <span className={Number(trInfo?.paymentDetails.studentDebtAmount) < 0 ? "text-sm font-bold text-red-600" : "text-sm font-bold text-green-600"}>
-                  {Number(trInfo?.paymentDetails.studentDebtAmount) > 0 ? "+" : ""}{trInfo ? Number(trInfo?.paymentDetails.studentDebtAmount).toLocaleString() : "0"} UZS
+
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <div className="flex items-center gap-3 mb-2">
+                  <ExclamationCircleOutlined className="text-red-500 text-lg" />
+                  <span className="text-sm font-medium text-gray-600">Qarzdorlik</span>
+                </div>
+                <span
+                  className={`text-lg font-bold ${
+                    Number(trInfo?.paymentDetails.studentDebtAmount) < 0 ? "text-red-600" : "text-green-600"
+                  }`}
+                >
+                  {Number(trInfo?.paymentDetails.studentDebtAmount) > 0 ? "+" : ""}
+                  {trInfo ? Number(trInfo?.paymentDetails.studentDebtAmount).toLocaleString() : "0"} UZS
                 </span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-600 flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5 text-red-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    ></path>
-                  </svg>
-                  "Qo'shimcha qarzdorlik"
-                </span>
-                <span className={Number(trInfo?.paymentDetails.studentAdditionalDebtAmount) >  0 ? "text-sm font-bold text-red-600" : "text-sm font-bold text-green-600"}>
-                  {Number(trInfo?.paymentDetails.studentAdditionalDebtAmount) > 0 ? "-" : ""}{trInfo ? Number(trInfo?.paymentDetails.studentAdditionalDebtAmount).toLocaleString() : "0"} UZS
+
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 md:col-span-2">
+                <div className="flex items-center gap-3 mb-2">
+                  <ExclamationCircleOutlined className="text-orange-500 text-lg" />
+                  <span className="text-sm font-medium text-gray-600">Qo'shimcha qarzdorlik</span>
+                </div>
+                <span
+                  className={`text-lg font-bold ${
+                    Number(trInfo?.paymentDetails.studentAdditionalDebtAmount) > 0 ? "text-red-600" : "text-green-600"
+                  }`}
+                >
+                  {Number(trInfo?.paymentDetails.studentAdditionalDebtAmount) > 0 ? "-" : ""}
+                  {trInfo ? Number(trInfo?.paymentDetails.studentAdditionalDebtAmount).toLocaleString() : "0"} UZS
                 </span>
               </div>
             </div>
           </div>
+
+          {/* Tabs */}
           <Tabs
             defaultActiveKey="transactions"
+            className="custom-tabs"
             items={[
               {
                 key: "transactions",
-                label: "Tranzaksiyalar tarixi",
+                label: (
+                  <span className="flex items-center gap-2 font-medium">
+                    <CreditCardOutlined />
+                    Tranzaksiyalar tarixi
+                  </span>
+                ),
                 children: (
-                  <>
+                  <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                     {trInfo?.transactions?.length ? (
                       <>
                         <Table
@@ -483,71 +438,73 @@ const handleBack = () => {
                           dataSource={trInfo.transactions}
                           rowKey="date"
                           pagination={false}
-                          style={{ marginBottom: 16 }}
+                          className="mb-6"
                         />
-                        <Text strong style={{ fontSize: 16 }}>
-                          Jami to'langan: {(Number(trInfo?.paymentDetails.studentPaidAmount) || 0).toLocaleString()} UZS
-                        </Text>
+                        <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-xl border border-green-200">
+                          <Text className="text-lg font-bold text-green-700">
+                            Jami to'langan: {(Number(trInfo?.paymentDetails.studentPaidAmount) || 0).toLocaleString()}{" "}
+                            UZS
+                          </Text>
+                        </div>
                       </>
                     ) : (
-                      <Text>Tranzaksiyalar topilmadi</Text>
+                      <div className="text-center py-12 flex items-center justify-center gap-2">
+                        <CreditCardOutlined className="text-4xl text-gray-300" />
+                        <Text className="text-gray-500">Tranzaksiyalar topilmadi</Text>
+                      </div>
                     )}
-                  </>
+                  </div>
                 ),
               },
               {
                 key: "discounts",
-                label: "Chegirmalar",
+                label: (
+                  <span className="flex items-center gap-2 font-medium">
+                    <DollarOutlined />
+                    Chegirmalar
+                  </span>
+                ),
                 children: (
-                  <>
-                    <div className="flex w-full items-center justify-end py-4">
+                  <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                    <div className="flex justify-end mb-6">
                       <Button
                         type="primary"
-                        size="large"
                         onClick={showModal}
-                        style={{
-                          maxWidth: 80,
-                          minWidth: 80,
-                          backgroundColor: "#050556",
-                          color: "white",
-                          height: 40,
-                        }}
+                        className="bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 border-0 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                        icon={<DollarOutlined />}
                       >
-                        Yaratish
+                        Yangi chegirma
                       </Button>
                     </div>
                     {discounts?.length ? (
-                      <div>
-                        <Table
-                          columns={discountColumns}
-                          dataSource={discounts}
-                          rowKey="id"
-                          pagination={false}
-                          style={{ marginBottom: 16 }}
-                        />
-                      </div>
+                      <Table columns={discountColumns} dataSource={discounts} rowKey="id" pagination={false} />
                     ) : (
-                      <Text>Chegirmalar topilmadi</Text>
+                      <div className="text-center py-12 flex justify-center items-center gap-2 ">
+                        <DollarOutlined className="text-4xl text-gray-300 " />
+                        <Text className="text-gray-500">Chegirmalar topilmadi</Text>
+                      </div>
                     )}
-                  </>
+                  </div>
                 ),
               },
               {
                 key: "debts",
-                label: "Qarzdorlik",
-                children: <StudentDebtsTable studentId={id} />
-              }
+                label: (
+                  <span className="flex items-center gap-2 font-medium">
+                    <ExclamationCircleOutlined />
+                    Qarzdorlik
+                  </span>
+                ),
+                children: <StudentDebtsTable studentId={id} />,
+              },
             ]}
           />
         </Card>
       </div>
-      <AuditModal
-        audetModalOpen={audetModalOpen}
-        setAudetModalOpen={setAudetModalOpen}
-        record={selectedRecord}
-      />
-    </>
-  );
-};
 
-export default StudentDetails;
+      <AuditModal audetModalOpen={audetModalOpen} setAudetModalOpen={setAudetModalOpen} record={selectedRecord} />
+    </div>
+  )
+}
+
+export default StudentDetails

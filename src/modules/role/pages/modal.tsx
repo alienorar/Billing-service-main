@@ -2,6 +2,7 @@
 
 import { Modal, Form, Input, Button, Select } from "antd"
 import { useEffect } from "react"
+import { UserOutlined, TagOutlined, LinkOutlined, SafetyOutlined, SettingOutlined } from "@ant-design/icons"
 import { useCreateRoles, useUpdateRoles } from "../hooks/mutations"
 import type { RoleModalType, RoleType } from "@types"
 
@@ -50,133 +51,141 @@ const RolesModal = ({ open, handleClose, update, permessionL }: RoleModalType) =
 
   return (
     <>
-      <style>{`
-        .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
-          background-color: #b8d9f2 !important;
-        }
-        .ant-select-item-option-selected:not(.ant-select-item-option-disabled) .ant-select-item-option-content {
-          color: #1f2937 !important;
-        }
-      `}</style>
       <Modal
         title={
-          <span className="text-2xl font-semibold text-gray-800">
-            {update?.id ? "Edit Role" : "Add New Role"}
-          </span>
+          <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
+            <div className="w-12 h-12 bg-gradient-to-br from-teal-400 via-sky-400 to-blue-800 rounded-xl flex items-center justify-center shadow-lg">
+              <SettingOutlined className="text-white text-xl" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-800">
+                {update?.id ? "Rolni tahrirlash" : "Yangi rol qo'shish"}
+              </h3>
+              <p className="text-sm text-gray-500 mt-1">
+                {update?.id ? "Rol ma'lumotlarini yangilang" : "Yangi rol ma'lumotlarini kiriting"}
+              </p>
+            </div>
+          </div>
         }
         open={open}
         onCancel={handleClose}
         footer={null}
-        className="rounded-lg"
+        width={800}
+        className="rounded-2xl"
         styles={{
-          content: { 
-            padding: '24px', 
-            backgroundColor: '#f9fafb',
-            borderRadius: '12px',
-          },
-          header: { 
-            padding: '16px 24px', 
-            borderBottom: '1px solid #e5e7eb' 
+          content: {
+            borderRadius: "16px",
+            padding: "24px",
+            background: "white",
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
           },
         }}
       >
-        <Form 
-          form={form} 
-          name="roles_form" 
-          layout="vertical" 
-          onFinish={onFinish}
-          className="space-y-4"
-        >
+        <Form form={form} name="roles_form" layout="vertical" onFinish={onFinish} className="mt-6">
           {update?.id && (
-            <Form.Item 
-              label={<span className="text-gray-700 font-medium">Role ID</span>} 
-              name="id"
-            >
-              <Input 
-                disabled 
-                className="rounded-md border-gray-300 bg-gray-100 text-gray-600 py-2 px-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
+            <Form.Item label={<span className="font-semibold text-gray-700">Role ID</span>} name="id">
+              <Input
+                disabled
+                prefix={<TagOutlined className="text-gray-400" />}
+                className="h-12 rounded-xl border-gray-200 bg-gray-50 text-gray-600"
               />
             </Form.Item>
           )}
-          <Form.Item 
-            label={<span className="text-gray-700 font-medium">Role Name</span>} 
-            name="name" 
-            rules={[{ required: true, message: "Enter role name!" }]}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Form.Item
+              label={<span className="font-semibold text-gray-700">Rol nomi</span>}
+              name="name"
+              rules={[{ required: true, message: "Rol nomini kiriting!" }]}
+            >
+              <Input
+                prefix={<UserOutlined className="text-gray-400" />}
+                placeholder="Rol nomini kiriting"
+                className="h-12 rounded-xl border-gray-200 focus:border-teal-400 focus:shadow-lg transition-all duration-200"
+              />
+            </Form.Item>
+
+            <Form.Item
+              label={<span className="font-semibold text-gray-700">Ko'rinib turuvchi nomi</span>}
+              name="displayName"
+              rules={[{ required: true, message: "Ko'rinib turuvchi nomini kiriting!" }]}
+            >
+              <Input
+                prefix={<TagOutlined className="text-gray-400" />}
+                placeholder="Ko'rinib turuvchi nomini kiriting"
+                className="h-12 rounded-xl border-gray-200 focus:border-teal-400 focus:shadow-lg transition-all duration-200"
+              />
+            </Form.Item>
+          </div>
+
+          <Form.Item
+            label={<span className="font-semibold text-gray-700">Default URL</span>}
+            name="defaultUrl"
+            rules={[{ required: true, message: "Default URL kiriting!" }]}
           >
-            <Input 
-              className="rounded-md border-gray-300 py-2 px-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
-              placeholder="Enter role name"
+            <Input
+              prefix={<LinkOutlined className="text-gray-400" />}
+              placeholder="Default URL kiriting"
+              className="h-12 rounded-xl border-gray-200 focus:border-teal-400 focus:shadow-lg transition-all duration-200"
             />
           </Form.Item>
-          <Form.Item 
-            label={<span className="text-gray-700 font-medium">Display Name</span>} 
-            name="displayName" 
-            rules={[{ required: true, message: "Enter display name!" }]}
-          >
-            <Input 
-              className="rounded-md border-gray-300 py-2 px-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
-              placeholder="Enter display name"
-            />
-          </Form.Item>
-          <Form.Item 
-            label={<span className="text-gray-700 font-medium">Default URL</span>} 
-            name="defaultUrl" 
-            rules={[{ required: true, message: "Enter default URL!" }]}
-          >
-            <Input 
-              className="rounded-md border-gray-300 py-2 px-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
-              placeholder="Enter default URL"
-            />
-          </Form.Item>
-          <Form.Item 
-            label={<span className="text-gray-700 font-medium">Permissions</span>} 
-            name="permissions"
-          >
+
+          <Form.Item label={<span className="font-semibold text-gray-700">Ruxsatlar</span>} name="permissions">
             <Select
               mode="multiple"
-              placeholder="Select permissions"
-              className="w-full"
-              dropdownClassName="rounded-lg shadow-lg"
+              placeholder="Ruxsatlarni tanlang"
+              className="min-h-12"
+              dropdownClassName="rounded-xl shadow-xl border-0"
               value={form.getFieldValue("permissions") || []}
               onChange={(values) => form.setFieldsValue({ permissions: values })}
+              style={{
+                borderRadius: "12px",
+              }}
             >
               {permessionL?.map((parent) => (
                 <OptGroup
                   key={parent.id}
                   label={
-                    <span className="font-semibold text-gray-700 text-sm">
-                      {parent.name}
-                    </span>
+                    <div className="flex items-center gap-2 py-2 px-1">
+                      <div className="w-6 h-6 bg-gradient-to-br from-teal-400 to-blue-600 rounded-lg flex items-center justify-center">
+                        <SafetyOutlined className="text-white text-xs" />
+                      </div>
+                      <span className="font-bold text-gray-700 text-sm">{parent.name}</span>
+                    </div>
                   }
                 >
-                  <Option 
-                    key={`parent-${parent.id}`} 
-                    value={parent.id} 
-                    label={`[Group] ${parent.name}`}
-                  >
-                    <span className="font-medium text-green-600">{parent.name}</span>
+                  <Option key={`parent-${parent.id}`} value={parent.id} label={`[Group] ${parent.name}`}>
+                    <div className="flex items-center gap-2 py-1">
+                      <div className="w-5 h-5 bg-gradient-to-br from-green-400 to-green-600 rounded-md flex items-center justify-center">
+                        <SafetyOutlined className="text-white text-xs" />
+                      </div>
+                      <span className="font-semibold text-green-700">{parent.name}</span>
+                      <span className="text-xs text-green-500 bg-green-50 px-2 py-0.5 rounded-full ml-auto">Guruh</span>
+                    </div>
                   </Option>
-                  {parent.children?.map((child:any) => (
-                    <Option 
-                      key={child.id} 
-                      value={child.id} 
-                      label={child.name}
-                    >
-                      <span className="pl-3 text-gray-600">{child.name}</span>
+                  {parent.children?.map((child: any) => (
+                    <Option key={child.id} value={child.id} label={child.name}>
+                      <div className="flex items-center gap-2 py-1 pl-6">
+                        <div className="w-4 h-4 bg-gradient-to-br from-blue-400 to-blue-600 rounded flex items-center justify-center">
+                          <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                        </div>
+                        <span className="text-gray-700">{child.name}</span>
+                      </div>
                     </Option>
                   ))}
                 </OptGroup>
               ))}
             </Select>
           </Form.Item>
-          <Form.Item>
+
+          <Form.Item className="mb-0 mt-8">
             <Button
               block
               htmlType="submit"
               loading={isCreating || isUpdating}
-              className="h-10 bg-[#050556] text-white font-semibold rounded-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200"
+              className="h-14 bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 border-0 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200"
             >
-              {update?.id ? "Update Role" : "Create Role"}
+              {update?.id ? "Rolni yangilash" : "Rol yaratish"}
             </Button>
           </Form.Item>
         </Form>

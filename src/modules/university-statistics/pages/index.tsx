@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { useGetUniversityStatistics } from "../hooks/queries"
 import { Card, Row, Col, Statistic, Spin, Alert, Typography, theme, Grid } from "antd"
-import { TeamOutlined, DollarOutlined, FileTextOutlined, PercentageOutlined } from "@ant-design/icons"
+import { TeamOutlined, DollarOutlined, FileTextOutlined, PercentageOutlined, BankOutlined } from "@ant-design/icons"
 
 const { Title, Text } = Typography
 const { useToken } = theme
@@ -38,38 +38,30 @@ const Index = () => {
 
   if (isLoading) {
     return (
-      <div style={{ 
-        display: "flex", 
-        justifyContent: "center", 
-        alignItems: "center", 
-        height: "100vh",
-        background: token.colorBgContainer
-      }}>
-        <Spin size="large" tip="Statistikani yuklash...">
-          <div style={{ padding: 50, background: token.colorBgElevated, borderRadius: 12 }} />
-        </Spin>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center">
+        <div className="bg-white p-12 rounded-2xl shadow-lg">
+          <Spin size="large" tip="Statistikani yuklash...">
+            <div className="w-32 h-32" />
+          </Spin>
+        </div>
       </div>
     )
   }
 
   if (isError) {
     return (
-      <div style={{ 
-        maxWidth: 800, 
-        margin: "40px auto",
-        padding: "0 24px"
-      }}>
-        <Alert
-          message="Xato"
-          description={error.message || "Universitet statistikasini yuklashda xato yuz berdi. Iltimos, qayta urinib ko'ring."}
-          type="error"
-          showIcon
-          closable
-          style={{ 
-            borderRadius: 12,
-            boxShadow: token.boxShadowSecondary
-          }}
-        />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
+        <div className="max-w-2xl mx-auto mt-20">
+          <Alert
+            message="Xato"
+            description={
+              error.message || "Universitet statistikasini yuklashda xato yuz berdi. Iltimos, qayta urinib ko'ring."
+            }
+            type="error"
+            showIcon
+            className="rounded-2xl shadow-lg"
+          />
+        </div>
       </div>
     )
   }
@@ -78,174 +70,119 @@ const Index = () => {
     return null
   }
 
-  // Card data configuration
   const statsCards = [
     {
       title: "Jami Talabalar",
       value: tableData.studentCount,
       icon: <TeamOutlined />,
-      color: token.colorPrimary,
-      background: token.geekblue1,
-      span: 8
+      color: "#1890ff",
+      background: "from-blue-50 to-cyan-50",
+      span: 8,
     },
     {
       title: "Shartnoma Talabalari",
       value: tableData.contractStudentCount,
       icon: <TeamOutlined />,
-      color: token.cyan6,
-      background: token.cyan1,
-      span: 8
+      color: "#52c41a",
+      background: "from-green-50 to-emerald-50",
+      span: 8,
     },
     {
       title: "Jami Shartnoma Summasi",
       value: tableData.allStudentContractMustPaidAmount,
       icon: <DollarOutlined />,
-      color: token.green6,
-      background: token.green1,
+      color: "#fa8c16",
+      background: "from-orange-50 to-amber-50",
       formatter: formatCurrency,
-      span: 8
+      span: 8,
     },
     {
       title: "To'langan Summa",
       value: tableData.allStudentPaidAmount,
-      icon: <DollarOutlined />,
-      color: token.volcano6,
-      background: token.volcano1,
+      icon: <BankOutlined />,
+      color: "#13c2c2",
+      background: "from-cyan-50 to-teal-50",
       formatter: formatCurrency,
-      span: screens.lg ? 6 : 12
+      span: screens.lg ? 6 : 12,
     },
     {
       title: "Qolgan Shartnoma Summasi",
       value: tableData.allStudentRemainContractAmount,
       icon: <DollarOutlined />,
-      color: token.orange6,
-      background: token.orange1,
+      color: "#722ed1",
+      background: "from-purple-50 to-indigo-50",
       formatter: formatCurrency,
-      span: screens.lg ? 6 : 12
+      span: screens.lg ? 6 : 12,
     },
     {
       title: "Jami Qarz Summasi",
       value: tableData.allStudentDebtAmount,
       icon: <FileTextOutlined />,
-      color: token.red6,
-      background: token.red1,
+      color: "#f5222d",
+      background: "from-red-50 to-pink-50",
       formatter: formatCurrency,
-      span: screens.lg ? 6 : 12
+      span: screens.lg ? 6 : 12,
     },
     {
       title: "Jami Chegirma Summasi",
       value: tableData.allDiscountAmount,
       icon: <PercentageOutlined />,
-      color: token.purple6,
-      background: token.purple1,
+      color: "#eb2f96",
+      background: "from-pink-50 to-rose-50",
       formatter: formatCurrency,
-      span: screens.lg ? 6 : 12
-    }
+      span: screens.lg ? 6 : 12,
+    },
   ]
 
   return (
-    <div style={{ 
-      padding: screens.xs ? "16px" : "24px",
-      background: token.colorBgContainer,
-      minHeight: "100vh"
-    }}>
-      {/* Header Section */}
-      <div style={{
-        textAlign: "center",
-        marginBottom: 40,
-        padding: screens.md ? "0 40px" : "0 16px"
-      }}>
-        <Title 
-          level={2} 
-          style={{ 
-            marginBottom: 8,
-            color: token.colorTextHeading,
-            fontWeight: 600,
-            fontSize: screens.lg ? 32 : 24
-          }}
-        >
-          {tableData.name} Statistikasi
-        </Title>
-        <Text 
-          type="secondary" 
-          style={{ 
-            fontSize: screens.lg ? 16 : 14,
-            color: token.colorTextSecondary
-          }}
-        >
-          Oxirgi yangilanish: {new Date().toLocaleDateString()}
-        </Text>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-teal-50 to-blue-50 p-8 rounded-2xl border border-teal-100 mb-8">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="w-16 h-16 bg-gradient-to-br from-teal-400 via-sky-400 to-blue-800 rounded-2xl flex items-center justify-center shadow-lg">
+            <BankOutlined className="text-white text-2xl" />
+          </div>
+          <div>
+            <Title level={1} className="!text-3xl !font-bold !text-gray-800 !mb-2">
+              {tableData.name} Statistikasi
+            </Title>
+            <Text className="text-lg text-gray-600">Oxirgi yangilanish: {new Date().toLocaleDateString()}</Text>
+          </div>
+        </div>
       </div>
 
       {/* Stats Grid */}
-      <div style={{ 
-        maxWidth: 1400,
-        margin: "0 auto",
-        padding: screens.md ? "0 20px" : "0"
-      }}>
+      <div className="max-w-7xl mx-auto">
         <Row gutter={[24, 24]}>
           {statsCards.map((card, index) => (
             <Col key={index} xs={24} sm={12} lg={card.span}>
-              <Card 
-                bordered={false}
-                style={{ 
-                  borderRadius: 12,
-                  background: card.background,
-                  height: "100%",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
-                  borderTop: `4px solid ${card.color}`,
-                  transition: "transform 0.3s ease, box-shadow 0.3s ease"
-                }}
-                bodyStyle={{ 
-                  padding: "20px 24px",
-                  height: "100%"
-                }}
-                hoverable
+              <Card
+                className={`bg-gradient-to-br ${card.background} border-0 shadow-lg rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}
+                bodyStyle={{ padding: "24px" }}
               >
-                <div style={{ 
-                  display: "flex",
-                  flexDirection: "column",
-                  height: "100%"
-                }}>
-                  <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: 12
-                  }}>
-                    <div style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: "50%",
-                      background: `${card.color}20`,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginRight: 12
-                    }}>
-                      {React.cloneElement(card.icon, { 
-                        style: { 
-                          color: card.color,
-                          fontSize: 18
-                        } 
-                      })}
-                    </div>
-                    <Text strong style={{ 
-                      fontSize: 16,
-                      color: token.colorTextSecondary
-                    }}>
-                      {card.title}
-                    </Text>
+                <div className="flex items-center justify-between mb-4">
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center shadow-md"
+                    style={{ backgroundColor: `${card.color}20` }}
+                  >
+                    {React.cloneElement(card.icon, {
+                      style: { color: card.color, fontSize: 20 },
+                    })}
                   </div>
+                </div>
+                <div>
+                  <Text strong className="text-gray-600 text-base block mb-2">
+                    {card.title}
+                  </Text>
                   <Statistic
                     value={card.value}
                     formatter={card.formatter ? (val) => card.formatter!(val) : undefined}
-                    valueStyle={{ 
+                    valueStyle={{
                       color: card.color,
-                      fontSize: screens.lg ? 28 : 24,
-                      fontWeight: 700,
-                      lineHeight: 1.2
+                      fontSize: screens.lg ? "28px" : "24px",
+                      fontWeight: "700",
+                      lineHeight: 1.2,
                     }}
-                    style={{ marginTop: "auto" }}
                   />
                 </div>
               </Card>
@@ -255,45 +192,23 @@ const Index = () => {
       </div>
 
       {/* Summary Section */}
-      {screens.lg && (
-        <div style={{ 
-          maxWidth: 1400,
-          margin: "40px auto 0",
-          padding: "0 20px"
-        }}>
-          <Card
-            bordered={false}
-            style={{ 
-              borderRadius: 12,
-              background: token.colorBgElevated,
-              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)"
-            }}
-          >
-            <div style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              padding: "16px 24px"
-            }}>
-              <Text strong style={{ fontSize: 16 }}>
+      <div className="max-w-7xl mx-auto mt-8">
+        <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg rounded-2xl">
+          <div className="flex justify-between items-center p-6">
+            <div>
+              <Text strong className="text-lg text-gray-800">
                 Umumiy statistika {new Date().getFullYear()} yil
               </Text>
-              <Text type="secondary">
-                {tableData.name} tomonidan taqdim etilgan
-              </Text>
+              <div className="text-gray-600 mt-1">{tableData.name} tomonidan taqdim etilgan</div>
             </div>
-          </Card>
-        </div>
-      )}
-
-      {/* Footer */}
-      <div style={{ 
-        marginTop: 60,
-        textAlign: "center",
-        padding: "16px 0",
-        borderTop: `1px solid ${token.colorBorderSecondary}`
-      }}>
-        
+            <div className="text-right">
+              <div className="text-2xl font-bold text-teal-600">
+                {((tableData.allStudentPaidAmount / tableData.allStudentContractMustPaidAmount) * 100).toFixed(1)}%
+              </div>
+              <div className="text-sm text-gray-500">To'lov foizi</div>
+            </div>
+          </div>
+        </Card>
       </div>
     </div>
   )
