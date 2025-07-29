@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from "react"
 import { useGetUniversityStatistics } from "../hooks/queries"
-import { Card, Row, Col, Statistic, Spin, Alert, Typography, theme, Grid } from "antd"
+import { Card, Row, Col, Statistic, Spin, Alert, Typography,  Grid } from "antd"
 import { TeamOutlined, DollarOutlined, FileTextOutlined, PercentageOutlined, BankOutlined } from "@ant-design/icons"
 
 const { Title, Text } = Typography
-const { useToken } = theme
+// const { useToken } = theme
 const { useBreakpoint } = Grid
 
 interface UniversityStatistics {
@@ -21,7 +21,7 @@ interface UniversityStatistics {
 }
 
 const Index = () => {
-  const { token } = useToken()
+  // const { token } = useToken()
   const screens = useBreakpoint()
   const [tableData, setTableData] = useState<UniversityStatistics | null>(null)
   const { data: statisticsData, isLoading, isError, error } = useGetUniversityStatistics()

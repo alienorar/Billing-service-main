@@ -135,10 +135,10 @@ const Index = () => {
                 okText="Ha"
                 cancelText="Yo'q"
                 okButtonProps={{
-                  className: "bg-green-500 hover:bg-green-600 border-green-500",
+                  className: "bg-green-500 hover:bg-green-600 border-green-500 px-2",
                 }}
                 cancelButtonProps={{
-                  className: "bg-red-500 hover:bg-red-600 border-red-500 text-white",
+                  className: "bg-red-500 hover:bg-red-600 border-red-500 text-white px-2 mx-1",
                 }}
               >
                 <Button

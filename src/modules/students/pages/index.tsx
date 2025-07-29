@@ -227,27 +227,26 @@ const Index = () => {
     },
     ...(isInDebt
       ? [
-          {
-            title: <span className="font-semibold text-gray-700">Qarzdorligi</span>,
-            key: "studentDebtAmount",
-            render: (_: any, record: any) => {
-              const amount = record.paymentDetails?.studentDebtAmount ?? 0
-              return (
-                <span
-                  className={`px-3 py-1 rounded-lg text-sm font-semibold ${
-                    amount < 0
-                      ? "text-red-600 bg-red-50"
-                      : amount > 0
-                        ? "text-green-600 bg-green-50"
-                        : "text-gray-500 bg-gray-50"
+        {
+          title: <span className="font-semibold text-gray-700">Qarzdorligi</span>,
+          key: "studentDebtAmount",
+          render: (_: any, record: any) => {
+            const amount = record.paymentDetails?.studentDebtAmount ?? 0
+            return (
+              <span
+                className={`px-3 py-1 rounded-lg text-sm font-semibold ${amount < 0
+                    ? "text-red-600 bg-red-50"
+                    : amount > 0
+                      ? "text-green-600 bg-green-50"
+                      : "text-gray-500 bg-gray-50"
                   }`}
-                >
-                  {amount !== 0 ? amount.toLocaleString() : "-"}
-                </span>
-              )
-            },
+              >
+                {amount !== 0 ? amount.toLocaleString() : "-"}
+              </span>
+            )
           },
-        ]
+        },
+      ]
       : []),
     {
       title: <span className="font-semibold text-gray-700">Action</span>,
@@ -274,7 +273,7 @@ const Index = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-teal-50 to-blue-50 p-6 rounded-2xl border border-teal-100">
+      <div className="bg-gradient-to-r from-slate-300 to-slate-500 p-6 rounded-2xl border border-teal-100">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-12 h-12 bg-gradient-to-br from-teal-400 via-sky-400 to-blue-800 rounded-xl flex items-center justify-center shadow-lg">
             <FiUsers className="text-white text-xl" />
@@ -466,9 +465,8 @@ const Index = () => {
               className="hidden"
             />
             <span
-              className={`w-5 h-5 flex items-center justify-center border-2 rounded ${
-                isInDebt ? "bg-gradient-to-br from-teal-400 to-blue-600 border-teal-400" : "bg-white border-gray-300"
-              }`}
+              className={`w-5 h-5 flex items-center justify-center border-2 rounded ${isInDebt ? "bg-gradient-to-br from-teal-400 to-blue-600 border-teal-400" : "bg-white border-gray-300"
+                }`}
             >
               {isInDebt && (
                 <svg
@@ -492,10 +490,10 @@ const Index = () => {
             okText="Ha"
             cancelText="Yo'q"
             okButtonProps={{
-              className: "bg-green-500 hover:bg-green-600 border-green-500 hover:border-green-600",
+              className: "bg-green-500 hover:bg-green-600 border-green-500 hover:border-green-600 px-2",
             }}
             cancelButtonProps={{
-              className: "bg-red-500 hover:bg-red-600 border-red-500 hover:border-red-600 text-white",
+              className: "bg-red-500 hover:bg-red-600 border-red-500 hover:border-red-600 text-white px-2 mx-1",
             }}
           >
             <Button
@@ -512,14 +510,15 @@ const Index = () => {
             onConfirm={() => {
               handleSync()
               setIsConfirmVisible(false)
+              isConfirmVisible
             }}
             okText="Ha"
             cancelText="Yo'q"
             okButtonProps={{
-              className: "bg-green-500 hover:bg-green-600 border-green-500 hover:border-green-600",
+              className: "bg-green-500 hover:bg-green-600 border-green-500 hover:border-green-600 px-2",
             }}
             cancelButtonProps={{
-              className: "bg-red-500 hover:bg-red-600 border-red-500 hover:border-red-600 text-white",
+              className: "bg-red-500 hover:bg-red-600 border-red-500 hover:border-red-600 text-white px-2",
             }}
           >
             <Button

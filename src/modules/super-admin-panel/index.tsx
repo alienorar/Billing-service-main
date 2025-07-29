@@ -234,7 +234,7 @@ const AdminPanel = () => {
               }}
             >
               <div className="h-full p-8 text-white">
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 h-full">
+                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 h-full ">
                   <Outlet />
                 </div>
               </div>

@@ -136,9 +136,9 @@ const DiscountsModal = ({ open, handleClose, update }: any) => {
             rules={[{ required: true, message: "Student ID sini kiriting!" }]}
           >
             <Input
-              prefix={<NumberOutlined className="text-gray-400" />}
+              prefix={<NumberOutlined className="text-gray-400 border-gray-200 border-[2px]"  />}
               placeholder="Student ID sini kiriting"
-              className="h-12 rounded-xl border-gray-200 focus:border-teal-400 focus:shadow-lg transition-all duration-200"
+              className="h-12 rounded-xl  focus:border-teal-400 focus:shadow-lg transition-all duration-200 border-gray-200 border-[2px]"
             />
           </Form.Item>
 
@@ -150,7 +150,7 @@ const DiscountsModal = ({ open, handleClose, update }: any) => {
             <Input
               prefix={<FileTextOutlined className="text-gray-400" />}
               placeholder="Tarif nomini kiriting"
-              className="h-12 rounded-xl border-gray-200 focus:border-teal-400 focus:shadow-lg transition-all duration-200"
+              className="h-12 rounded-xl border-gray-200 border-[2px] focus:border-teal-400 focus:shadow-lg transition-all duration-200"
             />
           </Form.Item>
         </div>
@@ -163,7 +163,7 @@ const DiscountsModal = ({ open, handleClose, update }: any) => {
           >
             <Select
               placeholder="Chegirma turini tanlang"
-              className="h-12"
+              className="h-12 border-gray-200 border-[2px]"
               suffixIcon={<DollarOutlined className="text-gray-400" />}
             >
               {discountTypeOptions.map((type) => (
@@ -186,7 +186,7 @@ const DiscountsModal = ({ open, handleClose, update }: any) => {
               type="number"
               prefix={<NumberOutlined className="text-gray-400" />}
               placeholder="Student kursini kiriting"
-              className="h-12 rounded-xl border-gray-200 focus:border-teal-400 focus:shadow-lg transition-all duration-200"
+              className="h-12 rounded-xl  focus:border-teal-400 focus:shadow-lg transition-all duration-200 border-gray-200 border-[2px]"
             />
           </Form.Item>
         </div>

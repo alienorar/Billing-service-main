@@ -129,7 +129,7 @@ const DebtsModal = ({ open, handleClose, update, studentId }: any) => {
             rules={[{ required: true, message: "Tavsifni kiriting!" }]}
           >
             <Input
-              className="rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 h-12"
+              className="rounded-lg border-gray-200 border-[2px] focus:border-teal-500 focus:ring-teal-500 h-12"
               placeholder="Qarz tavsifini kiriting"
             />
           </Form.Item>
@@ -139,7 +139,7 @@ const DebtsModal = ({ open, handleClose, update, studentId }: any) => {
             name="debtType"
             rules={[{ required: true, message: "Qarz turini tanlang!" }]}
           >
-            <Select placeholder="Qarz turini tanlang" className="rounded-lg h-12">
+            <Select placeholder="Qarz turini tanlang" className="rounded-lg h-12 border-gray-200 border-[2px]">
               {debtTypeOptions.map((type) => (
                 <Option key={type.value} value={type.value}>
                   {type.label}
@@ -155,7 +155,7 @@ const DebtsModal = ({ open, handleClose, update, studentId }: any) => {
           >
             <Input
               type="number"
-              className="rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 h-12"
+              className="rounded-lg border-gray-200 border-[2px] focus:border-teal-500 focus:ring-teal-500 h-12"
               placeholder="Kurs raqamini kiriting"
             />
           </Form.Item>
@@ -167,7 +167,7 @@ const DebtsModal = ({ open, handleClose, update, studentId }: any) => {
           >
             <Input
               type="number"
-              className="rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 h-12"
+              className="rounded-lg border-gray-200 border-[2px] focus:border-teal-500 focus:ring-teal-500 h-12"
               placeholder="Miqdorni kiriting (UZS)"
             />
           </Form.Item>
@@ -176,7 +176,7 @@ const DebtsModal = ({ open, handleClose, update, studentId }: any) => {
             <Input
               type="file"
               onChange={handleFileChange}
-              className="rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 h-12"
+              className="rounded-lg  focus:border-teal-500 focus:ring-teal-500 h-12"
             />
             {reasonFileUuid && (
               <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">

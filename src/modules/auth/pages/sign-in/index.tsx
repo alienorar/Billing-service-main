@@ -4,6 +4,7 @@ import type React from "react"
 import { Button, Form, Input, Card } from "antd"
 import { UserOutlined, LockOutlined, LoginOutlined, FieldTimeOutlined } from "@ant-design/icons"
 import { useSignInMutation } from "../../hooks/mutations"
+// import MoneyIcon from "../../../../assets/money-icon.webp"
 
 const Index: React.FC = () => {
   const { mutate } = useSignInMutation()
@@ -14,7 +15,7 @@ const Index: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen  bg-gradient-to-br from-teal-400 to-blue-600 flex items-center justify-center p-6 relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-r from-blue-600/20 to-violet-600/20 rounded-full blur-3xl"></div>
@@ -27,6 +28,7 @@ const Index: React.FC = () => {
         <div className="text-center mb-10">
           <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
             <FieldTimeOutlined className="text-3xl text-white" />
+            {/* <img src={MoneyIcon} alt="money" className="rounded-full h-50 w-40"/> */}
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-3">Xush kelibsiz</h1>
           <p className="text-gray-600 text-lg">Admin panelga kirish uchun ma'lumotlaringizni kiriting</p>
@@ -75,7 +77,7 @@ const Index: React.FC = () => {
               <Button
                 block
                 htmlType="submit"
-                className="h-14 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 border-0 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+                className="h-14 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 border-0 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 text-white"
                 icon={<LoginOutlined className="text-lg" />}
               >
                 Tizimga kirish
@@ -88,7 +90,7 @@ const Index: React.FC = () => {
             <p className="text-gray-500 text-sm">
               Parolingizni unutdingizmi?
               <span className="text-blue-600 hover:text-blue-700 cursor-pointer ml-2 underline font-medium transition-colors duration-200">
-                Yordam olish
+               <a href="https://t.me/aytishnikbachcha">Yordam olish</a>
               </span>
             </p>
           </div>

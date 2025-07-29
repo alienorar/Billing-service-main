@@ -48,7 +48,7 @@ const GroupModal: React.FC<GroupModalProps> = ({ open, handleClose, update }) =>
   return (
     <Modal
       title={
-        <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
+        <div className="flex items-center gap-3 pb-4 border-b border-gray-100 ">
           <div className="w-12 h-12 bg-gradient-to-br from-teal-400 via-sky-400 to-blue-800 rounded-xl flex items-center justify-center shadow-lg">
             <TeamOutlined className="text-white text-xl" />
           </div>
@@ -81,7 +81,7 @@ const GroupModal: React.FC<GroupModalProps> = ({ open, handleClose, update }) =>
           <Input
             disabled
             prefix={<IdcardOutlined className="text-gray-400" />}
-            className="h-12 rounded-xl border-gray-200 bg-gray-50 text-gray-600"
+            className="h-12 rounded-xl  bg-gray-50 text-gray-600 border-gray-400 border-[2px]"
           />
         </Form.Item>
 
@@ -95,7 +95,7 @@ const GroupModal: React.FC<GroupModalProps> = ({ open, handleClose, update }) =>
             options={paymentGroupOptions}
             loading={isLoadingPaymentGroups}
             allowClear
-            className="h-12"
+            className="h-12 border-gray-400 border-[2px] rounded-xl"
             suffixIcon={<DollarOutlined className="text-teal-500" />}
           />
         </Form.Item>

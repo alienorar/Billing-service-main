@@ -182,7 +182,7 @@ const Index: React.FC = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-400 via-sky-400 to-blue-800 p-6">
+    <div className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -191,9 +191,9 @@ const Index: React.FC = () => {
         </div>
 
         {/* Main Content Card */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        <div className="bg-gradient-to-r from-slate-300 to-slate-500 rounded-2xl shadow-2xl p-8">
           {/* Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="  grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <Input
               placeholder="Guruh nomi"
               className="rounded-lg border-gray-300 focus:border-teal-500 focus:ring-teal-500 outline-black"

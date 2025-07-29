@@ -3,13 +3,13 @@
 import type React from "react"
 import { useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { Button, Card, Table, Spin, Alert, Typography, message } from "antd"
+import { Button, Card, Table, Spin, Alert, message } from "antd"
 import { ArrowLeftOutlined, RedoOutlined, FileTextOutlined } from "@ant-design/icons"
 import dayjs from "dayjs"
 import { useCheckTransactionHistory } from "../../transaction-history/hooks/queries"
 import { useRetryTransactionHistory } from "../hooks/mutations"
 
-const { Title } = Typography
+// const { Title } = Typography
 
 interface RequestData {
   id: number

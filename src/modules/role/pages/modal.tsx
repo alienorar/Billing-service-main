@@ -53,7 +53,7 @@ const RolesModal = ({ open, handleClose, update, permessionL }: RoleModalType) =
     <>
       <Modal
         title={
-          <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
+          <div className="flex items-center gap-3 pb-4 border-b border-gray-100 ">
             <div className="w-12 h-12 bg-gradient-to-br from-teal-400 via-sky-400 to-blue-800 rounded-xl flex items-center justify-center shadow-lg">
               <SettingOutlined className="text-white text-xl" />
             </div>
@@ -71,7 +71,7 @@ const RolesModal = ({ open, handleClose, update, permessionL }: RoleModalType) =
         onCancel={handleClose}
         footer={null}
         width={800}
-        className="rounded-2xl"
+        className="rounded-2xl "
         styles={{
           content: {
             borderRadius: "16px",
@@ -81,18 +81,18 @@ const RolesModal = ({ open, handleClose, update, permessionL }: RoleModalType) =
           },
         }}
       >
-        <Form form={form} name="roles_form" layout="vertical" onFinish={onFinish} className="mt-6">
+        <Form form={form} name="roles_form" layout="vertical" onFinish={onFinish} className="mt-6  ">
           {update?.id && (
             <Form.Item label={<span className="font-semibold text-gray-700">Role ID</span>} name="id">
               <Input
                 disabled
                 prefix={<TagOutlined className="text-gray-400" />}
-                className="h-12 rounded-xl border-gray-200 bg-gray-50 text-gray-600"
+                className="h-12 rounded-xl bg-gray-50 text-gray-600 outline-black border-gray-400 border-[2px]"
               />
             </Form.Item>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
             <Form.Item
               label={<span className="font-semibold text-gray-700">Rol nomi</span>}
               name="name"
@@ -101,7 +101,7 @@ const RolesModal = ({ open, handleClose, update, permessionL }: RoleModalType) =
               <Input
                 prefix={<UserOutlined className="text-gray-400" />}
                 placeholder="Rol nomini kiriting"
-                className="h-12 rounded-xl border-gray-200 focus:border-teal-400 focus:shadow-lg transition-all duration-200"
+                className="h-12 rounded-xl focus:border-teal-400 focus:shadow-lg transition-all duration-200 border-gray-400 border-[2px]"
               />
             </Form.Item>
 
@@ -113,7 +113,7 @@ const RolesModal = ({ open, handleClose, update, permessionL }: RoleModalType) =
               <Input
                 prefix={<TagOutlined className="text-gray-400" />}
                 placeholder="Ko'rinib turuvchi nomini kiriting"
-                className="h-12 rounded-xl border-gray-200 focus:border-teal-400 focus:shadow-lg transition-all duration-200"
+                className="h-12 rounded-xl  focus:border-teal-400 focus:shadow-lg transition-all duration-200 border-gray-400 border-[2px]"
               />
             </Form.Item>
           </div>
@@ -126,7 +126,7 @@ const RolesModal = ({ open, handleClose, update, permessionL }: RoleModalType) =
             <Input
               prefix={<LinkOutlined className="text-gray-400" />}
               placeholder="Default URL kiriting"
-              className="h-12 rounded-xl border-gray-200 focus:border-teal-400 focus:shadow-lg transition-all duration-200"
+              className="h-12 rounded-xl  focus:border-teal-400 focus:shadow-lg transition-all duration-200 border-gray-400 border-[2px]"
             />
           </Form.Item>
 
@@ -134,7 +134,7 @@ const RolesModal = ({ open, handleClose, update, permessionL }: RoleModalType) =
             <Select
               mode="multiple"
               placeholder="Ruxsatlarni tanlang"
-              className="min-h-12"
+              className="min-h-12 border-gray-400 border-[2px]"
               dropdownClassName="rounded-xl shadow-xl border-0"
               value={form.getFieldValue("permissions") || []}
               onChange={(values) => form.setFieldsValue({ permissions: values })}

@@ -81,7 +81,7 @@ const AdminsModal = ({ open, handleClose, update, roles }: AdminModalType) => {
       title={null}
     >
       <div className="bg-gradient-to-r from-blue-600 to-violet-600 p-6 text-white">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 ">
           <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
             <UserAddOutlined className="text-white text-xl" />
           </div>
@@ -94,7 +94,7 @@ const AdminsModal = ({ open, handleClose, update, roles }: AdminModalType) => {
         </div>
       </div>
 
-      <div className="p-6">
+      <div className="p-6 bg-gradient-to-r from-slate-300 to-slate-500">
         <Form form={form} name="admin_form" layout="vertical" onFinish={onFinish} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Form.Item
@@ -172,7 +172,7 @@ const AdminsModal = ({ open, handleClose, update, roles }: AdminModalType) => {
               block
               htmlType="submit"
               loading={isCreating || isUpdating}
-              className="h-14 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 border-0 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200"
+              className="h-14 text-white bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 border-0 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200"
             >
               {update?.id ? "Adminni yangilash" : "Admin yaratish"}
             </Button>

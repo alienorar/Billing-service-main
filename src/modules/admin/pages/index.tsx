@@ -159,10 +159,10 @@ const Index = () => {
               okText="Ha"
               cancelText="Yo'q"
               okButtonProps={{
-                className: "bg-green-500 hover:bg-green-600 border-green-500 hover:border-green-600 rounded-lg",
+                className: "bg-green-500 hover:bg-green-600 border-green-500 hover:border-green-600 rounded-lg px-2",
               }}
               cancelButtonProps={{
-                className: "bg-red-500 hover:bg-red-600 border-red-500 hover:border-red-600 text-white rounded-lg",
+                className: "bg-red-500 hover:bg-red-600 border-red-500 hover:border-red-600 text-white rounded-lg px-2 mx-1",
               }}
             >
               <Button
@@ -183,7 +183,7 @@ const Index = () => {
       <AdminsModal open={isModalOpen} handleClose={handleClose} update={update} roles={rolesL} />
 
       {/* Header Card */}
-      <Card className="bg-white rounded-2xl shadow-lg border-0 overflow-hidden" bodyStyle={{ padding: "32px" }}>
+      <Card className="bg-gradient-to-r from-slate-300 to-slate-500 rounded-2xl shadow-lg border-0 overflow-hidden" bodyStyle={{ padding: "32px" }}>
         <div className="flex items-center gap-4 mb-8">
           <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-violet-600 rounded-2xl flex items-center justify-center shadow-lg">
             <TeamOutlined className="text-white text-xl" />
@@ -240,7 +240,7 @@ const Index = () => {
         <Button
           type="primary"
           onClick={showModal}
-          className="h-12 px-6 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 border-0 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+          className="h-12 text-white px-6 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 border-0 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
           icon={<PlusOutlined />}
         >
           Yangi admin qo'shish

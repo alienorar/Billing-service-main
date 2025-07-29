@@ -191,7 +191,7 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open: modalOpen, handleCl
           <Spin size="large" tip="Guruhlar yuklanmoqda..." />
         </div>
       ) : (
-        <Form form={form} layout="vertical" onFinish={handleFinish} className="mt-6 space-y-4">
+        <Form form={form} layout="vertical" onFinish={handleFinish} className="mt-6 space-y-4 ">
           <Form.Item
             label={<span className="font-semibold text-gray-700">Nomi</span>}
             name="name"
@@ -199,7 +199,7 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open: modalOpen, handleCl
           >
             <Input
               placeholder="To'lov guruhini nomini kiriting"
-              className="h-12 rounded-xl border-gray-200 focus:border-teal-400 transition-all duration-200"
+              className="h-12 rounded-xl  focus:border-teal-400 transition-all duration-200 border-gray-200 border-[2px]"
             />
           </Form.Item>
 
@@ -212,7 +212,7 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open: modalOpen, handleCl
               min={1}
               onChange={handleDurationChange}
               prefix={<ClockCircleOutlined className="text-gray-400" />}
-              className="w-full h-12 rounded-xl border-gray-200 focus:border-teal-400 transition-all duration-200"
+              className="w-full h-12 rounded-xl border-gray-200 border-[2px] focus:border-teal-400 transition-all duration-200"
             />
           </Form.Item>
 
@@ -254,7 +254,7 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open: modalOpen, handleCl
                   {fields.map(({ key, name, ...rest }) => (
                     <div key={key} className="flex gap-3 mb-3">
                       <Form.Item {...rest} name={[name, "key"]} initialValue={`${name + 1}`} className="flex-1">
-                        <Input disabled className="h-12 rounded-xl bg-gray-50" />
+                        <Input disabled className="h-12 rounded-xl bg-gray-50 border-gray-200 border-[2px" />
                       </Form.Item>
                       <Form.Item
                         {...rest}
@@ -266,7 +266,7 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open: modalOpen, handleCl
                           min={0}
                           placeholder="Miqdori (UZS)"
                           prefix={<DollarOutlined className="text-gray-400" />}
-                          className="w-full h-12 rounded-xl border-gray-200 focus:border-teal-400 transition-all duration-200"
+                          className="w-full h-12 rounded-xl border-gray-200 border-[2px] focus:border-teal-400 transition-all duration-200"
                         />
                       </Form.Item>
                     </div>

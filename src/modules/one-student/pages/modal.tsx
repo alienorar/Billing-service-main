@@ -135,7 +135,7 @@ const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
             <Input
               prefix={<FileTextOutlined className="text-gray-400" />}
               placeholder="Tarif nomini kiriting"
-              className="h-12 rounded-xl border-gray-200 focus:border-teal-400 focus:shadow-lg transition-all duration-200"
+              className="h-12 rounded-xl border-gray-200 border-[2px] focus:border-teal-400 focus:shadow-lg transition-all duration-200"
             />
           </Form.Item>
 
@@ -146,7 +146,7 @@ const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
           >
             <Select
               placeholder="Chegirma turini tanlang"
-              className="h-12"
+              className="h-12 border-gray-200 border-[2px] rounded-xl"
               suffixIcon={<DollarOutlined className="text-gray-400" />}
             >
               {discountTypeOptions.map((type) => (
@@ -171,7 +171,7 @@ const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
               type="number"
               prefix={<NumberOutlined className="text-gray-400" />}
               placeholder="Student kursini kiriting"
-              className="h-12 rounded-xl border-gray-200 focus:border-teal-400 focus:shadow-lg transition-all duration-200"
+              className="h-12 rounded-xl border-gray-200 border-[2px] focus:border-teal-400 focus:shadow-lg transition-all duration-200"
             />
           </Form.Item>
 
@@ -184,7 +184,7 @@ const DiscountsModal = ({ open, handleClose, update, studentId }: any) => {
               type="number"
               prefix={<DollarOutlined className="text-gray-400" />}
               placeholder="Chegirma miqdorini kiriting"
-              className="h-12 rounded-xl border-gray-200 focus:border-teal-400 focus:shadow-lg transition-all duration-200"
+              className="h-12 rounded-xl border-gray-200 border-[2px] focus:border-teal-400 focus:shadow-lg transition-all duration-200"
             />
           </Form.Item>
         </div>
