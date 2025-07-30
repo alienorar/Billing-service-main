@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { Button, Form, Input, Card } from "antd"
-import { UserOutlined, LockOutlined, LoginOutlined, FieldTimeOutlined } from "@ant-design/icons"
+import { UserOutlined, LockOutlined, LoginOutlined,  } from "@ant-design/icons"
 import { useSignInMutation } from "../../hooks/mutations"
 // import MoneyIcon from "../../../../assets/money-icon.webp"
 
@@ -26,12 +26,9 @@ const Index: React.FC = () => {
       <div className="w-full max-w-md relative z-10">
         {/* Logo/Header Section */}
         <div className="text-center mb-10">
-          <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
-            <FieldTimeOutlined className="text-3xl text-white" />
-            {/* <img src={MoneyIcon} alt="money" className="rounded-full h-50 w-40"/> */}
-          </div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-3">Xush kelibsiz</h1>
-          <p className="text-gray-600 text-lg">Admin panelga kirish uchun ma'lumotlaringizni kiriting</p>
+         
+          <h1 className="text-3xl font-bold text-gray-700 mb-3">Xush kelibsiz</h1>
+          <p className="text-gray-800 text-lg">Admin panelga kirish uchun ma'lumotlaringizni kiriting</p>
         </div>
 
         {/* Login Form */}

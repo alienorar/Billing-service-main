@@ -6,14 +6,14 @@ import { ArrowUpOutlined, DollarOutlined, WarningOutlined, BarChartOutlined } fr
 import { Line } from "@ant-design/charts"
 import { useGetPaymentChart, useGetPaymentStatistics } from "../hooks/queries"
 import type { ProcessedData, PaymentItem } from "../types"
-import { Button } from "antd"
+// import { Button } from "antd"
 import dayjs from "dayjs"
 
 const { Option } = Select
 const {  Text } = Typography
 
 const PaymentDashboard = () => {
-  const [year, setYear] = useState<"THIS_YEAR" | "LAST_YEAR">("THIS_YEAR")
+  // const [year, setYear] = useState<"THIS_YEAR" | "LAST_YEAR">("THIS_YEAR")
 
   const getInitialFilterCount = (): number => {
     try {
