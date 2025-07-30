@@ -136,8 +136,8 @@ const PaymentDashboard = () => {
     }
   }
 
-  const [days, getDays] = useState<"TODAY" | "YESTERDAY">("TODAY")
-  const [month, getMonth] = useState<"THIS_MONTH" | "LAST_MONTH">("THIS_MONTH")
+  // const [days, getDays] = useState<"TODAY" | "YESTERDAY">("TODAY")
+  // const [month, getMonth] = useState<"THIS_MONTH" | "LAST_MONTH">("THIS_MONTH")
 
   const { data: todayStats } = useGetPaymentStatistics({
     from: dayjs().format("YYYY-MM-DD"),
@@ -232,147 +232,89 @@ const PaymentDashboard = () => {
           </div>
         </div>
 
-        {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <Card className="bg-white rounded-2xl shadow-lg border-0 overflow-hidden">
-            <div className="p-2">
-              <div className="flex justify-center mb-4">
-                <Button.Group className="bg-gray-50 rounded-xl p-1">
-                  <Button
-                    type={days === "YESTERDAY" ? "primary" : "default"}
-                    onClick={() => getDays("YESTERDAY")}
-                    className={`rounded-lg font-medium transition-all duration-200 px-3 ${
-                      days === "YESTERDAY"
-                        ? "bg-gradient-to-r from-teal-500 to-blue-600 text-white border-0 shadow-lg"
-                        : "bg-transparent text-gray-600 border-0 hover:bg-gray-100"
-                    }`}
-                  >
-                    Kecha
-                  </Button>
-                  <Button
-                    type={days === "TODAY" ? "primary" : "default"}
-                    onClick={() => getDays("TODAY")}
-                    className={`rounded-lg font-medium transition-all duration-200 px-3 ${
-                      days === "TODAY"
-                        ? "bg-gradient-to-r from-teal-500 to-blue-600 text-white border-0 shadow-lg"
-                        : "bg-transparent text-gray-600 border-0 hover:bg-gray-100"
-                    }`}
-                  >
-                    Bugun
-                  </Button>
-                </Button.Group>
-              </div>
-              <Statistic
-                title={
-                  <span className="text-gray-600 font-medium">
-                    {days === "TODAY" ? "Bugungi to'lovlar" : "Kechagi to'lovlar"}
-                  </span>
-                }
-                value={
-                  days === "TODAY"
-                    ? todayStats?.data?.allPaymentAmount?.toLocaleString("en-US")
-                    : yesterdayStats?.data?.allPaymentAmount?.toLocaleString("en-US")
-                }
-                suffix="so'm"
-                valueStyle={{ color: "#f97316", fontSize: "24px", fontWeight: "bold" }}
-                prefix={<WarningOutlined />}
-              />
-            </div>
-          </Card>
-
-          <Card className="bg-white rounded-2xl shadow-lg border-0 overflow-hidden">
-            <div className="p-2">
-              <div className="flex justify-center mb-4">
-                <Button.Group className="bg-gray-50 rounded-xl p-1">
-                  <Button
-                    type={month === "LAST_MONTH" ? "primary" : "default"}
-                    onClick={() => getMonth("LAST_MONTH")}
-                    className={`rounded-lg font-medium transition-all duration-200 px-3 ${
-                      month === "LAST_MONTH"
-                        ? "bg-gradient-to-r from-teal-500 to-blue-600 text-white border-0 shadow-lg"
-                        : "bg-transparent text-gray-600 border-0 hover:bg-gray-100"
-                    }`}
-                  >
-                    O'tgan oy
-                  </Button>
-                  <Button
-                    type={month === "THIS_MONTH" ? "primary" : "default"}
-                    onClick={() => getMonth("THIS_MONTH")}
-                    className={`rounded-lg font-medium transition-all duration-200 px-3 ${
-                      month === "THIS_MONTH"
-                        ? "bg-gradient-to-r from-teal-500 to-blue-600 text-white border-0 shadow-lg"
-                        : "bg-transparent text-gray-600 border-0 hover:bg-gray-100"
-                    }`}
-                  >
-                    Bu oy
-                  </Button>
-                </Button.Group>
-              </div>
-              <Statistic
-                title={
-                  <span className="text-gray-600 font-medium">
-                    {month === "THIS_MONTH" ? "Shu oy to'lovlari" : "O'tgan oy to'lovlari"}
-                  </span>
-                }
-                value={
-                  month === "THIS_MONTH"
-                    ? thisMonthStats?.data?.allPaymentAmount?.toLocaleString("en-US")
-                    : lastMonthStats?.data?.allPaymentAmount?.toLocaleString("en-US")
-                }
-                suffix="so'm"
-                valueStyle={{ color: "#16a34a", fontSize: "24px", fontWeight: "bold" }}
-                prefix={<ArrowUpOutlined />}
-              />
-            </div>
-          </Card>
-
-          <Card className="bg-white rounded-2xl shadow-lg border-0 overflow-hidden">
-            <div className="p-2">
-              <div className="flex justify-center mb-4">
-                <Button.Group className="bg-gray-50 rounded-xl p-1">
-                  <Button
-                    type={year === "LAST_YEAR" ? "primary" : "default"}
-                    onClick={() => setYear("LAST_YEAR")}
-                    className={`rounded-lg font-medium transition-all duration-200 px-3 ${
-                      year === "LAST_YEAR"
-                        ? "bg-gradient-to-r from-teal-500 to-blue-600 text-white border-0 shadow-lg"
-                        : "bg-transparent text-gray-600 border-0 hover:bg-gray-100"
-                    }`}
-                  >
-                    O'tgan yil
-                  </Button>
-                  <Button
-                    type={year === "THIS_YEAR" ? "primary" : "default"}
-                    onClick={() => setYear("THIS_YEAR")}
-                    className={`rounded-lg font-medium transition-all duration-200 px-3 ${
-                      year === "THIS_YEAR"
-                        ? "bg-gradient-to-r from-teal-500 to-blue-600 text-white border-0 shadow-lg"
-                        : "bg-transparent text-gray-600 border-0 hover:bg-gray-100"
-                    }`}
-                  >
-                    Bu yil
-                  </Button>
-                </Button.Group>
-              </div>
-              <Statistic
-                title={
-                  <span className="text-gray-600 font-medium">
-                    {year === "THIS_YEAR" ? "Bu yildagi to'lovlar" : "O'tgan yildagi to'lovlar"}
-                  </span>
-                }
-                value={
-                  year === "THIS_YEAR"
-                    ? thisYearStats?.data?.allPaymentAmount?.toLocaleString("en-US")
-                    : lastYearStats?.data?.allPaymentAmount?.toLocaleString("en-US")
-                }
-                suffix="so'm"
-                valueStyle={{ color: "#7c3aed", fontSize: "24px", fontWeight: "bold" }}
-                prefix={<BarChartOutlined />}
-              />
-            </div>
-          </Card>
+{/* Kichikroq va ixcham statistik kartalar */}
+<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+  {/* Kecha/Bugun */}
+  <Card className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
+    <div className="p-3">
+      <div className="flex justify-center mb-3">
+        <span className="bg-gradient-to-br from-teal-400 via-sky-400 to-blue-800 text-white font-medium text-xs px-3 py-1 rounded-full shadow-sm">
+          Kecha va Bugun
+        </span>
+      </div>
+      <div className="space-y-2">
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-2 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+          <p className="text-gray-600 text-xs font-medium">Kecha</p>
+          <p className="text-lg font-semibold text-gray-900">
+            {yesterdayStats?.data?.allPaymentAmount?.toLocaleString("en-US") || "0"} 
+            <span className="text-xs font-normal text-gray-500 ml-1">so'm</span>
+          </p>
         </div>
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-2 rounded-lg hover:bg-blue-200 transition-colors duration-200">
+          <p className="text-blue-700 text-xs font-medium">Bugun</p>
+          <p className="text-lg font-semibold text-blue-900">
+            {todayStats?.data?.allPaymentAmount?.toLocaleString("en-US") || "0"} 
+            <span className="text-xs font-normal text-blue-600 ml-1">so'm</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </Card>
 
+  {/* O'tgan oy/Bu oy */}
+  <Card className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
+    <div className="p-3">
+      <div className="flex justify-center mb-3">
+        <span className="bg-gradient-to-br from-teal-400 via-sky-400 to-blue-800 text-white font-medium text-xs px-3 py-1 rounded-full shadow-sm">
+          O'tgan oy va Bu oy
+        </span>
+      </div>
+      <div className="space-y-2">
+        <div className=" p-2 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+          <p className="text-gray-600 text-xs font-medium">O'tgan oy</p>
+          <p className="text-lg font-semibold text-gray-900">
+            {lastMonthStats?.data?.allPaymentAmount?.toLocaleString("en-US") || "0"} 
+            <span className="text-xs font-normal text-gray-500 ml-1">so'm</span>
+          </p>
+        </div>
+        <div className="bg-gradient-to-r from-purple-50 to-indigo-100 p-2 rounded-lg hover:bg-purple-200 transition-colors duration-200">
+          <p className="text-purple-700 text-xs font-medium">Bu oy</p>
+          <p className="text-lg font-semibold text-purple-900">
+            {thisMonthStats?.data?.allPaymentAmount?.toLocaleString("en-US") || "0"} 
+            <span className="text-xs font-normal text-purple-600 ml-1">so'm</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </Card>
+
+  {/* O'tgan yil/Bu yil */}
+  <Card className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
+    <div className="p-3">
+      <div className="flex justify-center mb-3">
+        <span className="bg-gradient-to-br from-teal-400 via-sky-400 to-blue-800 text-white font-medium text-xs px-3 py-1 rounded-full shadow-sm">
+          O'tgan yil va Bu yil
+        </span>
+      </div>
+      <div className="space-y-2">
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-2 rounded-lg hover:bg-gray-200 transition-colors duration-200">
+          <p className="text-gray-600 text-xs font-medium">O'tgan yil</p>
+          <p className="text-lg font-semibold text-gray-900">
+            {lastYearStats?.data?.allPaymentAmount?.toLocaleString("en-US") || "0"} 
+            <span className="text-xs font-normal text-gray-500 ml-1">so'm</span>
+          </p>
+        </div>
+        <div className="bg-gradient-to-r from-green-50 to-lime-100 p-2 rounded-lg hover:bg-green-200 transition-colors duration-200">
+          <p className="text-green-700 text-xs font-medium">Bu yil</p>
+          <p className="text-lg font-semibold text-green-900">
+            {thisYearStats?.data?.allPaymentAmount?.toLocaleString("en-US") || "0"} 
+            <span className="text-xs font-normal text-green-600 ml-1">so'm</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </Card>
+</div>
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-4">
           <Select

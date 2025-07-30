@@ -60,7 +60,7 @@ const AdminPanel = () => {
             collapsible
             collapsed={collapsed}
             width={280}
-            className="bg-gradient-to-b from-blue-600 to-violet-600 shadow-2xl border-r-0"
+            className="bg-gradient-to-b from-blue-600 to-violet-600 shadow-2xl border-r-0 fixed top-0 bottom-0 left-0 z-50 "
             style={{
               background: "linear-gradient(180deg, #2563eb 0%, #7c3aed 100%)",
               boxShadow: "4px 0 20px rgba(0, 0, 0, 0.1)",
@@ -173,8 +173,9 @@ const AdminPanel = () => {
           <Layout className="bg-transparent">
             {/* Header */}
             <Header
-              className="bg-white shadow-sm border-b border-gray-100"
+              className="bg-white shadow-sm border-b border-gray-100  fixed top-0 right-0 z-40"
               style={{
+               left: collapsed ? 80 : 280, 
                 padding: 0,
                 background: "white",
                 boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
@@ -228,13 +229,14 @@ const AdminPanel = () => {
             <Content
               className="m-6 bg-gradient-to-br from-cyan-400 via-blue-500 to-blue-600 rounded-3xl shadow-xl overflow-hidden"
               style={{
+                    marginLeft: collapsed ? 80 : 280,
                 minHeight: "calc(100vh - 112px)",
                 background: "linear-gradient(135deg, #22d3ee 0%, #3b82f6 50%, #2563eb 100%)",
                 boxShadow: "0 20px 40px rgba(0, 0, 0, 0.1)",
               }}
             >
               <div className="h-full p-8 text-white">
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 h-full ">
+                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 h-full">
                   <Outlet />
                 </div>
               </div>
