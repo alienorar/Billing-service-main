@@ -18,18 +18,30 @@ export const logout = () => {
   localStorage.removeItem("Lastname")
 };
 
-export const setFirstname = (data:any) => {
+export const setFirstname = (data:string) => {
   localStorage.setItem("Firstname", data);
 };
 
 export const getFirstname = () => localStorage.getItem("Firstname");
 
-export const setLastname = (data:any) => {
+
+export const setLastname = (data:string) => {
   localStorage.setItem("Lastname", data);
 };
 
 export const getLastname = () => localStorage.getItem("Lastname");
 
+
+export const getPhone = () => localStorage.getItem("phone");
+
+export const setPhone = (data:string) => {
+  localStorage.setItem("phone",data);}
+
+
+export const getRole = () => localStorage.getItem("role");
+
+export const setRole = (data:string) => {
+  localStorage.setItem("role",data);}
 
 // =========================Role permission service ========================
 

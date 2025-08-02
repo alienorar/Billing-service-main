@@ -11,7 +11,7 @@ import {
 } from "@ant-design/icons"
 import { Button, Layout, Menu, Dropdown, Avatar } from "antd"
 import { NavLink, useLocation, Outlet } from "react-router-dom"
-import { getUserPermissions, logout } from "../../utils/token-service"
+import { getPhone, getRole, getUserPermissions, logout } from "../../utils/token-service"
 import MainLogo from "../../assets/otu-logo.png"
 import { routesConfig } from "../../router/routes"
 
@@ -37,6 +37,11 @@ const AdminPanel = () => {
   const Firstname = localStorage.getItem("Firstname")
   const Lastname = localStorage.getItem("Lastname")
   const accessToken = localStorage.getItem("accessToken")
+
+  const role = getRole()
+  const phoneNumber = getPhone()
+  // console.log(role)
+
 
   const menu = (
     <Menu className="px-2 bg-white rounded-2xl shadow-2xl border-0 min-w-[200px]">
@@ -162,7 +167,7 @@ const AdminPanel = () => {
                       <div className="text-white font-semibold text-sm truncate">
                         {Firstname} {Lastname}
                       </div>
-                      <div className="text-white/70 text-xs">O'qituvchi</div>
+                      <div className="text-white/70 text-xs">{phoneNumber}</div>
                     </div>
                   </div>
                 </div>
@@ -210,7 +215,7 @@ const AdminPanel = () => {
                         <span className="font-semibold text-gray-800 text-sm">
                           {Firstname} {Lastname}
                         </span>
-                        <span className="text-xs text-gray-500">Administrator</span>
+                        <span className="text-xs text-gray-500">{role}</span>
                       </div>
                       <span className="ml-2">
                         {menuOpen ? (
