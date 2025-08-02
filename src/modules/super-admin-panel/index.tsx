@@ -115,15 +115,16 @@ const AdminPanel = () => {
                           return (
                             <Menu.Item
                               key={fullPath}
-                              icon={<span className="text-white/70">{child.icon}</span>}
+                              icon={<span className={ !collapsed ? "text-white font-medium" : "text-black font-medium"} >{child.icon}</span>}
                               className="ml-4 rounded-lg"
                               style={{
-                                backgroundColor: pathname === fullPath ? "rgba(255, 255, 255, 0.2)" : "transparent",
+                                backgroundColor: pathname === fullPath ? "bg-gradient-to-b from-blue-600 to-violet-600" : "bg-gradient-to-b from-blue-600 to-violet-600",
                                 borderRadius: "8px",
                                 margin: "2px 0",
+                                // color:"white"
                               }}
                             >
-                              <NavLink to={fullPath} className="text-white/80 hover:text-white">
+                              <NavLink to={fullPath} className={ !collapsed ? "text-white font-medium" : "text-gray-700 font-medium"} >
                                 {child.label}
                               </NavLink>
                             </Menu.Item>
@@ -180,7 +181,7 @@ const AdminPanel = () => {
             <Header
               className="bg-white shadow-sm border-b border-gray-100  fixed top-0 right-0 z-40"
               style={{
-               left: collapsed ? 80 : 280, 
+                left: collapsed ? 80 : 280,
                 padding: 0,
                 background: "white",
                 boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
@@ -234,7 +235,7 @@ const AdminPanel = () => {
             <Content
               className="m-6 bg-gradient-to-br from-cyan-400 via-blue-500 to-blue-600 rounded-3xl shadow-xl overflow-hidden"
               style={{
-                    marginLeft: collapsed ? 80 : 280,
+                marginLeft: collapsed ? 80 : 280,
                 minHeight: "calc(100vh - 112px)",
                 background: "linear-gradient(135deg, #22d3ee 0%, #3b82f6 50%, #2563eb 100%)",
                 boxShadow: "0 20px 40px rgba(0, 0, 0, 0.1)",
