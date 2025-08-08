@@ -171,6 +171,8 @@ const Index = () => {
     { value: "", label: "Barchasi" },
     { value: "KUNDUZGI", label: "Kunduzgi" },
     { value: "SIRTQI", label: "Sirtqi" },
+    { value: "MASOFAVIY", label: "Masofaviy" },
+    { value: "KECHKI", label: "Kechki" },
   ]
 
   const educationTypeOptions = [
