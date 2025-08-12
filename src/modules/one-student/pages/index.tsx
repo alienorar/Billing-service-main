@@ -286,6 +286,10 @@ const StudentDetails: React.FC = () => {
                   <span className="text-sm font-medium text-gray-600">PINFL:</span>
                   <span className="font-mono text-sm text-gray-800">{student?.pinfl || "-"}</span>
                 </div>
+                <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm">
+                  <span className="text-sm font-medium text-gray-600">Student statusi:</span>
+                  <span className="font-mono text-sm text-sky-800">{student?.studentStatus || "-"}</span>
+                </div>
               </div>
             </div>
           </div>

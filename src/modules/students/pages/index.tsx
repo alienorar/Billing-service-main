@@ -173,6 +173,16 @@ const Index = () => {
       render: (value: any) => <span className="font-medium text-gray-800">{value ?? "-"}</span>,
     },
     {
+      title: <span className="font-semibold text-gray-700">Kursi</span>,
+      dataIndex: "level",
+      render: (value: any) => <span className="font-medium text-gray-800">{value ?? "-"}</span>,
+    },
+    {
+      title: <span className="font-semibold text-gray-700">Student statusi</span>,
+      dataIndex: "studentStatus",
+      render: (value: any) => <span className="font-medium text-green-800">{value ?? "-"}</span>,
+    },
+    {
       title: <span className="font-semibold text-gray-700">PINFL</span>,
       dataIndex: "pinfl",
       render: (value: any) => <span className="font-mono text-sm text-gray-600">{value ?? "-"}</span>,
@@ -235,10 +245,10 @@ const Index = () => {
             return (
               <span
                 className={`px-3 py-1 rounded-lg text-sm font-semibold ${amount < 0
-                    ? "text-red-600 bg-red-50"
-                    : amount > 0
-                      ? "text-green-600 bg-green-50"
-                      : "text-gray-500 bg-gray-50"
+                  ? "text-red-600 bg-red-50"
+                  : amount > 0
+                    ? "text-green-600 bg-green-50"
+                    : "text-gray-500 bg-gray-50"
                   }`}
               >
                 {amount !== 0 ? amount.toLocaleString() : "-"}
@@ -521,6 +531,7 @@ const Index = () => {
               className: "bg-red-500 hover:bg-red-600 border-red-500 hover:border-red-600 text-white px-2",
             }}
           >
+
             <Button
               loading={isSyncing}
               className="h-10 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 border-0 px-5 rounded-xl font-medium text-white shadow-lg hover:shadow-xl transition-all duration-200"
@@ -529,15 +540,30 @@ const Index = () => {
               HEMIS orqali yangilash
             </Button>
           </Popconfirm>
-
-          <Button
-            onClick={handleExportStudents}
+          <Popconfirm
+            title="Studentlar ro'yhatini yuklash"
+            description="Aniq ishonchingiz komilmi? Bu jarayon ma'lumotlarni yuklaydi."
+            onConfirm={() => {
+              showModal
+              handleExportStudents()
+            }}
+            okText="Ha"
+            cancelText="Yo'q"
+            okButtonProps={{
+              className: "bg-green-500 hover:bg-green-600 border-green-500 hover:border-green-600 px-2",
+            }}
+            cancelButtonProps={{
+              className: "bg-red-500 hover:bg-red-600 border-red-500 hover:border-red-600 text-white px-2 mx-1",
+            }}
+          > <Button
+            // onClick={handleExportStudents}
             loading={exportStudentsMutation.isPending}
             className="h-10 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 border-0 rounded-xl px-4 font-medium text-white shadow-lg hover:shadow-xl transition-all duration-200"
             icon={<FiDownload />}
           >
-            Ro'yxatni yuklash
-          </Button>
+              Ro'yxatni yuklash
+            </Button></Popconfirm>
+
         </div>
       </div>
 

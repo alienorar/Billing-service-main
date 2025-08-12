@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { FiDownload } from "react-icons/fi"
 import { useEffect, useMemo, useState } from "react"
 import { type TablePaginationConfig, Spin, Alert, Button, Input } from "antd"
@@ -23,6 +22,7 @@ interface StudentRecord {
   group: string
   paymentGroup: string | null
   level: string
+  studentStatus: string // Assumed field for student status
   paymentDetails: DebtAmout
 }
 
@@ -64,11 +64,27 @@ const GroupSinglePage: React.FC = () => {
 
   const [tableData, setTableData] = useState<StudentRecord[]>([])
   const [total, setTotal] = useState<number>(0)
+  const [groupInfo, setGroupInfo] = useState<{
+    group?: string
+    educationForm?: string
+    educationType?: string
+    speciality?: string
+  }>({})
 
   useEffect(() => {
     if (studentsByGroupId?.data?.content) {
       setTableData(studentsByGroupId.data.content)
       setTotal(studentsByGroupId.data.paging.totalItems ?? 0)
+      // Assuming all students in the group share the same group info
+      if (studentsByGroupId.data.content.length > 0) {
+        const firstStudent = studentsByGroupId.data.content[0]
+        setGroupInfo({
+          group: firstStudent.group,
+          educationForm: firstStudent.educationForm,
+          educationType: firstStudent.educationType,
+          speciality: firstStudent.speciality,
+        })
+      }
     }
   }, [studentsByGroupId])
 
@@ -121,6 +137,13 @@ const GroupSinglePage: React.FC = () => {
         sorter: (a: StudentRecord, b: StudentRecord) => a.id - b.id,
       },
       {
+        title: <span className="font-semibold text-gray-700">PINFL</span>,
+        dataIndex: "pinfl",
+        key: "pinfl",
+        render: (text: any) => <span className="font-medium text-gray-600">{text}</span>,
+        sorter: (a: StudentRecord, b: StudentRecord) => a.pinfl.localeCompare(b.pinfl),
+      },
+      {
         title: <span className="font-semibold text-gray-700">To'liq ism</span>,
         dataIndex: "fullName",
         key: "fullName",
@@ -135,18 +158,11 @@ const GroupSinglePage: React.FC = () => {
         sorter: (a: StudentRecord, b: StudentRecord) => a.phone.localeCompare(b.phone),
       },
       {
-        title: <span className="font-semibold text-gray-700">Mutaxasislik</span>,
-        dataIndex: "speciality",
-        key: "speciality",
+        title: <span className="font-semibold text-gray-700">Status</span>,
+        dataIndex: "studentStatus",
+        key: "studentStatus",
         render: (text: any) => <span className="text-gray-800">{text}</span>,
-        sorter: (a: StudentRecord, b: StudentRecord) => a.speciality.localeCompare(b.speciality),
-      },
-      {
-        title: <span className="font-semibold text-gray-700">Guruh</span>,
-        dataIndex: "group",
-        key: "group",
-        render: (text: any) => <span className="text-gray-800 font-medium">{text}</span>,
-        sorter: (a: StudentRecord, b: StudentRecord) => a.group.localeCompare(b.group),
+        sorter: (a: StudentRecord, b: StudentRecord) => a.studentStatus.localeCompare(b.studentStatus),
       },
       {
         title: <span className="font-semibold text-gray-700">Kurs</span>,
@@ -156,23 +172,38 @@ const GroupSinglePage: React.FC = () => {
         sorter: (a: StudentRecord, b: StudentRecord) => a.level.localeCompare(b.level),
       },
       {
-        title: <span className="font-semibold text-gray-700">Qarzdorlik</span>,
-        key: "studentDebtAmount",
-        sorter: (a: StudentRecord, b: StudentRecord) => {
-          const valA = a.paymentDetails?.studentDebtAmount ?? 0
-          const valB = b.paymentDetails?.studentDebtAmount ?? 0
-          return valA - valB
-        },
+        title: <span className="font-semibold text-gray-700">To'lov Tafsilotlari</span>,
+        key: "paymentDetails",
         render: (_: any, record: StudentRecord) => {
-          const amount = record.paymentDetails?.studentDebtAmount ?? 0
+          const {
+            studentDebtAmount = 0,
+            studentMustPaidAmount = 0,
+            studentContractAmount = 0,
+            studentPaidAmount = 0,
+            studentDiscountAmount = 0,
+          } = record.paymentDetails || {}
           return (
-            <span
-              className={`px-3 py-1 rounded-lg text-sm font-semibold ${
-                amount < 0 ? "text-red-600 bg-red-50" : "text-green-600 bg-green-50"
-              }`}
-            >
-              {amount.toLocaleString()}
-            </span>
+            <div className="space-y-1">
+              <span
+                className={`block px-3 py-1 rounded-lg text-sm font-semibold ${
+                  studentDebtAmount < 0 ? "text-red-600 bg-red-50" : "text-green-600 bg-green-50"
+                }`}
+              >
+                Qarz: {studentDebtAmount.toLocaleString()}
+              </span>
+              <span className="block text-gray-600 text-sm">
+                Kontrakt: {studentContractAmount.toLocaleString()}
+              </span>
+              <span className="block text-gray-600 text-sm">
+                To'langan: {studentPaidAmount.toLocaleString()}
+              </span>
+              <span className="block text-gray-600 text-sm">
+                Chegirma: {studentDiscountAmount.toLocaleString()}
+              </span>
+              <span className="block text-gray-600 text-sm">
+                To'lashi kerak: {studentMustPaidAmount.toLocaleString()}
+              </span>
+            </div>
           )
         },
       },
@@ -226,6 +257,29 @@ const GroupSinglePage: React.FC = () => {
           >
             Ortga
           </Button>
+        </div>
+
+        {/* Group Information */}
+        <div className="mb-6 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
+          <h2 className="text-lg font-semibold text-gray-700 mb-3">Guruh Ma'lumotlari</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <span className="font-medium text-gray-600">Guruh: </span>
+              <span className="text-gray-800">{groupInfo.group || "N/A"}</span>
+            </div>
+            <div>
+              <span className="font-medium text-gray-600">Ta'lim shakli: </span>
+              <span className="text-gray-800">{groupInfo.educationForm || "N/A"}</span>
+            </div>
+            <div>
+              <span className="font-medium text-gray-600">Ta'lim turi: </span>
+              <span className="text-gray-800">{groupInfo.educationType || "N/A"}</span>
+            </div>
+            <div>
+              <span className="font-medium text-gray-600">Mutaxasislik: </span>
+              <span className="text-gray-800">{groupInfo.speciality || "N/A"}</span>
+            </div>
+          </div>
         </div>
 
         {/* Search and Export */}

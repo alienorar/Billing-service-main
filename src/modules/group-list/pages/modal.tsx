@@ -1,10 +1,9 @@
 "use client"
 
 import type React from "react"
-
-import { Modal, Form, Input, Button, Select } from "antd"
 import { useEffect } from "react"
-import { TeamOutlined, IdcardOutlined, DollarOutlined } from "@ant-design/icons"
+import { Modal, Form, Input, Button, Select, InputNumber } from "antd"
+import { TeamOutlined, IdcardOutlined, DollarOutlined, EyeOutlined, NumberOutlined } from "@ant-design/icons"
 import { useUpdateGroupList } from "../hooks/mutations"
 import type { GroupListUpdate, PaymentGroup } from "@types"
 import { useGetPmtGroupList } from "../hooks/queries"
@@ -31,6 +30,8 @@ const GroupModal: React.FC<GroupModalProps> = ({ open, handleClose, update }) =>
       form.setFieldsValue({
         groupId: update.id,
         paymentGroupId: update.paymentGroupId || undefined,
+        visible: update.visible,
+        debtLevel: update.debtLevel,
       })
     } else {
       form.resetFields()
@@ -41,6 +42,8 @@ const GroupModal: React.FC<GroupModalProps> = ({ open, handleClose, update }) =>
     const payload: GroupListUpdate = {
       groupId: values.groupId,
       paymentGroupId: values.paymentGroupId,
+      visible: values.visible,
+      debtLevel: values.debtLevel,
     }
     updateMutate(payload, { onSuccess: handleClose })
   }
@@ -48,7 +51,7 @@ const GroupModal: React.FC<GroupModalProps> = ({ open, handleClose, update }) =>
   return (
     <Modal
       title={
-        <div className="flex items-center gap-3 pb-4 border-b border-gray-100 ">
+        <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
           <div className="w-12 h-12 bg-gradient-to-br from-teal-400 via-sky-400 to-blue-800 rounded-xl flex items-center justify-center shadow-lg">
             <TeamOutlined className="text-white text-xl" />
           </div>
@@ -81,7 +84,7 @@ const GroupModal: React.FC<GroupModalProps> = ({ open, handleClose, update }) =>
           <Input
             disabled
             prefix={<IdcardOutlined className="text-gray-400" />}
-            className="h-12 rounded-xl  bg-gray-50 text-gray-600 border-gray-400 border-[2px]"
+            className="h-12 rounded-xl bg-gray-50 text-gray-600 border-gray-400 border-[2px]"
           />
         </Form.Item>
 
@@ -97,6 +100,36 @@ const GroupModal: React.FC<GroupModalProps> = ({ open, handleClose, update }) =>
             allowClear
             className="h-12 border-gray-400 border-[2px] rounded-xl"
             suffixIcon={<DollarOutlined className="text-teal-500" />}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label={<span className="font-semibold text-gray-700">Ko'rinish</span>}
+          name="visible"
+          rules={[{ required: true, message: "Ko'rinishni tanlang!" }]}
+        >
+          <Select
+            placeholder="Ko'rinishni tanlang"
+            options={[
+              { value: true, label: "Ko'rinadigan" },
+              { value: false, label: "Ko'rinmaydigan" },
+            ]}
+            allowClear
+            className="h-12 border-gray-400 border-[2px] rounded-xl"
+            suffixIcon={<EyeOutlined className="text-teal-500" />}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label={<span className="font-semibold text-gray-700">Qarz darajasi</span>}
+          name="debtLevel"
+          rules={[{ required: true, message: "Qarz darajasini kiriting!" }]}
+        >
+          <InputNumber
+            min={0}
+            placeholder="Qarz darajasini kiriting"
+            className="w-full h-12 rounded-xl bg-gray-50 text-gray-600 border-gray-400 border-[2px]"
+            prefix={<NumberOutlined className="text-gray-400" />}
           />
         </Form.Item>
 
