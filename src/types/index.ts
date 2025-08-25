@@ -158,7 +158,9 @@ export interface PaymentGroup {
 export interface GroupListUpdate {
   groupId?: number | string;
   paymentGroupId?: number | string;
-  id?: number | string
+  id?: number | string;
+  visible: boolean,
+  debtLevel:number | string
 }
 
 

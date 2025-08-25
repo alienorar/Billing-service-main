@@ -1,4 +1,4 @@
-import { setFirstname, setLastname } from './../../../utils/token-service/index';
+import { setFirstname, setLastname, setPhone, setRole } from './../../../utils/token-service';
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { signIn } from "../service";
@@ -19,8 +19,12 @@ export function useSignInMutation() {
             setUserPermissions(permissons)
             const firstName = response?.data?.data.user.firstName
             const lastName = response?.data?.data.user.lastName
+            const phoneNumber = response?.data?.data.user.phone
+            const role  = response?.data?.data?.user?.role.displayName
             setFirstname(firstName)
             setLastname(lastName)
+            setPhone(phoneNumber)
+            setRole(role)
             navigate("/super-admin-panel/students");
         },
         onError: (error: any) => {

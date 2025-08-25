@@ -1,197 +1,187 @@
-import { useEffect, useState } from "react";
-import { Card, Row, Col, Table, Typography, Descriptions, Divider } from "antd";
-import { useGetStudentStatistics } from "../hooks/queries";
-import type { TableColumnsType } from "antd";
-import { Line } from "@ant-design/charts";
+"use client"
 
-const { Title, Text } = Typography;
+import { useEffect, useState } from "react"
+import { Card, Row, Col, Table, Typography, Descriptions, Divider } from "antd"
+import { useGetStudentStatistics } from "../hooks/queries"
+import type { TableColumnsType } from "antd"
+import { Line } from "@ant-design/charts"
+import { UserOutlined, BarChartOutlined } from "@ant-design/icons"
 
-// Define interfaces for the data structure
+const { Title, Text } = Typography
+
 interface EducationType {
-  Bakalavr: { Erkak: number; Ayol: number };
-  Magistr: { Erkak: number; Ayol: number };
-  Jami: { Erkak: number; Ayol: number };
+  Bakalavr: { Erkak: number; Ayol: number }
+  Magistr: { Erkak: number; Ayol: number }
+  Jami: { Erkak: number; Ayol: number }
 }
 
 interface AgeData {
   Bakalavr: {
-    "30 yoshgacha": { Erkak: number; Ayol: number };
-    "30 yoshdan katta": { Erkak: number; Ayol: number };
-    Jami: { Erkak: number; Ayol: number };
-  };
+    "30 yoshgacha": { Erkak: number; Ayol: number }
+    "30 yoshdan katta": { Erkak: number; Ayol: number }
+    Jami: { Erkak: number; Ayol: number }
+  }
   Magistr: {
-    "30 yoshgacha": { Erkak: number; Ayol: number };
-    "30 yoshdan katta": { Erkak: number; Ayol: number };
-    Jami: { Erkak: number; Ayol: number };
-  };
+    "30 yoshgacha": { Erkak: number; Ayol: number }
+    "30 yoshdan katta": { Erkak: number; Ayol: number }
+    Jami: { Erkak: number; Ayol: number }
+  }
 }
 
 interface PaymentData {
-  [key: string]: { Bakalavr: number; Magistr: number };
+  [key: string]: { Bakalavr: number; Magistr: number }
 }
 
 interface RegionData {
-  [key: string]: { Bakalavr: number; Magistr?: number };
+  [key: string]: { Bakalavr: number; Magistr?: number }
 }
 
 interface CitizenshipData {
-  [key: string]: { Bakalavr: number; Magistr: number };
+  [key: string]: { Bakalavr: number; Magistr: number }
 }
 
 interface AccommodationData {
-  [key: string]: { Bakalavr: number; Magistr: number };
+  [key: string]: { Bakalavr: number; Magistr: number }
 }
 
 interface EducationForm {
-  [key: string]: { Erkak: number; Ayol: number };
+  [key: string]: { Erkak: number; Ayol: number }
 }
 
 interface LevelData {
   [key: string]: {
-    [key: string]: { [key: string]: number };
-  };
+    [key: string]: { [key: string]: number }
+  }
 }
 
 interface StatisticData {
-  education_type: EducationType;
-  age: AgeData;
-  payment: PaymentData;
-  region: RegionData;
-  citizenship: CitizenshipData;
-  accommodation: AccommodationData;
-  education_form: { Bakalavr: EducationForm; Magistr: EducationForm };
-  level: LevelData;
+  education_type: EducationType
+  age: AgeData
+  payment: PaymentData
+  region: RegionData
+  citizenship: CitizenshipData
+  accommodation: AccommodationData
+  education_form: { Bakalavr: EducationForm; Magistr: EducationForm }
+  level: LevelData
 }
 
 interface EducationTypeTableData {
-  key: string;
-  type: string;
-  male: number;
-  female: number;
-  total: number;
+  key: string
+  type: string
+  male: number
+  female: number
+  total: number
 }
 
 interface AgeTableData {
-  key: string;
-  ageGroup: string;
-  male: number;
-  female: number;
-  total: number;
+  key: string
+  ageGroup: string
+  male: number
+  female: number
+  total: number
 }
 
 interface PaymentTableData {
-  key: string;
-  type: string;
-  bachelor: number;
-  master: number;
+  key: string
+  type: string
+  bachelor: number
+  master: number
 }
 
 interface RegionTableData {
-  key: number;
-  region: string;
-  bachelor: number;
-  master: number;
+  key: number
+  region: string
+  bachelor: number
+  master: number
 }
 
 interface CitizenshipTableData {
-  key: string;
-  type: string;
-  bachelor: number;
-  master: number;
+  key: string
+  type: string
+  bachelor: number
+  master: number
 }
 
 interface AccommodationTableData {
-  key: string;
-  type: string;
-  bachelor: number;
-  master: number;
+  key: string
+  type: string
+  bachelor: number
+  master: number
 }
 
 interface EducationFormTableData {
-  key: string;
-  form: string;
-  male: number;
-  female: number;
-  total: number;
+  key: string
+  form: string
+  male: number
+  female: number
+  total: number
 }
 
 interface LevelTableData {
-  key: string;
-  course: string;
-  form: string;
-  count: number;
+  key: string
+  course: string
+  form: string
+  count: number
 }
 
-// Custom styling
-const cardStyle = {
-  borderRadius: "12px",
-  boxShadow: "0 4px 12px rgba(5, 5, 86, 0.1)",
-  border: "1px solid #f0f0f0",
-};
-
-const headerStyle = {
-  color: "#050556",
-  fontWeight: 600,
-};
-
-const tableHeaderStyle = {
-  backgroundColor: "#050556",
-  color: "white",
-  fontWeight: "bold",
-};
-
-const highlightStyle = {
-  backgroundColor: "#f0f5ff",
-  fontWeight: "bold",
-};
+const cardStyle = "bg-white rounded-2xl shadow-lg border border-gray-100"
+const headerStyle = "text-teal-700 font-bold text-lg"
 
 const Index = () => {
-  const [statisticData, setStatisticData] = useState<StatisticData | null>(null);
-  const { data: studentStatistics } = useGetStudentStatistics();
+  const [statisticData, setStatisticData] = useState<StatisticData | null>(null)
+  const { data: studentStatistics } = useGetStudentStatistics()
 
   useEffect(() => {
     if (studentStatistics?.data?.data) {
-      setStatisticData(studentStatistics.data.data);
+      setStatisticData(studentStatistics.data.data)
     }
-  }, [studentStatistics]);
+  }, [studentStatistics])
 
   if (!statisticData) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center">
+        <div className="bg-white p-12 rounded-2xl shadow-lg">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
+          <p className="text-gray-600 mt-4 text-center">Ma'lumotlar yuklanmoqda...</p>
+        </div>
+      </div>
+    )
   }
 
-  // Education Type Data
   const educationTypeColumns: TableColumnsType<EducationTypeTableData> = [
-    { 
-      title: "Ta'lim turi", 
-      dataIndex: "type", 
+    {
+      title: <span className="font-semibold text-gray-700">Ta'lim turi</span>,
+      dataIndex: "type",
       key: "type",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
-      onCell: (record) => ({
-        style: record.type === "Jami" ? highlightStyle : {},
-      }),
+      render: (text, record) => (
+        <span className={record.type === "Jami" ? "font-bold text-teal-700" : "text-gray-800"}>{text}</span>
+      ),
     },
-    { 
-      title: "Erkak", 
-      dataIndex: "male", 
+    {
+      title: <span className="font-semibold text-gray-700">Erkak</span>,
+      dataIndex: "male",
       key: "male",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
+      render: (text, record) => (
+        <span className={record.type === "Jami" ? "font-bold text-teal-700" : "text-gray-800"}>{text}</span>
+      ),
     },
-    { 
-      title: "Ayol", 
-      dataIndex: "female", 
+    {
+      title: <span className="font-semibold text-gray-700">Ayol</span>,
+      dataIndex: "female",
       key: "female",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
+      render: (text, record) => (
+        <span className={record.type === "Jami" ? "font-bold text-teal-700" : "text-gray-800"}>{text}</span>
+      ),
     },
-    { 
-      title: "Jami", 
-      dataIndex: "total", 
+    {
+      title: <span className="font-semibold text-gray-700">Jami</span>,
+      dataIndex: "total",
       key: "total",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
-      onCell: (record) => ({
-        style: record.type === "Jami" ? highlightStyle : {},
-      }),
+      render: (text, record) => (
+        <span className={record.type === "Jami" ? "font-bold text-teal-700" : "text-gray-800"}>{text}</span>
+      ),
     },
-  ];
+  ]
 
   const educationTypeData: EducationTypeTableData[] = [
     {
@@ -215,35 +205,30 @@ const Index = () => {
       female: statisticData.education_type.Jami.Ayol,
       total: statisticData.education_type.Jami.Erkak + statisticData.education_type.Jami.Ayol,
     },
-  ];
+  ]
 
-  // Age Data
   const ageColumns: TableColumnsType<AgeTableData> = [
-    { 
-      title: "Yosh guruhi", 
-      dataIndex: "ageGroup", 
+    {
+      title: <span className="font-semibold text-gray-700">Yosh guruhi</span>,
+      dataIndex: "ageGroup",
       key: "ageGroup",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-    { 
-      title: "Erkak", 
-      dataIndex: "male", 
+    {
+      title: <span className="font-semibold text-gray-700">Erkak</span>,
+      dataIndex: "male",
       key: "male",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-    { 
-      title: "Ayol", 
-      dataIndex: "female", 
+    {
+      title: <span className="font-semibold text-gray-700">Ayol</span>,
+      dataIndex: "female",
       key: "female",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-    { 
-      title: "Jami", 
-      dataIndex: "total", 
+    {
+      title: <span className="font-semibold text-gray-700">Jami</span>,
+      dataIndex: "total",
       key: "total",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-  ];
+  ]
 
   const ageData: AgeTableData[] = [
     {
@@ -274,29 +259,25 @@ const Index = () => {
       female: statisticData.age.Magistr["30 yoshdan katta"].Ayol,
       total: statisticData.age.Magistr["30 yoshdan katta"].Erkak + statisticData.age.Magistr["30 yoshdan katta"].Ayol,
     },
-  ];
+  ]
 
-  // Payment Data
   const paymentColumns: TableColumnsType<PaymentTableData> = [
-    { 
-      title: "To'lov turi", 
-      dataIndex: "type", 
+    {
+      title: <span className="font-semibold text-gray-700">To'lov turi</span>,
+      dataIndex: "type",
       key: "type",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-    { 
-      title: "Bakalavr", 
-      dataIndex: "bachelor", 
+    {
+      title: <span className="font-semibold text-gray-700">Bakalavr</span>,
+      dataIndex: "bachelor",
       key: "bachelor",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-    { 
-      title: "Magistr", 
-      dataIndex: "master", 
+    {
+      title: <span className="font-semibold text-gray-700">Magistr</span>,
+      dataIndex: "master",
       key: "master",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-  ];
+  ]
 
   const paymentData: PaymentTableData[] = [
     {
@@ -311,122 +292,109 @@ const Index = () => {
       bachelor: statisticData.payment["Davlat granti"]?.Bakalavr ?? 0,
       master: statisticData.payment["Davlat granti"]?.Magistr ?? 0,
     },
-  ];
+  ]
 
-  // Region Data
   const regionColumns: TableColumnsType<RegionTableData> = [
-    { 
-      title: "Viloyat", 
-      dataIndex: "region", 
+    {
+      title: <span className="font-semibold text-gray-700">Viloyat</span>,
+      dataIndex: "region",
       key: "region",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-    { 
-      title: "Bakalavr", 
-      dataIndex: "bachelor", 
+    {
+      title: <span className="font-semibold text-gray-700">Bakalavr</span>,
+      dataIndex: "bachelor",
       key: "bachelor",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-    { 
-      title: "Magistr", 
-      dataIndex: "master", 
+    {
+      title: <span className="font-semibold text-gray-700">Magistr</span>,
+      dataIndex: "master",
       key: "master",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-  ];
+  ]
 
   const regionData: RegionTableData[] = Object.entries(statisticData.region).map(([region, data], index) => ({
     key: index,
     region,
     bachelor: data.Bakalavr,
     master: data.Magistr || 0,
-  }));
+  }))
 
-  // Citizenship Data
   const citizenshipColumns: TableColumnsType<CitizenshipTableData> = [
-    { 
-      title: "Fuqarolik turi", 
-      dataIndex: "type", 
+    {
+      title: <span className="font-semibold text-gray-700">Fuqarolik turi</span>,
+      dataIndex: "type",
       key: "type",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-    { 
-      title: "Bakalavr", 
-      dataIndex: "bachelor", 
+    {
+      title: <span className="font-semibold text-gray-700">Bakalavr</span>,
+      dataIndex: "bachelor",
       key: "bachelor",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-    { 
-      title: "Magistr", 
-      dataIndex: "master", 
+    {
+      title: <span className="font-semibold text-gray-700">Magistr</span>,
+      dataIndex: "master",
       key: "master",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-  ];
+  ]
 
-  const citizenshipData: CitizenshipTableData[] = Object.entries(statisticData.citizenship).map(([type, data], index) => ({
-    key: String(index + 1),
-    type,
-    bachelor: data.Bakalavr,
-    master: data.Magistr,
-  }));
+  const citizenshipData: CitizenshipTableData[] = Object.entries(statisticData.citizenship).map(
+    ([type, data], index) => ({
+      key: String(index + 1),
+      type,
+      bachelor: data.Bakalavr,
+      master: data.Magistr,
+    }),
+  )
 
-  // Accommodation Data
   const accommodationColumns: TableColumnsType<AccommodationTableData> = [
-    { 
-      title: "Yashash turi", 
-      dataIndex: "type", 
+    {
+      title: <span className="font-semibold text-gray-700">Yashash turi</span>,
+      dataIndex: "type",
       key: "type",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-    { 
-      title: "Bakalavr", 
-      dataIndex: "bachelor", 
+    {
+      title: <span className="font-semibold text-gray-700">Bakalavr</span>,
+      dataIndex: "bachelor",
       key: "bachelor",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-    { 
-      title: "Magistr", 
-      dataIndex: "master", 
+    {
+      title: <span className="font-semibold text-gray-700">Magistr</span>,
+      dataIndex: "master",
       key: "master",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-  ];
+  ]
 
-  const accommodationData: AccommodationTableData[] = Object.entries(statisticData.accommodation).map(([type, data], index) => ({
-    key: String(index + 1),
-    type,
-    bachelor: data.Bakalavr,
-    master: data.Magistr,
-  }));
+  const accommodationData: AccommodationTableData[] = Object.entries(statisticData.accommodation).map(
+    ([type, data], index) => ({
+      key: String(index + 1),
+      type,
+      bachelor: data.Bakalavr,
+      master: data.Magistr,
+    }),
+  )
 
-  // Education Form Data
   const educationFormColumns: TableColumnsType<EducationFormTableData> = [
-    { 
-      title: "Ta'lim shakli", 
-      dataIndex: "form", 
+    {
+      title: <span className="font-semibold text-gray-700">Ta'lim shakli</span>,
+      dataIndex: "form",
       key: "form",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-    { 
-      title: "Erkak", 
-      dataIndex: "male", 
+    {
+      title: <span className="font-semibold text-gray-700">Erkak</span>,
+      dataIndex: "male",
       key: "male",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-    { 
-      title: "Ayol", 
-      dataIndex: "female", 
+    {
+      title: <span className="font-semibold text-gray-700">Ayol</span>,
+      dataIndex: "female",
       key: "female",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-    { 
-      title: "Jami", 
-      dataIndex: "total", 
+    {
+      title: <span className="font-semibold text-gray-700">Jami</span>,
+      dataIndex: "total",
       key: "total",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-  ];
+  ]
 
   const educationFormData: EducationFormTableData[] = [
     {
@@ -450,32 +418,28 @@ const Index = () => {
       female: statisticData.education_form.Magistr.Kunduzgi.Ayol,
       total: statisticData.education_form.Magistr.Kunduzgi.Erkak + statisticData.education_form.Magistr.Kunduzgi.Ayol,
     },
-  ];
+  ]
 
-  // Level Data
   const levelColumns: TableColumnsType<LevelTableData> = [
-    { 
-      title: "Kurs", 
-      dataIndex: "course", 
+    {
+      title: <span className="font-semibold text-gray-700">Kurs</span>,
+      dataIndex: "course",
       key: "course",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-    { 
-      title: "Ta'lim shakli", 
-      dataIndex: "form", 
+    {
+      title: <span className="font-semibold text-gray-700">Ta'lim shakli</span>,
+      dataIndex: "form",
       key: "form",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-    { 
-      title: "Talabalar soni", 
-      dataIndex: "count", 
+    {
+      title: <span className="font-semibold text-gray-700">Talabalar soni</span>,
+      dataIndex: "count",
       key: "count",
-      onHeaderCell: () => ({ style: tableHeaderStyle }),
     },
-  ];
+  ]
 
-  const levelData: LevelTableData[] = [];
-  ["Bakalavr", "Magistr"].forEach((type) => {
+  const levelData: LevelTableData[] = []
+  ;["Bakalavr", "Magistr"].forEach((type) => {
     Object.entries(statisticData.level[type]).forEach(([course, forms]) => {
       Object.entries(forms).forEach(([form, count]) => {
         if (count > 0) {
@@ -484,26 +448,25 @@ const Index = () => {
             course: `${course} (${type})`,
             form,
             count,
-          });
+          })
         }
-      });
-    });
-  });
+      })
+    })
+  })
 
-  // Prepare data for line chart (Education Type)
   const educationTypeChartData = [
-    { type: 'Bakalavr', gender: 'Erkak', value: statisticData.education_type.Bakalavr.Erkak },
-    { type: 'Bakalavr', gender: 'Ayol', value: statisticData.education_type.Bakalavr.Ayol },
-    { type: 'Magistr', gender: 'Erkak', value: statisticData.education_type.Magistr.Erkak },
-    { type: 'Magistr', gender: 'Ayol', value: statisticData.education_type.Magistr.Ayol },
-  ];
+    { type: "Bakalavr", gender: "Erkak", value: statisticData.education_type.Bakalavr.Erkak },
+    { type: "Bakalavr", gender: "Ayol", value: statisticData.education_type.Bakalavr.Ayol },
+    { type: "Magistr", gender: "Erkak", value: statisticData.education_type.Magistr.Erkak },
+    { type: "Magistr", gender: "Ayol", value: statisticData.education_type.Magistr.Ayol },
+  ]
 
   const educationTypeChartConfig = {
     data: educationTypeChartData,
-    xField: 'type',
-    yField: 'value',
-    seriesField: 'gender',
-    color: ['#050556', '#ff6b6b'],
+    xField: "type",
+    yField: "value",
+    seriesField: "gender",
+    color: ["#1890ff", "#ff6b6b"],
     yAxis: {
       label: {
         formatter: (v: string) => `${v}`.replace(/\d{1,3}(?=(\d{3})+$)/g, (s) => `${s},`),
@@ -511,70 +474,88 @@ const Index = () => {
     },
     point: {
       size: 4,
-      shape: 'diamond',
+      shape: "diamond",
     },
     legend: {
-      position: 'top',
+      position: "top",
     },
     animation: {
       appear: {
-        animation: 'path-in',
+        animation: "path-in",
         duration: 1000,
       },
     },
-  };
+  }
 
-  // Prepare data for payment type chart
   const paymentChartData = [
-    { type: "To'lov-shartnoma", level: 'Bakalavr', value: statisticData.payment["To'lov-shartnoma"]?.Bakalavr ?? 0 },
-    { type: "To'lov-shartnoma", level: 'Magistr', value: statisticData.payment["To'lov-shartnoma"]?.Magistr ?? 0 },
-    { type: "Davlat granti", level: 'Bakalavr', value: statisticData.payment["Davlat granti"]?.Bakalavr ?? 0 },
-    { type: "Davlat granti", level: 'Magistr', value: statisticData.payment["Davlat granti"]?.Magistr ?? 0 },
-  ];
+    {
+      type: "To'lov-shartnoma",
+      level: "Bakalavr",
+      value: statisticData.payment["To'lov-shartnoma"]?.Bakalavr ?? 0,
+    },
+    { type: "To'lov-shartnoma", level: "Magistr", value: statisticData.payment["To'lov-shartnoma"]?.Magistr ?? 0 },
+    { type: "Davlat granti", level: "Bakalavr", value: statisticData.payment["Davlat granti"]?.Bakalavr ?? 0 },
+    { type: "Davlat granti", level: "Magistr", value: statisticData.payment["Davlat granti"]?.Magistr ?? 0 },
+  ]
 
   const paymentChartConfig = {
     data: paymentChartData,
-    xField: 'type',
-    yField: 'value',
-    seriesField: 'level',
-    color: ['#050556', '#7cb5ec'],
+    xField: "type",
+    yField: "value",
+    seriesField: "level",
+    color: ["#1890ff", "#7cb5ec"],
     yAxis: {
       label: {
         formatter: (v: string) => `${v}`.replace(/\d{1,3}(?=(\d{3})+$)/g, (s) => `${s},`),
       },
     },
     legend: {
-      position: 'top',
+      position: "top",
     },
     smooth: true,
     animation: {
       appear: {
-        animation: 'path-in',
+        animation: "path-in",
         duration: 1000,
       },
     },
-  };
+  }
 
   return (
-    <div style={{ padding: "24px", backgroundColor: "#f5f7fa" }}>
-      <Title level={2} style={{ color: "#050556", marginBottom: "24px", textAlign: "center" }}>
-        Talabalar statistikasi
-      </Title>
-      
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-teal-50 to-blue-50 p-8 rounded-2xl border border-teal-100 mb-8">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 bg-gradient-to-br from-teal-400 via-sky-400 to-blue-800 rounded-2xl flex items-center justify-center shadow-lg">
+            <BarChartOutlined className="text-white text-2xl" />
+          </div>
+          <div>
+            <Title level={1} className="!text-3xl !font-bold !text-gray-800 !mb-2">
+              Talabalar statistikasi
+            </Title>
+            <Text className="text-lg text-gray-600">Talabalar bo'yicha batafsil statistik ma'lumotlar</Text>
+          </div>
+        </div>
+      </div>
+
       <Row gutter={[24, 24]}>
         {/* Summary Cards */}
         <Col span={8}>
-          <Card 
-            style={{ ...cardStyle, borderTop: "4px solid #050556" }}
-            bodyStyle={{ padding: "16px" }}
-          >
-            <Title level={4} style={headerStyle}>
-              Jami talabalar
-            </Title>
-            <Text style={{ fontSize: "28px", fontWeight: "bold", color: "#050556" }}>
+          <Card className={`${cardStyle} border-t-4 border-t-teal-500`}>
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center">
+                <UserOutlined className="text-teal-600 text-xl" />
+              </div>
+              <div>
+                <Title level={4} className="!text-teal-700 !mb-0">
+                  Jami talabalar
+                </Title>
+              </div>
+            </div>
+            <Text className="text-3xl font-bold text-teal-600 block mb-4">
               {statisticData.education_type.Jami.Erkak + statisticData.education_type.Jami.Ayol}
             </Text>
-            <Divider style={{ margin: "12px 0" }} />
+            <Divider className="my-3" />
             <Row>
               <Col span={12}>
                 <Text strong>Erkak:</Text> {statisticData.education_type.Jami.Erkak}
@@ -585,19 +566,23 @@ const Index = () => {
             </Row>
           </Card>
         </Col>
-        
+
         <Col span={8}>
-          <Card 
-            style={{ ...cardStyle, borderTop: "4px solid #7cb5ec" }}
-            bodyStyle={{ padding: "16px" }}
-          >
-            <Title level={4} style={headerStyle}>
-              Bakalavrlar
-            </Title>
-            <Text style={{ fontSize: "28px", fontWeight: "bold", color: "#050556" }}>
+          <Card className={`${cardStyle} border-t-4 border-t-blue-500`}>
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                <UserOutlined className="text-blue-600 text-xl" />
+              </div>
+              <div>
+                <Title level={4} className="!text-blue-700 !mb-0">
+                  Bakalavrlar
+                </Title>
+              </div>
+            </div>
+            <Text className="text-3xl font-bold text-blue-600 block mb-4">
               {statisticData.education_type.Bakalavr.Erkak + statisticData.education_type.Bakalavr.Ayol}
             </Text>
-            <Divider style={{ margin: "12px 0" }} />
+            <Divider className="my-3" />
             <Row>
               <Col span={12}>
                 <Text strong>Erkak:</Text> {statisticData.education_type.Bakalavr.Erkak}
@@ -608,19 +593,23 @@ const Index = () => {
             </Row>
           </Card>
         </Col>
-        
+
         <Col span={8}>
-          <Card 
-            style={{ ...cardStyle, borderTop: "4px solid #ff6b6b" }}
-            bodyStyle={{ padding: "16px" }}
-          >
-            <Title level={4} style={headerStyle}>
-              Magistrlar
-            </Title>
-            <Text style={{ fontSize: "28px", fontWeight: "bold", color: "#050556" }}>
+          <Card className={`${cardStyle} border-t-4 border-t-purple-500`}>
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                <UserOutlined className="text-purple-600 text-xl" />
+              </div>
+              <div>
+                <Title level={4} className="!text-purple-700 !mb-0">
+                  Magistrlar
+                </Title>
+              </div>
+            </div>
+            <Text className="text-3xl font-bold text-purple-600 block mb-4">
               {statisticData.education_type.Magistr.Erkak + statisticData.education_type.Magistr.Ayol}
             </Text>
-            <Divider style={{ margin: "12px 0" }} />
+            <Divider className="my-3" />
             <Row>
               <Col span={12}>
                 <Text strong>Erkak:</Text> {statisticData.education_type.Magistr.Erkak}
@@ -634,25 +623,21 @@ const Index = () => {
 
         {/* Education Type Section */}
         <Col span={24}>
-          <Card 
-            title="Ta'lim turi bo'yicha statistikalar" 
-            bordered={false} 
-            style={cardStyle}
-            headStyle={{ ...headerStyle, borderBottom: "1px solid #f0f0f0" }}
-          >
+          <Card title={<span className={headerStyle}>Ta'lim turi bo'yicha statistikalar</span>} className={cardStyle}>
             <Row gutter={24}>
               <Col span={16}>
-                <Table 
-                  columns={educationTypeColumns} 
-                  dataSource={educationTypeData} 
-                  pagination={false} 
-                  bordered 
+                <Table
+                  columns={educationTypeColumns}
+                  dataSource={educationTypeData}
+                  pagination={false}
+                  bordered
                   size="middle"
+                  className="rounded-xl overflow-hidden"
                 />
               </Col>
               <Col span={8}>
-                <div style={{ padding: "16px", backgroundColor: "#fff", borderRadius: "8px" }}>
-                  <Title level={5} style={{ marginBottom: "16px", color: "#050556" }}>
+                <div className="bg-gray-50 p-4 rounded-xl">
+                  <Title level={5} className="!mb-4 !text-teal-700">
                     Ta'lim turi bo'yicha grafik
                   </Title>
                   <Line {...educationTypeChartConfig} />
@@ -664,43 +649,41 @@ const Index = () => {
 
         {/* Age Data Section */}
         <Col span={24}>
-          <Card 
-            title="Yosh guruhlari bo'yicha statistikalar" 
-            bordered={false} 
-            style={cardStyle}
-            headStyle={{ ...headerStyle, borderBottom: "1px solid #f0f0f0" }}
+          <Card
+            title={<span className={headerStyle}>Yosh guruhlari bo'yicha statistikalar</span>}
+            className={cardStyle}
           >
-            <Table 
-              columns={ageColumns} 
-              dataSource={ageData} 
-              pagination={false} 
-              bordered 
+            <Table
+              columns={ageColumns}
+              dataSource={ageData}
+              pagination={false}
+              bordered
               size="middle"
+              className="rounded-xl overflow-hidden"
             />
           </Card>
         </Col>
 
         {/* Payment and Education Form Section */}
         <Col span={12}>
-          <Card 
-            title="To'lov turlari bo'yicha statistikalar" 
-            bordered={false} 
-            style={cardStyle}
-            headStyle={{ ...headerStyle, borderBottom: "1px solid #f0f0f0" }}
+          <Card
+            title={<span className={headerStyle}>To'lov turlari bo'yicha statistikalar</span>}
+            className={cardStyle}
           >
             <Row gutter={24}>
               <Col span={24}>
-                <Table 
-                  columns={paymentColumns} 
-                  dataSource={paymentData} 
-                  pagination={false} 
-                  bordered 
+                <Table
+                  columns={paymentColumns}
+                  dataSource={paymentData}
+                  pagination={false}
+                  bordered
                   size="middle"
+                  className="rounded-xl overflow-hidden"
                 />
               </Col>
-              <Col span={24} style={{ marginTop: "24px" }}>
-                <div style={{ padding: "16px", backgroundColor: "#fff", borderRadius: "8px" }}>
-                  <Title level={5} style={{ marginBottom: "16px", color: "#050556" }}>
+              <Col span={24} className="mt-6">
+                <div className="bg-gray-50 p-4 rounded-xl">
+                  <Title level={5} className="!mb-4 !text-teal-700">
                     To'lov turlari bo'yicha grafik
                   </Title>
                   <Line {...paymentChartConfig} />
@@ -711,120 +694,95 @@ const Index = () => {
         </Col>
 
         <Col span={12}>
-          <Card 
-            title="Ta'lim shakli bo'yicha statistikalar" 
-            bordered={false} 
-            style={cardStyle}
-            headStyle={{ ...headerStyle, borderBottom: "1px solid #f0f0f0" }}
-          >
-            <Table 
-              columns={educationFormColumns} 
-              dataSource={educationFormData} 
-              pagination={false} 
-              bordered 
+          <Card title={<span className={headerStyle}>Ta'lim shakli bo'yicha statistikalar</span>} className={cardStyle}>
+            <Table
+              columns={educationFormColumns}
+              dataSource={educationFormData}
+              pagination={false}
+              bordered
               size="middle"
+              className="rounded-xl overflow-hidden"
             />
           </Card>
         </Col>
 
         {/* Region Data Section */}
         <Col span={24}>
-          <Card 
-            title="Viloyatlar bo'yicha statistikalar" 
-            bordered={false} 
-            style={cardStyle}
-            headStyle={{ ...headerStyle, borderBottom: "1px solid #f0f0f0" }}
-          >
-            <Table 
-              columns={regionColumns} 
-              dataSource={regionData} 
-              pagination={false} 
-              bordered 
+          <Card title={<span className={headerStyle}>Viloyatlar bo'yicha statistikalar</span>} className={cardStyle}>
+            <Table
+              columns={regionColumns}
+              dataSource={regionData}
+              pagination={false}
+              bordered
               size="middle"
               scroll={{ x: true }}
+              className="rounded-xl overflow-hidden"
             />
           </Card>
         </Col>
 
         {/* Citizenship and Accommodation Section */}
         <Col span={12}>
-          <Card 
-            title="Fuqarolik bo'yicha statistikalar" 
-            bordered={false} 
-            style={cardStyle}
-            headStyle={{ ...headerStyle, borderBottom: "1px solid #f0f0f0" }}
-          >
-            <Table 
-              columns={citizenshipColumns} 
-              dataSource={citizenshipData} 
-              pagination={false} 
-              bordered 
+          <Card title={<span className={headerStyle}>Fuqarolik bo'yicha statistikalar</span>} className={cardStyle}>
+            <Table
+              columns={citizenshipColumns}
+              dataSource={citizenshipData}
+              pagination={false}
+              bordered
               size="middle"
+              className="rounded-xl overflow-hidden"
             />
           </Card>
         </Col>
 
         <Col span={12}>
-          <Card 
-            title="Yashash turi bo'yicha statistikalar" 
-            bordered={false} 
-            style={cardStyle}
-            headStyle={{ ...headerStyle, borderBottom: "1px solid #f0f0f0" }}
-          >
-            <Table 
-              columns={accommodationColumns} 
-              dataSource={accommodationData} 
-              pagination={false} 
-              bordered 
+          <Card title={<span className={headerStyle}>Yashash turi bo'yicha statistikalar</span>} className={cardStyle}>
+            <Table
+              columns={accommodationColumns}
+              dataSource={accommodationData}
+              pagination={false}
+              bordered
               size="middle"
+              className="rounded-xl overflow-hidden"
             />
           </Card>
         </Col>
 
         {/* Level Data Section */}
         <Col span={24}>
-          <Card 
-            title="Kurslar bo'yicha statistikalar" 
-            bordered={false} 
-            style={cardStyle}
-            headStyle={{ ...headerStyle, borderBottom: "1px solid #f0f0f0" }}
-          >
-            <Table 
-              columns={levelColumns} 
-              dataSource={levelData} 
-              pagination={false} 
-              bordered 
+          <Card title={<span className={headerStyle}>Kurslar bo'yicha statistikalar</span>} className={cardStyle}>
+            <Table
+              columns={levelColumns}
+              dataSource={levelData}
+              pagination={false}
+              bordered
               size="middle"
+              className="rounded-xl overflow-hidden"
             />
           </Card>
         </Col>
 
         {/* Summary Section */}
         <Col span={24}>
-          <Card 
-            title="Qisqacha ma'lumot" 
-            bordered={false} 
-            style={cardStyle}
-            headStyle={{ ...headerStyle, borderBottom: "1px solid #f0f0f0" }}
-          >
-            <Descriptions bordered column={2} size="middle">
+          <Card title={<span className={headerStyle}>Qisqacha ma'lumot</span>} className={cardStyle}>
+            <Descriptions bordered column={2} size="middle" className="rounded-xl overflow-hidden">
               <Descriptions.Item label="Jami talabalar" labelStyle={{ fontWeight: "bold" }}>
-                <Text strong style={{ color: "#050556" }}>
+                <Text strong className="text-teal-600">
                   {statisticData.education_type.Jami.Erkak + statisticData.education_type.Jami.Ayol}
                 </Text>
               </Descriptions.Item>
               <Descriptions.Item label="Bakalavrlar" labelStyle={{ fontWeight: "bold" }}>
-                <Text strong style={{ color: "#050556" }}>
+                <Text strong className="text-blue-600">
                   {statisticData.education_type.Bakalavr.Erkak + statisticData.education_type.Bakalavr.Ayol}
                 </Text>
               </Descriptions.Item>
               <Descriptions.Item label="Magistrlar" labelStyle={{ fontWeight: "bold" }}>
-                <Text strong style={{ color: "#050556" }}>
+                <Text strong className="text-purple-600">
                   {statisticData.education_type.Magistr.Erkak + statisticData.education_type.Magistr.Ayol}
                 </Text>
               </Descriptions.Item>
               <Descriptions.Item label="30 yoshgacha talabalar" labelStyle={{ fontWeight: "bold" }}>
-                <Text strong style={{ color: "#050556" }}>
+                <Text strong className="text-green-600">
                   {statisticData.age.Bakalavr["30 yoshgacha"].Erkak +
                     statisticData.age.Bakalavr["30 yoshgacha"].Ayol +
                     statisticData.age.Magistr["30 yoshgacha"].Erkak +
@@ -832,7 +790,7 @@ const Index = () => {
                 </Text>
               </Descriptions.Item>
               <Descriptions.Item label="30 yoshdan katta talabalar" labelStyle={{ fontWeight: "bold" }}>
-                <Text strong style={{ color: "#050556" }}>
+                <Text strong className="text-orange-600">
                   {statisticData.age.Bakalavr["30 yoshdan katta"].Erkak +
                     statisticData.age.Bakalavr["30 yoshdan katta"].Ayol +
                     statisticData.age.Magistr["30 yoshdan katta"].Erkak +
@@ -840,18 +798,19 @@ const Index = () => {
                 </Text>
               </Descriptions.Item>
               <Descriptions.Item label="To'lov-shartnoma asosida o'qiydiganlar" labelStyle={{ fontWeight: "bold" }}>
-                <Text strong style={{ color: "#050556" }}>
-                  {statisticData.payment["To'lov-shartnoma"]?.Bakalavr + statisticData.payment["To'lov-shartnoma"]?.Magistr}
+                <Text strong className="text-red-600">
+                  {statisticData.payment["To'lov-shartnoma"]?.Bakalavr +
+                    statisticData.payment["To'lov-shartnoma"]?.Magistr}
                 </Text>
               </Descriptions.Item>
               <Descriptions.Item label="O'zbekiston fuqarolari" labelStyle={{ fontWeight: "bold" }}>
-                <Text strong style={{ color: "#050556" }}>
+                <Text strong className="text-indigo-600">
                   {statisticData.citizenship["O'zbekiston Respublikasi fuqarosi"]?.Bakalavr +
                     statisticData.citizenship["O'zbekiston Respublikasi fuqarosi"]?.Magistr}
                 </Text>
               </Descriptions.Item>
               <Descriptions.Item label="Talabalar turar joyida yashovchilar" labelStyle={{ fontWeight: "bold" }}>
-                <Text strong style={{ color: "#050556" }}>
+                <Text strong className="text-cyan-600">
                   {statisticData.accommodation["Talabalar turar joyida"].Bakalavr +
                     statisticData.accommodation["Talabalar turar joyida"].Magistr}
                 </Text>
@@ -861,7 +820,7 @@ const Index = () => {
         </Col>
       </Row>
     </div>
-  );
-};
+  )
+}
 
-export default Index;
+export default Index

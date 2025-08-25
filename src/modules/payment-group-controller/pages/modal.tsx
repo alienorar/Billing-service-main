@@ -4,6 +4,7 @@ import type React from "react"
 import { Modal, Form, Input, Button, InputNumber, TreeSelect, Spin, Alert } from "antd"
 import { useForm } from "antd/es/form/Form"
 import { useEffect, useState } from "react"
+import { TeamOutlined, ClockCircleOutlined, DollarOutlined } from "@ant-design/icons"
 import { useCreatePmtGroupList, useUpdatePmtGroupList } from "../hooks/mutations"
 import { useGetAvailabletGroupList } from "../hooks/queries"
 import type { PaymentGroup, Speciality, AvailableGroup, PmtGroupFormValues, ContractAmountForm } from "@types"
@@ -27,17 +28,16 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open: modalOpen, handleCl
   const { data: groupList, isLoading: isGroupsLoading, isError, error: errorInfo } = useGetAvailabletGroupList()
 
   const [expandedKeys, setExpandedKeys] = useState<(string | number)[]>([])
-  const [selectedGroupIds, setSelectedGroupIds] = useState<number[]>([]) // number[] ga o'zgartirdik
-  const [selectedGroupData, setSelectedGroupData] = useState<{ value: number; label: string }[]>([]) // label bilan birga saqlash
+  const [selectedGroupIds, setSelectedGroupIds] = useState<number[]>([])
+  const [selectedGroupData, setSelectedGroupData] = useState<{ value: number; label: string }[]>([])
 
   useEffect(() => {
     if (update?.id && groupList?.data) {
-      // ==== EDIT MODE ====
       const contractAmounts = update.contractAmounts
-          ? Object.entries(update.contractAmounts).map(([key, amount]) => ({ key, amount }))
-          : []
-      let groupIds: number[] = []
-      let groupData: { value: number; label: string }[] = []
+        ? Object.entries(update.contractAmounts).map(([key, amount]) => ({ key, amount }))
+        : []
+      const groupIds: number[] = []
+      const groupData: { value: number; label: string }[] = []
 
       if (update.groupIds && Array.isArray(update.groupIds)) {
         update.groupIds.forEach((g: GroupObject | string | number) => {
@@ -46,16 +46,16 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open: modalOpen, handleCl
             groupData.push({ value: g.id, label: g.name })
           } else if (typeof g === "string") {
             const foundGroup = groupList.data
-                .flatMap((s: Speciality) => s.groups || [])
-                .find((group: AvailableGroup) => group.name === g)
+              .flatMap((s: Speciality) => s.groups || [])
+              .find((group: AvailableGroup) => group.name === g)
             if (foundGroup) {
               groupIds.push(foundGroup.id)
               groupData.push({ value: foundGroup.id, label: foundGroup.name })
             }
           } else if (typeof g === "number") {
             const foundGroup = groupList.data
-                .flatMap((s: Speciality) => s.groups || [])
-                .find((group: AvailableGroup) => group.id === g)
+              .flatMap((s: Speciality) => s.groups || [])
+              .find((group: AvailableGroup) => group.id === g)
             if (foundGroup) {
               groupIds.push(g)
               groupData.push({ value: g, label: foundGroup.name })
@@ -90,7 +90,6 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open: modalOpen, handleCl
     }
   }, [update, form, groupList])
 
-  // ──────────────────────────── HELPERS ───────────────────────────────
   const handleDurationChange = (duration: number | null): void => {
     if (typeof duration === "number" && duration > 0) {
       const current: ContractAmountForm[] = form.getFieldValue("contractAmounts") ?? []
@@ -105,7 +104,7 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open: modalOpen, handleCl
   }
 
   const treeData: DataNode[] = Array.isArray(groupList?.data)
-      ? groupList.data.map((s: Speciality) => ({
+    ? groupList.data.map((s: Speciality) => ({
         title: `${s.name} — [${(s.educationForm || "N/A").toUpperCase()} / ${(s.educationType || "N/A").toUpperCase()}]`,
         value: `speciality-${s.id}`,
         key: `speciality-${s.id}`,
@@ -116,9 +115,8 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open: modalOpen, handleCl
           key: g.id,
         })),
       }))
-      : []
+    : []
 
-  // ───────────────────────────── SUBMIT ───────────────────────────────
   const handleFinish = async (values: PmtGroupFormValues): Promise<void> => {
     const basePayload: Omit<PaymentGroup, "id"> = {
       name: values.name,
@@ -147,120 +145,151 @@ const PmtGroupModal: React.FC<PmtGroupModalProps> = ({ open: modalOpen, handleCl
     }
   }
 
-  // ───────────────────────────── RENDER ───────────────────────────────
   if (isError) {
     return (
-        <Alert
-            message="Error"
-            description={`Failed to load groups: ${errorInfo instanceof Error ? errorInfo.message : "Unknown error"}`}
-            type="error"
-            showIcon
-            style={{ margin: 20 }}
-        />
+      <Alert
+        message="Xato"
+        description={`Guruhlarni yuklashda xato: ${errorInfo instanceof Error ? errorInfo.message : "Noma'lum xato"}`}
+        type="error"
+        showIcon
+        className="m-5 rounded-xl"
+      />
     )
   }
 
   return (
-      <Modal
-          title={update?.id ? "To'lov guruhini yangilash" : "To'lov guruhini yaratish"}
-          open={modalOpen}
-          onCancel={handleClose}
-          footer={null}
-          destroyOnClose
-      >
-        {isGroupsLoading ? (
-            <Spin style={{ display: "block", margin: "20px auto" }} />
-        ) : (
-            <Form form={form} layout="vertical" onFinish={handleFinish}>
-              {/* NAME */}
-              <Form.Item label="Nomi" name="name" rules={[{ required: true, message: "To'lov guruhini nomini kiriting" }]}>
-                <Input placeholder="To'lov guruhini nomini kiriting" />
-              </Form.Item>
+    <Modal
+      title={
+        <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
+          <div className="w-12 h-12 bg-gradient-to-br from-teal-400 via-sky-400 to-blue-800 rounded-xl flex items-center justify-center shadow-lg">
+            <TeamOutlined className="text-white text-xl" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-gray-800">
+              {update?.id ? "To'lov guruhini yangilash" : "To'lov guruhini yaratish"}
+            </h3>
+            <p className="text-sm text-gray-500 mt-1">To'lov guruhi ma'lumotlarini kiriting</p>
+          </div>
+        </div>
+      }
+      open={modalOpen}
+      onCancel={handleClose}
+      footer={null}
+      destroyOnClose
+      width={700}
+      styles={{
+        content: {
+          borderRadius: "16px",
+          padding: "24px",
+          background: "white",
+          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+        },
+      }}
+    >
+      {isGroupsLoading ? (
+        <div className="flex justify-center items-center py-12">
+          <Spin size="large" tip="Guruhlar yuklanmoqda..." />
+        </div>
+      ) : (
+        <Form form={form} layout="vertical" onFinish={handleFinish} className="mt-6 space-y-4 ">
+          <Form.Item
+            label={<span className="font-semibold text-gray-700">Nomi</span>}
+            name="name"
+            rules={[{ required: true, message: "To'lov guruhini nomini kiriting" }]}
+          >
+            <Input
+              placeholder="To'lov guruhini nomini kiriting"
+              className="h-12 rounded-xl  focus:border-teal-400 transition-all duration-200 border-gray-200 border-[2px]"
+            />
+          </Form.Item>
 
-              {/* DURATION */}
-              <Form.Item
-                  label="Muddati (yilda)"
-                  name="duration"
-                  rules={[{ required: true, message: "Muddatni kiriting!" }]}
-              >
-                <InputNumber min={1} style={{ width: "100%" }} onChange={handleDurationChange} />
-              </Form.Item>
+          <Form.Item
+            label={<span className="font-semibold text-gray-700">Muddati (yilda)</span>}
+            name="duration"
+            rules={[{ required: true, message: "Muddatni kiriting!" }]}
+          >
+            <InputNumber
+              min={1}
+              onChange={handleDurationChange}
+              prefix={<ClockCircleOutlined className="text-gray-400" />}
+              className="w-full h-12 rounded-xl border-gray-200 border-[2px] focus:border-teal-400 transition-all duration-200"
+            />
+          </Form.Item>
 
-              <Form.Item label="Guruhlar" name="groupIds">
-                <TreeSelect<{ value: number; label: string }[]>
-                    treeData={treeData}
-                    multiple
-                    treeCheckable
-                    showCheckedStrategy={TreeSelect.SHOW_CHILD}
-                    value={selectedGroupData}
-                    placeholder="Guruhlarni tanlang"
-                    style={{ width: "100%" }}
-                    treeDefaultExpandAll
-                    treeExpandedKeys={expandedKeys}
-                    onTreeExpand={setExpandedKeys as (keys: (string | number)[]) => void}
-                    allowClear
-                    autoClearSearchValue={false}
-                    showSearch
-                    labelInValue
-                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                    filterTreeNode={(input, node) => (node.title as string).toLowerCase().includes(input.toLowerCase())}
-                    onChange={(val: { value: number; label: string }[] | undefined) => {
-                      const selectedData = val || []
-                      const numericIds = selectedData.map(item => item.value)
-                      setSelectedGroupData(selectedData)
-                      setSelectedGroupIds(numericIds)
-                      form.setFieldsValue({ groupIds: selectedData })
-                    }}
-                />
-              </Form.Item>
+          <Form.Item label={<span className="font-semibold text-gray-700">Guruhlar</span>} name="groupIds">
+            <TreeSelect<{ value: number; label: string }[]>
+              treeData={treeData}
+              multiple
+              treeCheckable
+              showCheckedStrategy={TreeSelect.SHOW_CHILD}
+              value={selectedGroupData}
+              placeholder="Guruhlarni tanlang"
+              className="w-full"
+              treeDefaultExpandAll
+              treeExpandedKeys={expandedKeys}
+              onTreeExpand={setExpandedKeys as (keys: (string | number)[]) => void}
+              allowClear
+              autoClearSearchValue={false}
+              showSearch
+              labelInValue
+              dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+              filterTreeNode={(input, node) => (node.title as string).toLowerCase().includes(input.toLowerCase())}
+              onChange={(val: { value: number; label: string }[] | undefined) => {
+                const selectedData = val || []
+                const numericIds = selectedData.map((item) => item.value)
+                setSelectedGroupData(selectedData)
+                setSelectedGroupIds(numericIds)
+                form.setFieldsValue({ groupIds: selectedData })
+              }}
+            />
+          </Form.Item>
 
-              {/* CONTRACT AMOUNTS */}
-              <Form.Item label="Kontrakt to'lov miqdori" name="contractAmounts">
-                <Form.List name="contractAmounts">
-                  {(fields) => (
-                      <>
-                        {fields.map(({ key, name, ...rest }) => (
-                            <div key={key} style={{ display: "flex", gap: 8, marginBottom: 2 }}>
-                              <Form.Item {...rest} name={[name, "key"]} initialValue={`${name + 1}`} style={{ flex: 1 }}>
-                                <Input disabled />
-                              </Form.Item>
-                              <Form.Item
-                                  {...rest}
-                                  name={[name, "amount"]}
-                                  rules={[{ required: true, message: "Kontrakt miqdorini kiriting!" }]}
-                                  style={{ flex: 2 }}
-                              >
-                                <InputNumber min={0} style={{ width: "100%" }} placeholder="Miqdori (UZS)" />
-                              </Form.Item>
-                            </div>
-                        ))}
-                      </>
-                  )}
-                </Form.List>
-              </Form.Item>
+          <Form.Item
+            label={<span className="font-semibold text-gray-700">Kontrakt to'lov miqdori</span>}
+            name="contractAmounts"
+          >
+            <Form.List name="contractAmounts">
+              {(fields) => (
+                <>
+                  {fields.map(({ key, name, ...rest }) => (
+                    <div key={key} className="flex gap-3 mb-3">
+                      <Form.Item {...rest} name={[name, "key"]} initialValue={`${name + 1}`} className="flex-1">
+                        <Input disabled className="h-12 rounded-xl bg-gray-50 border-gray-200 border-[2px" />
+                      </Form.Item>
+                      <Form.Item
+                        {...rest}
+                        name={[name, "amount"]}
+                        rules={[{ required: true, message: "Kontrakt miqdorini kiriting!" }]}
+                        className="flex-2"
+                      >
+                        <InputNumber
+                          min={0}
+                          placeholder="Miqdori (UZS)"
+                          prefix={<DollarOutlined className="text-gray-400" />}
+                          className="w-full h-12 rounded-xl border-gray-200 border-[2px] focus:border-teal-400 transition-all duration-200"
+                        />
+                      </Form.Item>
+                    </div>
+                  ))}
+                </>
+              )}
+            </Form.List>
+          </Form.Item>
 
-              {/* SUBMIT BUTTON */}
-              <Form.Item>
-                <Button
-                    type="primary"
-                    htmlType="submit"
-                    block
-                    loading={isCreating || isUpdating}
-                    style={{
-                      backgroundColor: "#050556",
-                      color: "white",
-                      height: "40px",
-                      fontSize: "18px",
-                      marginTop: "10px",
-                      borderRadius: "6px",
-                    }}
-                >
-                  {update?.id ? "To'lov guruhini yangilash" : "To'lov guruhini yaratish"}
-                </Button>
-              </Form.Item>
-            </Form>
-        )}
-      </Modal>
+          <Form.Item className="mb-0 mt-8">
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              loading={isCreating || isUpdating}
+              className="h-14 bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 border-0 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              {update?.id ? "To'lov guruhini yangilash" : "To'lov guruhini yaratish"}
+            </Button>
+          </Form.Item>
+        </Form>
+      )}
+    </Modal>
   )
 }
 
