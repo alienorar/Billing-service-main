@@ -1,27 +1,31 @@
-"use client"
+
 
 import React, { useEffect, useState } from "react"
-import { useGetUniversityStatistics } from "../hooks/queries"
-import { Card, Row, Col, Statistic, Spin, Alert, Typography,  Grid } from "antd"
+import { Card, Row, Col, Statistic, Spin, Alert, Typography, Grid } from "antd"
 import { TeamOutlined, DollarOutlined, FileTextOutlined, PercentageOutlined, BankOutlined } from "@ant-design/icons"
+import { useGetUniversityStatistics } from "../hooks/queries"
 
 const { Title, Text } = Typography
-// const { useToken } = theme
 const { useBreakpoint } = Grid
 
 interface UniversityStatistics {
-  name: string
-  studentCount: number
-  contractStudentCount: number
-  allStudentContractMustPaidAmount: number
-  allStudentDebtAmount: number
-  allStudentRemainContractAmount: number
-  allStudentPaidAmount: number
-  allDiscountAmount: number
+  count: number
+  contractAmount: number
+  additionalDebtAmount: number
+  calculatedDebtAmount: number
+  paidAmount: number
+  discountAmount: number
+  debtRate: number
 }
 
-const Index = () => {
-  // const { token } = useToken()
+// interface StatisticsResponse {
+//   timestamp: number
+//   success: boolean
+//   errorMessage: string
+//   data: UniversityStatistics
+// }
+
+const Index: React.FC = () => {
   const screens = useBreakpoint()
   const [tableData, setTableData] = useState<UniversityStatistics | null>(null)
   const { data: statisticsData, isLoading, isError, error } = useGetUniversityStatistics()
@@ -32,8 +36,12 @@ const Index = () => {
     }
   }, [statisticsData])
 
-  const formatCurrency = (amount: string | number) => {
-    return `${Number(amount).toLocaleString()} UZS`
+  const formatCurrency = (amount: number) => {
+    return `${amount.toLocaleString()} UZS`
+  }
+
+  const formatPercentage = (value: number) => {
+    return `${value.toFixed(2)}%`
   }
 
   if (isLoading) {
@@ -55,7 +63,7 @@ const Index = () => {
           <Alert
             message="Xato"
             description={
-              error.message || "Universitet statistikasini yuklashda xato yuz berdi. Iltimos, qayta urinib ko'ring."
+              error?.message || "Statistikani yuklashda xato yuz berdi. Iltimos, qayta urinib ko'ring."
             }
             type="error"
             showIcon
@@ -73,23 +81,15 @@ const Index = () => {
   const statsCards = [
     {
       title: "Jami Talabalar",
-      value: tableData.studentCount,
+      value: tableData.count,
       icon: <TeamOutlined />,
       color: "#1890ff",
       background: "from-blue-50 to-cyan-50",
       span: 8,
     },
     {
-      title: "Shartnoma Talabalari",
-      value: tableData.contractStudentCount,
-      icon: <TeamOutlined />,
-      color: "#52c41a",
-      background: "from-green-50 to-emerald-50",
-      span: 8,
-    },
-    {
       title: "Jami Shartnoma Summasi",
-      value: tableData.allStudentContractMustPaidAmount,
+      value: tableData.contractAmount,
       icon: <DollarOutlined />,
       color: "#fa8c16",
       background: "from-orange-50 to-amber-50",
@@ -98,7 +98,7 @@ const Index = () => {
     },
     {
       title: "To'langan Summa",
-      value: tableData.allStudentPaidAmount,
+      value: tableData.paidAmount,
       icon: <BankOutlined />,
       color: "#13c2c2",
       background: "from-cyan-50 to-teal-50",
@@ -106,17 +106,8 @@ const Index = () => {
       span: screens.lg ? 6 : 12,
     },
     {
-      title: "Qolgan Shartnoma Summasi",
-      value: tableData.allStudentRemainContractAmount,
-      icon: <DollarOutlined />,
-      color: "#722ed1",
-      background: "from-purple-50 to-indigo-50",
-      formatter: formatCurrency,
-      span: screens.lg ? 6 : 12,
-    },
-    {
-      title: "Jami Qarz Summasi",
-      value: tableData.allStudentDebtAmount,
+      title: "Qarz Summasi",
+      value: tableData.calculatedDebtAmount,
       icon: <FileTextOutlined />,
       color: "#f5222d",
       background: "from-red-50 to-pink-50",
@@ -124,12 +115,30 @@ const Index = () => {
       span: screens.lg ? 6 : 12,
     },
     {
-      title: "Jami Chegirma Summasi",
-      value: tableData.allDiscountAmount,
-      icon: <PercentageOutlined />,
+      title: "Qo'shimcha Qarz",
+      value: tableData.additionalDebtAmount,
+      icon: <FileTextOutlined />,
       color: "#eb2f96",
       background: "from-pink-50 to-rose-50",
       formatter: formatCurrency,
+      span: screens.lg ? 6 : 12,
+    },
+    {
+      title: "Jami Chegirma Summasi",
+      value: tableData.discountAmount,
+      icon: <PercentageOutlined />,
+      color: "#722ed1",
+      background: "from-purple-50 to-indigo-50",
+      formatter: formatCurrency,
+      span: screens.lg ? 6 : 12,
+    },
+    {
+      title: "Qarz Foizi",
+      value: tableData.debtRate,
+      icon: <PercentageOutlined />,
+      color: "#52c41a",
+      background: "from-green-50 to-emerald-50",
+      formatter: formatPercentage,
       span: screens.lg ? 6 : 12,
     },
   ]
@@ -144,7 +153,7 @@ const Index = () => {
           </div>
           <div>
             <Title level={1} className="!text-3xl !font-bold !text-gray-800 !mb-2">
-              {tableData.name} Statistikasi
+              Universitet Statistikasi
             </Title>
             <Text className="text-lg text-gray-600">Oxirgi yangilanish: {new Date().toLocaleDateString()}</Text>
           </div>
@@ -176,7 +185,7 @@ const Index = () => {
                   </Text>
                   <Statistic
                     value={card.value}
-                    formatter={card.formatter ? (val) => card.formatter!(val) : undefined}
+                    // formatter={card.formatter}
                     valueStyle={{
                       color: card.color,
                       fontSize: screens.lg ? "28px" : "24px",
@@ -199,13 +208,13 @@ const Index = () => {
               <Text strong className="text-lg text-gray-800">
                 Umumiy statistika {new Date().getFullYear()} yil
               </Text>
-              <div className="text-gray-600 mt-1">{tableData.name} tomonidan taqdim etilgan</div>
+              <div className="text-gray-600 mt-1">Universitet tomonidan taqdim etilgan</div>
             </div>
             <div className="text-right">
               <div className="text-2xl font-bold text-teal-600">
-                {((tableData.allStudentPaidAmount / tableData.allStudentContractMustPaidAmount) * 100).toFixed(1)}%
+                {formatPercentage(tableData.debtRate)}
               </div>
-              <div className="text-sm text-gray-500">To'lov foizi</div>
+              <div className="text-sm text-gray-500">Qarz foizi</div>
             </div>
           </div>
         </Card>

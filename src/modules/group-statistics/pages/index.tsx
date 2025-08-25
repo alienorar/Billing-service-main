@@ -299,7 +299,7 @@ const Index: React.FC = () => {
 
   return (
     <div className="min-h-screen p-4 md:p-6">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-9xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Guruh Statistikasi</h1>

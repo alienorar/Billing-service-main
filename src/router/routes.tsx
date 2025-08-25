@@ -33,6 +33,7 @@ import {
   SpecialityStatistics,
   PaymentHistoryChart,
   Xazna,
+  Abiturient,
 } from "@modules"
 import { FiSlack } from "react-icons/fi"
 
@@ -69,6 +70,14 @@ export const routesConfig = [
     icon: <FaUserGraduate style={{ fontSize: "22px" }} />,
     element: <Students />,
     permissions: ["STUDENT_MENU"],
+    showInSidebar: true,
+  },
+  {
+    path: "abiturients",
+    label: "Abiturientlar",
+    icon: <FaUserGraduate style={{ fontSize: "22px" }} />,
+    element: <Abiturient />,
+    permissions: ["STUDENT_HEMIS_LIST"],
     showInSidebar: true,
   },
   {
