@@ -34,6 +34,7 @@ import {
   PaymentHistoryChart,
   Xazna,
   Abiturient,
+  Log,
 } from "@modules"
 import { FiSlack } from "react-icons/fi"
 
@@ -153,6 +154,14 @@ export const routesConfig = [
         icon: <FaHandHoldingUsd style={{ fontSize: "22px" }} />,
         label: "Chegirmalar",
         element: <Discount />,
+        permissions: ["DISCOUNT_PAGEABLE"],
+        showInSidebar: true,
+      },
+      {
+        path: "log",
+        icon: <FaHandHoldingUsd style={{ fontSize: "22px" }} />,
+        label: "Log",
+        element: <Log />,
         permissions: ["DISCOUNT_PAGEABLE"],
         showInSidebar: true,
       },

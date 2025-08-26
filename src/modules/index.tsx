@@ -71,6 +71,9 @@ const Xazna = loadable(() => import('./xazna/pages'), {
 const Abiturient = loadable(() => import('./abiturient/pages'), {
   fallback: <Loading />
 });
+const Log = loadable(() => import('./log/pages'), {
+  fallback: <Loading />
+});
 
 const NotFound = loadable(() => import('./not-found'), {
   fallback: <Loading />
@@ -103,6 +106,7 @@ export {
   PaymentHistoryChart,
   Xazna,
   Abiturient,
+  Log,
   NotFound,
   AccessDenied
 }
