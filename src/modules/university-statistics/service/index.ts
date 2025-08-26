@@ -8,5 +8,5 @@ export async function getUniversityStatistics () {
 
 // =========================GET++++++++++++++++++++++++
 export async function getDebtRate(params:ParamsType) {
-    return (await  axiosInstance.get(`/api/v1/debt/rate/list${params}`)).data
+    return (await  axiosInstance.get(`/api/v1/debt/rate/list`,{params})).data
 }

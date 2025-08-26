@@ -25,7 +25,9 @@ export interface ParamsType {
   showDebt?: string;
   type?: string
   sortBy?: string,
-  direction: string
+  direction?: string,
+  timeUnit?:string,
+  count?:number|string
 }
 
 export interface PagingType {

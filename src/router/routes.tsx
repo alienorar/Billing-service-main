@@ -7,6 +7,7 @@ import {
   FaRegCreditCard,
   FaSignal,
   FaSlack,
+  FaUserClock,
   FaUserGraduate,
   FaUsers,
   FaUserShield,
@@ -76,7 +77,7 @@ export const routesConfig = [
   {
     path: "abiturients",
     label: "Abiturientlar",
-    icon: <FaUserGraduate style={{ fontSize: "22px" }} />,
+    icon: <FaUserClock style={{ fontSize: "22px" }} />,
     element: <Abiturient />,
     permissions: ["STUDENT_HEMIS_LIST"],
     showInSidebar: true,
