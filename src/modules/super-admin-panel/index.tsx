@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -8,41 +8,42 @@ import {
   LogoutOutlined,
   DownOutlined,
   UpOutlined,
-} from "@ant-design/icons"
-import { Button, Layout, Menu, Dropdown, Avatar } from "antd"
-import { NavLink, useLocation, Outlet } from "react-router-dom"
-import { getPhone, getRole, getUserPermissions, logout } from "../../utils/token-service"
-import MainLogo from "../../assets/otu-logo.png"
-import { routesConfig } from "../../router/routes"
+} from "@ant-design/icons";
+import { Button, Layout, Menu, Dropdown, Avatar } from "antd";
+import { NavLink, useLocation, Outlet } from "react-router-dom";
+import { getPhone, getRole, getUserPermissions, logout } from "../../utils/token-service";
+import MainLogo from "../../assets/otu-logo.png";
+import { routesConfig } from "../../router/routes";
 
-const { Header, Sider, Content } = Layout
+const { Header, Sider, Content } = Layout;
 
 const AdminPanel = () => {
-  const [collapsed, setCollapsed] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
-  const { pathname } = useLocation()
-  const permissions = getUserPermissions()
+  const [collapsed, setCollapsed] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [openKeys, setOpenKeys] = useState<string[]>([]); // State to manage open submenus
+  const { pathname } = useLocation();
+  const permissions = getUserPermissions();
 
   const hasPermission = (requiredPermissions: string[]) => {
-    if (!requiredPermissions || requiredPermissions.length === 0) return true
-    return requiredPermissions.every((perm) => permissions.includes(perm))
-  }
+    if (!requiredPermissions || requiredPermissions.length === 0) return true;
+    return requiredPermissions.every((perm) => permissions.includes(perm));
+  };
 
   // Filter routes and their children based on showInSidebar and permissions
   const accessibleRoutes = routesConfig.filter(
     (item) => (item.showInSidebar !== false) && hasPermission(item.permissions)
-  )
+  );
 
   const handleLogout = () => {
-    logout()
-  }
+    logout();
+  };
 
-  const Firstname = localStorage.getItem("Firstname")
-  const Lastname = localStorage.getItem("Lastname")
-  const accessToken = localStorage.getItem("accessToken")
+  const Firstname = localStorage.getItem("Firstname");
+  const Lastname = localStorage.getItem("Lastname");
+  const accessToken = localStorage.getItem("accessToken");
 
-  const role = getRole()
-  const phoneNumber = getPhone()
+  const role = getRole();
+  const phoneNumber = getPhone();
 
   const menu = (
     <Menu className="px-2 bg-white rounded-2xl shadow-2xl border-0 min-w-[200px]">
@@ -55,7 +56,18 @@ const AdminPanel = () => {
         Chiqish
       </Menu.Item>
     </Menu>
-  )
+  );
+
+  // Handle submenu open/close with single-open behavior
+  const onOpenChange = (keys: string[]) => {
+    // Allow only one submenu to be open at a time
+    const latestOpenKey = keys[keys.length - 1];
+    if (latestOpenKey) {
+      setOpenKeys([latestOpenKey]);
+    } else {
+      setOpenKeys([]);
+    }
+  };
 
   if (accessToken) {
     return (
@@ -70,6 +82,8 @@ const AdminPanel = () => {
             style={{
               background: "linear-gradient(180deg, #2563eb 0%, #7c3aed 100%)",
               boxShadow: "4px 0 20px rgba(0, 0, 0, 0.1)",
+              overflowY: "auto",
+              // maxHeight: "calc(100vh - 64px)",
             }}
           >
             {/* Logo Section */}
@@ -89,10 +103,14 @@ const AdminPanel = () => {
             <Menu
               mode="inline"
               selectedKeys={[pathname]}
+              openKeys={openKeys} // Control open submenus
+              onOpenChange={onOpenChange} // Handle submenu open/close
               className="bg-transparent border-0 px-4"
               style={{
                 borderRight: 0,
                 background: "transparent",
+                overflowY: "auto",
+                maxHeight: "calc(100vh - 140px)",
               }}
             >
               {accessibleRoutes.map((item) => {
@@ -100,8 +118,8 @@ const AdminPanel = () => {
                   // Filter child routes based on showInSidebar and permissions
                   const accessibleChildren = item.children.filter(
                     (child) => (child.showInSidebar !== false) && hasPermission(child.permissions)
-                  )
-                  if (accessibleChildren.length === 0) return null
+                  );
+                  if (accessibleChildren.length === 0) return null;
 
                   return (
                     <Menu.SubMenu
@@ -116,7 +134,7 @@ const AdminPanel = () => {
                       }}
                     >
                       {accessibleChildren.map((child) => {
-                        const fullPath = `/super-admin-panel/${child.path}`
+                        const fullPath = `/super-admin-panel/${child.path}`;
                         return (
                           <Menu.Item
                             key={fullPath}
@@ -132,14 +150,14 @@ const AdminPanel = () => {
                               {child.label}
                             </NavLink>
                           </Menu.Item>
-                        )
+                        );
                       })}
                     </Menu.SubMenu>
-                  )
+                  );
                 }
 
-                const fullPath = `/super-admin-panel/${item.path}`
-                const isActive = pathname === fullPath
+                const fullPath = `/super-admin-panel/${item.path}`;
+                const isActive = pathname === fullPath;
                 return (
                   <Menu.Item
                     key={fullPath}
@@ -158,7 +176,7 @@ const AdminPanel = () => {
                       {item.label}
                     </NavLink>
                   </Menu.Item>
-                )
+                );
               })}
             </Menu>
 
@@ -248,10 +266,10 @@ const AdminPanel = () => {
           </Layout>
         </Layout>
       </div>
-    )
+    );
   }
 
-  return null
-}
+  return null;
+};
 
-export default AdminPanel
+export default AdminPanel;
