@@ -11,6 +11,7 @@ import { EditOutlined, TeamOutlined, SearchOutlined } from "@ant-design/icons"
 import GroupModal from "./modal"
 
 interface GroupRecord {
+  visible:boolean
   id: number
   name: string
   educationLang: string
@@ -76,6 +77,7 @@ const GroupList: React.FC = () => {
         paymentGroupId: item.paymentGroupId,
         paymentGroupName: item.paymentGroupName,
         level: item.level,
+        visible: item.visible,
         debtLevel: item.debtLevel,
       }))
       setTableData(normalized)
@@ -199,12 +201,12 @@ const GroupList: React.FC = () => {
         key: "visible",
         width: 100,
         minWidth: 80,
-        render: (active: boolean) => (
-          <Tag color={active ? "green" : "red"} className="rounded-lg font-medium px-2 md:px-3 py-1 text-xs md:text-sm">
-            {active ? "Aktiv" : "Aktiv emas"}
+        render: (visible: boolean) => (
+          <Tag color={visible ? "green" : "red"} className="rounded-lg font-medium px-2 md:px-3 py-1 text-xs md:text-sm">
+            {visible ? "Aktiv" : "Aktiv emas"}
           </Tag>
         ),
-        sorter: (a: GroupRecord, b: GroupRecord) => Number(a.active) - Number(b.active),
+        sorter: (a: GroupRecord, b: GroupRecord) => Number(a.visible) - Number(b.visible),
       },
       {
         title: <span className="font-semibold text-gray-700 text-sm md:text-base">To'lov guruhi ID</span>,

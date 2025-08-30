@@ -3,8 +3,8 @@ import { ColumnsType, TablePaginationConfig, TableProps } from "antd/es/table";
 
 // ========== PARAMS TYPE ==========
 export interface ParamsType {
-    studentId?: number|string;
-    passport?:string;
+  studentId?: number | string;
+  passport?: string;
   size?: number | string | undefined,
   page?: number | string | undefined,
   search?: string,
@@ -22,7 +22,12 @@ export interface ParamsType {
   educationType?: string | undefined;
   educationLang?: string | undefined;
   active?: string | undefined;
-  showDebt?: string
+  showDebt?: string;
+  type?: string
+  sortBy?: string,
+  direction?: string,
+  timeUnit?:string,
+  count?:number|string
 }
 
 export interface PagingType {
@@ -120,7 +125,7 @@ export interface AdminType {
   phone?: string;
   firstName?: string;
   lastName?: string;
-  
+
 }
 
 
@@ -160,7 +165,7 @@ export interface GroupListUpdate {
   paymentGroupId?: number | string;
   id?: number | string;
   visible: boolean,
-  debtLevel:number | string
+  debtLevel: number | string
 }
 
 
@@ -233,7 +238,7 @@ export interface DebtRecord {
     studentDiscountAmount?: number;
   };
 
-  studentId?: number|string;
+  studentId?: number | string;
   description?: string;
   reasonFile?: string;
   debtType?: string;

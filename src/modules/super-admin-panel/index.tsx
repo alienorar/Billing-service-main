@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -8,40 +8,42 @@ import {
   LogoutOutlined,
   DownOutlined,
   UpOutlined,
-} from "@ant-design/icons"
-import { Button, Layout, Menu, Dropdown, Avatar } from "antd"
-import { NavLink, useLocation, Outlet } from "react-router-dom"
-import { getPhone, getRole, getUserPermissions, logout } from "../../utils/token-service"
-import MainLogo from "../../assets/otu-logo.png"
-import { routesConfig } from "../../router/routes"
+} from "@ant-design/icons";
+import { Button, Layout, Menu, Dropdown, Avatar } from "antd";
+import { NavLink, useLocation, Outlet } from "react-router-dom";
+import { getPhone, getRole, getUserPermissions, logout } from "../../utils/token-service";
+import MainLogo from "../../assets/otu-logo.png";
+import { routesConfig } from "../../router/routes";
 
-const { Header, Sider, Content } = Layout
+const { Header, Sider, Content } = Layout;
 
 const AdminPanel = () => {
-  const [collapsed, setCollapsed] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
-  const { pathname } = useLocation()
-  const permissions = getUserPermissions()
+  const [collapsed, setCollapsed] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [openKeys, setOpenKeys] = useState<string[]>([]); // State to manage open submenus
+  const { pathname } = useLocation();
+  const permissions = getUserPermissions();
 
   const hasPermission = (requiredPermissions: string[]) => {
-    if (!requiredPermissions || requiredPermissions.length === 0) return true
-    return requiredPermissions.every((perm) => permissions.includes(perm))
-  }
+    if (!requiredPermissions || requiredPermissions.length === 0) return true;
+    return requiredPermissions.every((perm) => permissions.includes(perm));
+  };
 
-  const accessibleRoutes = routesConfig.filter((item) => item.showInSidebar && hasPermission(item.permissions))
+  // Filter routes and their children based on showInSidebar and permissions
+  const accessibleRoutes = routesConfig.filter(
+    (item) => (item.showInSidebar !== false) && hasPermission(item.permissions)
+  );
 
   const handleLogout = () => {
-    logout()
-  }
+    logout();
+  };
 
-  const Firstname = localStorage.getItem("Firstname")
-  const Lastname = localStorage.getItem("Lastname")
-  const accessToken = localStorage.getItem("accessToken")
+  const Firstname = localStorage.getItem("Firstname");
+  const Lastname = localStorage.getItem("Lastname");
+  const accessToken = localStorage.getItem("accessToken");
 
-  const role = getRole()
-  const phoneNumber = getPhone()
-  // console.log(role)
-
+  const role = getRole();
+  const phoneNumber = getPhone();
 
   const menu = (
     <Menu className="px-2 bg-white rounded-2xl shadow-2xl border-0 min-w-[200px]">
@@ -54,7 +56,18 @@ const AdminPanel = () => {
         Chiqish
       </Menu.Item>
     </Menu>
-  )
+  );
+
+  // Handle submenu open/close with single-open behavior
+  const onOpenChange = (keys: string[]) => {
+    // Allow only one submenu to be open at a time
+    const latestOpenKey = keys[keys.length - 1];
+    if (latestOpenKey) {
+      setOpenKeys([latestOpenKey]);
+    } else {
+      setOpenKeys([]);
+    }
+  };
 
   if (accessToken) {
     return (
@@ -65,10 +78,12 @@ const AdminPanel = () => {
             collapsible
             collapsed={collapsed}
             width={280}
-            className="bg-gradient-to-b from-blue-600 to-violet-600 shadow-2xl border-r-0 fixed top-0 bottom-0 left-0 z-50 "
+            className="bg-gradient-to-b from-blue-600 to-violet-600 shadow-2xl border-r-0 fixed top-0 bottom-0 left-0 z-50"
             style={{
               background: "linear-gradient(180deg, #2563eb 0%, #7c3aed 100%)",
               boxShadow: "4px 0 20px rgba(0, 0, 0, 0.1)",
+              overflowY: "auto",
+              // maxHeight: "calc(100vh - 64px)",
             }}
           >
             {/* Logo Section */}
@@ -88,14 +103,24 @@ const AdminPanel = () => {
             <Menu
               mode="inline"
               selectedKeys={[pathname]}
+              openKeys={openKeys} // Control open submenus
+              onOpenChange={onOpenChange} // Handle submenu open/close
               className="bg-transparent border-0 px-4"
               style={{
                 borderRight: 0,
                 background: "transparent",
+                overflowY: "auto",
+                maxHeight: "calc(100vh - 140px)",
               }}
             >
               {accessibleRoutes.map((item) => {
                 if (item.children && item.children.length > 0) {
+                  // Filter child routes based on showInSidebar and permissions
+                  const accessibleChildren = item.children.filter(
+                    (child) => (child.showInSidebar !== false) && hasPermission(child.permissions)
+                  );
+                  if (accessibleChildren.length === 0) return null;
+
                   return (
                     <Menu.SubMenu
                       key={item.label}
@@ -108,34 +133,31 @@ const AdminPanel = () => {
                         margin: "4px 0",
                       }}
                     >
-                      {item.children
-                        .filter((child) => hasPermission(child.permissions))
-                        .map((child) => {
-                          const fullPath = `/super-admin-panel/${child.path}`
-                          return (
-                            <Menu.Item
-                              key={fullPath}
-                              icon={<span className={ !collapsed ? "text-white font-medium" : "text-black font-medium"} >{child.icon}</span>}
-                              className="ml-4 rounded-lg"
-                              style={{
-                                backgroundColor: pathname === fullPath ? "bg-gradient-to-b from-blue-600 to-violet-600" : "bg-gradient-to-b from-blue-600 to-violet-600",
-                                borderRadius: "8px",
-                                margin: "2px 0",
-                                // color:"white"
-                              }}
-                            >
-                              <NavLink to={fullPath} className={ !collapsed ? "text-white font-medium" : "text-gray-700 font-medium"} >
-                                {child.label}
-                              </NavLink>
-                            </Menu.Item>
-                          )
-                        })}
+                      {accessibleChildren.map((child) => {
+                        const fullPath = `/super-admin-panel/${child.path}`;
+                        return (
+                          <Menu.Item
+                            key={fullPath}
+                            icon={<span className={!collapsed ? "text-white font-medium" : "text-black font-medium"}>{child.icon}</span>}
+                            className="ml-4 rounded-lg"
+                            style={{
+                              backgroundColor: pathname === fullPath ? "rgba(255, 255, 255, 0.2)" : "transparent",
+                              borderRadius: "8px",
+                              margin: "2px 0",
+                            }}
+                          >
+                            <NavLink to={fullPath} className={!collapsed ? "text-white font-medium" : "text-gray-700 font-medium"}>
+                              {child.label}
+                            </NavLink>
+                          </Menu.Item>
+                        );
+                      })}
                     </Menu.SubMenu>
-                  )
+                  );
                 }
 
-                const fullPath = `/super-admin-panel/${item.path}`
-                const isActive = pathname === fullPath
+                const fullPath = `/super-admin-panel/${item.path}`;
+                const isActive = pathname === fullPath;
                 return (
                   <Menu.Item
                     key={fullPath}
@@ -154,7 +176,7 @@ const AdminPanel = () => {
                       {item.label}
                     </NavLink>
                   </Menu.Item>
-                )
+                );
               })}
             </Menu>
 
@@ -179,7 +201,7 @@ const AdminPanel = () => {
           <Layout className="bg-transparent">
             {/* Header */}
             <Header
-              className="bg-white shadow-sm border-b border-gray-100  fixed top-0 right-0 z-40"
+              className="bg-white shadow-sm border-b border-gray-100 fixed top-0 right-0 z-40"
               style={{
                 left: collapsed ? 80 : 280,
                 padding: 0,
@@ -199,12 +221,6 @@ const AdminPanel = () => {
                 </div>
 
                 <div className="flex items-center gap-4">
-                  {/* <Button
-                    type="text"
-                    className="text-gray-600 hover:text-gray-800 hover:bg-gray-50 border-0 rounded-full w-10 h-10"
-                    icon={<span className="text-lg">🌙</span>}
-                  /> */}
-
                   <Dropdown overlay={menu} trigger={["click"]} onOpenChange={setMenuOpen} placement="bottomRight">
                     <div className="cursor-pointer flex items-center gap-3 hover:bg-gray-50 px-3 py-2 rounded-xl transition-all duration-200">
                       <Avatar
@@ -250,10 +266,10 @@ const AdminPanel = () => {
           </Layout>
         </Layout>
       </div>
-    )
+    );
   }
 
-  return null
-}
+  return null;
+};
 
-export default AdminPanel
+export default AdminPanel;

@@ -8,6 +8,7 @@ import { GlobalTable } from "@components"
 import { useGetGroupStatistics } from "../hooks/queries"
 
 interface PaymentDetails {
+  extraPayment: number
   contractAmount: number
   discountAmount: number
   additionalDebtAmount: number
@@ -106,174 +107,197 @@ const Index: React.FC = () => {
     navigate(`/super-admin-panel/group-statistics/${record.id}`)
   }
 
-  /* ---------- Columns ---------- */
-  const columns = useMemo(
-    () => [
-      {
-        title: "ID",
-        dataIndex: "id",
-        key: "id",
-        width: 80,
-        minWidth: 80,
-        sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) => a.id - b.id,
-      },
-      {
-        title: "Nomi",
-        dataIndex: "name",
-        key: "name",
-        width: 150,
-        minWidth: 120,
-        sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) => a.name.localeCompare(b.name),
-        render: (text: string, record: GroupStatisticsRecord) => (
-          <a
-            onClick={() => handleRowClick(record)}
-            className="text-teal-600 hover:text-teal-800 font-medium cursor-pointer text-sm md:text-base"
-          >
-            {text}
-          </a>
-        ),
-      },
-      {
-        title: "Mutaxasisligi",
-        dataIndex: "speciality",
-        key: "speciality",
-        width: 200,
-        minWidth: 150,
-        sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) => a.speciality.localeCompare(b.speciality),
-        render: (text: string) => <span className="text-sm md:text-base">{text}</span>,
-      },
-      {
-        title: "Studentlar soni",
-        dataIndex: "studentCount",
-        key: "studentCount",
-        width: 120,
-        minWidth: 100,
-        sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) => a.studentCount - b.studentCount,
-        render: (value: number) => <span className="text-sm md:text-base">{value}</span>,
-      },
-      {
-        title: "Kontrakt studentlar soni",
-        dataIndex: "contractStudentCount",
-        key: "contractStudentCount",
-        width: 150,
-        minWidth: 120,
-        sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) => a.contractStudentCount - b.contractStudentCount,
-        render: (value: number) => <span className="text-sm md:text-base">{value}</span>,
-      },
-      {
-        title: "Qarz darajasi",
-        dataIndex: "debtLevel",
-        key: "debtLevel",
-        width: 120,
-        minWidth: 100,
-        sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) => a.debtLevel - b.debtLevel,
-        render: (value: number) => <span className="text-sm md:text-base">{value}</span>,
-      },
-   {
-  title: "Qarzdorlik summasi",
-  dataIndex: "allStudentDebts",
-  key: "allStudentDebts",
-  width: 150,
-  minWidth: 120,
-  render: (value: number | null) => (
-    <span
-      className={
-        value
-          ? value < 0
-            ? "text-green-600 font-medium text-sm md:text-base"
-            : "text-red-600 font-medium text-sm md:text-base"
-          : "text-gray-400 text-sm md:text-base"
-      }
-    >
-      {value ? value.toLocaleString() + " UZS" : "—"}
-    </span>
-  ),
-  sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
-    (a.allStudentDebts || 0) - (b.allStudentDebts || 0),
-},
-      {
-        title: "Jami to'langan summa",
-        dataIndex: "allStudentPaid",
-        key: "allStudentPaid",
-        width: 150,
-        minWidth: 120,
-        render: (value: number | null) => (
-          <span className={value ? "text-green-600 font-medium text-sm md:text-base" : "text-gray-400 text-sm md:text-base"}>
-            {value ? value.toLocaleString() + " UZS" : "—"}
-          </span>
-        ),
-        sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
-          (a.allStudentPaid || 0) - (b.allStudentPaid || 0),
-      },
-      {
-        title: "Kontrakt summasi",
-        dataIndex: ["paymentDetails", "contractAmount"],
-        key: "contractAmount",
-        width: 150,
-        minWidth: 120,
-        responsive: ["md"] as any, // Hide on small screens
-        render: (value: number) => (
-          <span className="text-sm md:text-base">{value ? value.toLocaleString() + " UZS" : "—"}</span>
-        ),
-        sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
-          a.paymentDetails.contractAmount - b.paymentDetails.contractAmount,
-      },
-      {
-        title: "Chegirma summasi",
-        dataIndex: ["paymentDetails", "discountAmount"],
-        key: "discountAmount",
-        width: 150,
-        minWidth: 120,
-        responsive: ["md"] as any, // Hide on small screens
-        render: (value: number) => (
-          <span className="text-sm md:text-base">{value ? value.toLocaleString() + " UZS" : "—"}</span>
-        ),
-        sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
-          a.paymentDetails.discountAmount - b.paymentDetails.discountAmount,
-      },
-      {
-        title: "Qo'shimcha qarz summasi",
-        dataIndex: ["paymentDetails", "additionalDebtAmount"],
-        key: "additionalDebtAmount",
-        width: 150,
-        minWidth: 120,
-        responsive: ["md"] as any, // Hide on small screens
-        render: (value: number) => (
-          <span className="text-sm md:text-base">{value ? value.toLocaleString() + " UZS" : "—"}</span>
-        ),
-        sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
-          a.paymentDetails.additionalDebtAmount - b.paymentDetails.additionalDebtAmount,
-      },
-      {
-        title: "To'langan summa",
-        dataIndex: ["paymentDetails", "paidAmount"],
-        key: "paidAmount",
-        width: 150,
-        minWidth: 120,
-        responsive: ["md"] as any, // Hide on small screens
-        render: (value: number) => (
-          <span className="text-green-600 font-medium text-sm md:text-base">{value ? value.toLocaleString() + " UZS" : "—"}</span>
-        ),
-        sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
-          a.paymentDetails.paidAmount - b.paymentDetails.paidAmount,
-      },
-      {
-        title: "Hisoblangan qarz",
-        dataIndex: ["paymentDetails", "calculatedDebt"],
-        key: "calculatedDebt",
-        width: 150,
-        minWidth: 120,
-        responsive: ["md"] as any, // Hide on small screens
-        render: (value: number) => (
-          <span className="text-red-600 font-medium text-sm md:text-base">{value ? value.toLocaleString() + " UZS" : "—"}</span>
-        ),
-        sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
-          a.paymentDetails.calculatedDebt - b.paymentDetails.calculatedDebt,
-      },
-    ],
-    [],
-  )
-
+ const columns = useMemo(
+  () => [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+      width: 80,
+      minWidth: 80,
+      sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) => a.id - b.id,
+    },
+    {
+      title: "Nomi",
+      dataIndex: "name",
+      key: "name",
+      width: 150,
+      minWidth: 120,
+      sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) => a.name.localeCompare(b.name),
+      render: (text: string, record: GroupStatisticsRecord) => (
+        <a
+          onClick={() => handleRowClick(record)}
+          className="text-teal-600 hover:text-teal-800 font-medium cursor-pointer text-sm md:text-base"
+        >
+          {text}
+        </a>
+      ),
+    },
+    {
+      title: "Mutaxasisligi",
+      dataIndex: "speciality",
+      key: "speciality",
+      width: 200,
+      minWidth: 150,
+      sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) => a.speciality.localeCompare(b.speciality),
+      render: (text: string) => <span className="text-sm md:text-base">{text}</span>,
+    },
+    {
+      title: "Studentlar soni",
+      dataIndex: "studentCount",
+      key: "studentCount",
+      width: 120,
+      minWidth: 100,
+      sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) => a.studentCount - b.studentCount,
+      render: (value: number) => <span className="text-sm md:text-base">{value}</span>,
+    },
+    {
+      title: "Kontrakt studentlar soni",
+      dataIndex: "contractStudentCount",
+      key: "contractStudentCount",
+      width: 150,
+      minWidth: 120,
+      sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) => a.contractStudentCount - b.contractStudentCount,
+      render: (value: number) => <span className="text-sm md:text-base">{value}</span>,
+    },
+    {
+      title: "Qarz darajasi",
+      dataIndex: "debtLevel",
+      key: "debtLevel",
+      width: 120,
+      minWidth: 100,
+      sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) => (a.debtLevel || 0) - (b.debtLevel || 0),
+      render: (value: number | null) => <span className="text-sm md:text-base">{value ?? "—"}</span>,
+    },
+    {
+      title: "Qarzdorlik summasi",
+      dataIndex: "allStudentDebts",
+      key: "allStudentDebts",
+      width: 150,
+      minWidth: 120,
+      render: (value: number | null) => (
+        <span
+          className={
+            value
+              ? value < 0
+                ? "text-green-600 font-medium text-sm md:text-base"
+                : "text-red-600 font-medium text-sm md:text-base"
+              : "text-gray-400 text-sm md:text-base"
+          }
+        >
+          {value ? value.toLocaleString() + " UZS" : "—"}
+        </span>
+      ),
+      sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
+        (a.allStudentDebts || 0) - (b.allStudentDebts || 0),
+    },
+    {
+      title: "Jami to'langan summa",
+      dataIndex: "allStudentPaid",
+      key: "allStudentPaid",
+      width: 150,
+      minWidth: 120,
+      render: (value: number | null) => (
+        <span className={value ? "text-green-600 font-medium text-sm md:text-base" : "text-gray-400 text-sm md:text-base"}>
+          {value ? value.toLocaleString() + " UZS" : "—"}
+        </span>
+      ),
+      sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
+        (a.allStudentPaid || 0) - (b.allStudentPaid || 0),
+    },
+    {
+      title: "Kontrakt summasi",
+      dataIndex: ["paymentDetails", "contractAmount"],
+      key: "contractAmount",
+      width: 150,
+      minWidth: 120,
+      responsive: ["md"] as any,
+      render: (value: number) => (
+        <span className="text-sm md:text-base">
+          {value !== undefined && value !== null ? value.toLocaleString() + " UZS" : "—"}
+        </span>
+      ),
+      sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
+        (a.paymentDetails?.contractAmount || 0) - (b.paymentDetails?.contractAmount || 0),
+    },
+    {
+      title: "Chegirma summasi",
+      dataIndex: ["paymentDetails", "discountAmount"],
+      key: "discountAmount",
+      width: 150,
+      minWidth: 120,
+      responsive: ["md"] as any,
+      render: (value: number) => (
+        <span className="text-sm md:text-base">
+          {value !== undefined && value !== null ? value.toLocaleString() + " UZS" : "—"}
+        </span>
+      ),
+      sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
+        (a.paymentDetails?.discountAmount || 0) - (b.paymentDetails?.discountAmount || 0),
+    },
+    {
+      title: "Qo'shimcha qarz summasi",
+      dataIndex: ["paymentDetails", "additionalDebtAmount"],
+      key: "additionalDebtAmount",
+      width: 150,
+      minWidth: 120,
+      responsive: ["md"] as any,
+      render: (value: number) => (
+        <span className="text-sm md:text-base">
+          {value !== undefined && value !== null ? value.toLocaleString() + " UZS" : "—"}
+        </span>
+      ),
+      sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
+        (a.paymentDetails?.additionalDebtAmount || 0) - (b.paymentDetails?.additionalDebtAmount || 0),
+    },
+    {
+      title: "To'langan summa",
+      dataIndex: ["paymentDetails", "paidAmount"],
+      key: "paidAmount",
+      width: 150,
+      minWidth: 120,
+      responsive: ["md"] as any,
+      render: (value: number) => (
+        <span className="text-green-600 font-medium text-sm md:text-base">
+          {value !== undefined && value !== null ? value.toLocaleString() + " UZS" : "—"}
+        </span>
+      ),
+      sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
+        (a.paymentDetails?.paidAmount || 0) - (b.paymentDetails?.paidAmount || 0),
+    },
+    {
+      title: "Hisoblangan qarz",
+      dataIndex: ["paymentDetails", "calculatedDebt"],
+      key: "calculatedDebt",
+      width: 150,
+      minWidth: 120,
+      responsive: ["md"] as any,
+      render: (value: number) => (
+        <span className="text-red-600 font-medium text-sm md:text-base">
+          {value !== undefined && value !== null ? value.toLocaleString() + " UZS" : "—"}
+        </span>
+      ),
+      sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
+        (a.paymentDetails?.calculatedDebt || 0) - (b.paymentDetails?.calculatedDebt || 0),
+    },
+    {
+      title: "Qo'shimcha to'lov",
+      dataIndex: ["paymentDetails", "extraPayment"],
+      key: "extraPayment",
+      width: 150,
+      minWidth: 120,
+      responsive: ["md"] as any,
+      render: (value: number) => (
+        <span className="text-green-600 font-medium text-sm md:text-base">
+          {value !== undefined && value !== null ? value.toLocaleString() + " UZS" : "—"}
+        </span>
+      ),
+      sorter: (a: GroupStatisticsRecord, b: GroupStatisticsRecord) =>
+        (a.paymentDetails?.extraPayment || 0) - (b.paymentDetails?.extraPayment || 0),
+    },
+  ],
+  [],
+);
   /* ---------- Options ---------- */
   const educationLangOptions: { value: string; label: string }[] = [
     { value: "", label: "All" },
@@ -299,7 +323,7 @@ const Index: React.FC = () => {
 
   return (
     <div className="min-h-screen p-4 md:p-6">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-9xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Guruh Statistikasi</h1>
