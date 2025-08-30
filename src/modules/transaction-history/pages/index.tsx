@@ -344,7 +344,7 @@ const TransactionHistory: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-x-scroll">
         <GlobalTable
           loading={isFetching}
           data={tableData}

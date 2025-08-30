@@ -45,7 +45,7 @@ const Index: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const [filterType, setFilterType] = useState<string>("DAILY")
   const [filterCount, setFilterCount] = useState<number>(10)
-  const [tempFilterCount, setTempFilterCount] = useState<number>(filterCount)
+  const [tempFilterCount, setTempFilterCount] = useState<number>(10)
 
   // URL search parameters for debt rate
   const timeUnit = searchParams.get("timeUnit") || "DAILY"
@@ -57,12 +57,21 @@ const Index: React.FC = () => {
     count,
   })
 
+  // Sync state with searchParams on mount or when searchParams change
+  useEffect(() => {
+    setFilterType(timeUnit)
+    setFilterCount(count)
+    setTempFilterCount(count)
+  }, [timeUnit, count])
+
+  // Update tableData when statisticsData changes
   useEffect(() => {
     if (statisticsData?.data) {
       setTableData(statisticsData.data)
     }
   }, [statisticsData])
 
+  // Update debtRateData when debtRateResponse changes
   useEffect(() => {
     if (debtRateResponse?.data) {
       setDebtRateData(debtRateResponse.data)
@@ -70,37 +79,39 @@ const Index: React.FC = () => {
     }
   }, [debtRateResponse])
 
+  // Debounce searchParams updates
   useEffect(() => {
-    setFilterType(timeUnit)
-    setFilterCount(count)
-    setTempFilterCount(count)
-  }, [timeUnit, count])
+    const maxLimit = getMaxLimit(filterType)
+    const newCount = Math.min(filterCount, maxLimit)
 
+    // Only update searchParams if values have changed
+    if (timeUnit !== filterType || count !== newCount) {
+      const handler = setTimeout(() => {
+        setSearchParams({
+          timeUnit: filterType,
+          count: newCount.toString(),
+        })
+      }, 500) // Debounce for 500ms
+
+      return () => clearTimeout(handler)
+    }
+  }, [filterType, filterCount, setSearchParams])
+
+  // Ensure tempFilterCount respects maxLimit
   useEffect(() => {
     const maxLimit = getMaxLimit(filterType)
     if (tempFilterCount > maxLimit) {
       setTempFilterCount(maxLimit)
     }
-  }, [filterType])
+  }, [filterType, tempFilterCount])
 
+  // Debounce filterCount updates from tempFilterCount
   useEffect(() => {
     const handler = setTimeout(() => {
       setFilterCount(tempFilterCount)
     }, 1000)
     return () => clearTimeout(handler)
   }, [tempFilterCount])
-
-  useEffect(() => {
-    const maxLimit = getMaxLimit(filterType)
-    let newCount = filterCount
-    if (filterCount > maxLimit) newCount = maxLimit
-    if (newCount !== filterCount) setFilterCount(newCount)
-
-    setSearchParams({
-      timeUnit: filterType,
-      count: newCount.toString(),
-    })
-  }, [filterType, filterCount])
 
   const getMaxLimit = (type: string): number => {
     switch (type) {
@@ -132,7 +143,6 @@ const Index: React.FC = () => {
     }
 
     const sortedData = [...debtRateData].sort((a, b) => parseDate(a.from).getTime() - parseDate(b.from).getTime())
-
     const filteredData = sortedData.slice(-filterCount)
 
     return filteredData.map((item) => {
@@ -149,7 +159,7 @@ const Index: React.FC = () => {
 
   const statsCards = [
     {
-      title: "Jami Talabalar",
+      title: "J dedication Talabalar",
       value: tableData?.count ?? 0,
       icon: <TeamOutlined />,
       color: "#1890ff",
@@ -237,19 +247,12 @@ const Index: React.FC = () => {
   ]
 
   const handleTableChange = (pagination: TablePaginationConfig) => {
-    // const current = pagination.current ?? 1
     const pageSize = pagination.pageSize ?? 10
-    setSearchParams({
-      timeUnit: filterType,
-      count: pageSize.toString(),
-    })
+    setTempFilterCount(pageSize)
   }
 
   const handleSearch = () => {
-    setSearchParams({
-      timeUnit: filterType,
-      count: filterCount.toString(),
-    })
+    setFilterCount(tempFilterCount)
   }
 
   if (isStatsLoading) {

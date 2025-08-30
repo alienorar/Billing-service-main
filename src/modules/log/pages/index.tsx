@@ -1,11 +1,13 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import type React from "react"
+import { useEffect, useState } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom"
-import { Button, Input, Select, TablePaginationConfig, Alert, Spin } from "antd"
-import { FiSearch, FiFileText } from "react-icons/fi"
-import { GlobalTable } from "@components"
+import { Button, Input, Select, type TablePaginationConfig, Alert, Spin } from "antd"
+import { FiSearch, FiFileText, FiChevronUp, FiChevronDown } from "react-icons/fi"
+// import { GlobalTable } from "../GlobalTable"
 import { useGetLog } from "../hooks/queries"
+import { GlobalTable } from "@components"
 
 const { Option } = Select
 
@@ -21,7 +23,7 @@ interface Log {
         additionalDebtAmount: number
         paidAmount: number
         calculatedDebt: number
-        extraPayment: number
+        extraPayment: number | string
     }
     fullName?: string
 }
@@ -30,6 +32,8 @@ const Index: React.FC = () => {
     const [tableData, setTableData] = useState<Log[]>([])
     const [total, setTotal] = useState<number>(0)
     const [searchParams, setSearchParams] = useSearchParams()
+    const navigate = useNavigate()
+
     const page = Number(searchParams.get("page")) || 1
     const size = Number(searchParams.get("size")) || 10
     const pinfl = searchParams.get("pinfl") || ""
@@ -37,9 +41,13 @@ const Index: React.FC = () => {
     const name = searchParams.get("name") || ""
     const sortBy = searchParams.get("sortBy") || "calculatedDebt"
     const direction = searchParams.get("direction") || "DESC"
-      const navigate = useNavigate()
 
-    const { data: logs, isLoading, isError, error } = useGetLog({
+    const {
+        data: logs,
+        isLoading,
+        isError,
+        error,
+    } = useGetLog({
         page: page - 1,
         size,
         pinfl: pinfl || undefined,
@@ -54,10 +62,22 @@ const Index: React.FC = () => {
         setTotal(logs?.data?.paging?.totalItems || 0)
     }, [logs])
 
+    const updateSearchParams = (params: Record<string, string>) => {
+        setSearchParams({
+            page: params.page,
+            size: params.size,
+            pinfl: params.pinfl,
+            type: params.type,
+            name: params.name,
+            sortBy: params.sortBy,
+            direction: params.direction,
+        })
+    }
+
     const handleTableChange = (pagination: TablePaginationConfig) => {
         const current = pagination.current ?? 1
         const pageSize = pagination.pageSize ?? 10
-        setSearchParams({
+        updateSearchParams({
             page: current.toString(),
             size: pageSize.toString(),
             pinfl,
@@ -69,7 +89,7 @@ const Index: React.FC = () => {
     }
 
     const handleSearch = () => {
-        setSearchParams({
+        updateSearchParams({
             page: "1",
             size: size.toString(),
             pinfl,
@@ -80,91 +100,184 @@ const Index: React.FC = () => {
         })
     }
 
+    const handleSort = (field: string) => {
+        const newDirection = sortBy === field && direction === "ASC" ? "DESC" : "ASC"
+        updateSearchParams({
+            page: "1",
+            size: size.toString(),
+            pinfl,
+            type,
+            name,
+            sortBy: field,
+            direction: newDirection,
+        })
+    }
+
+    const getSortIcon = (field: string) => {
+        if (sortBy !== field) {
+            return (
+                <div className="flex flex-col ml-1 opacity-50 hover:opacity-100 transition-opacity">
+                    <FiChevronUp className="text-gray-400 text-xs -mb-1" />
+                    <FiChevronDown className="text-gray-400 text-xs" />
+                </div>
+            )
+        }
+        return direction === "ASC" ? (
+            <FiChevronUp className="text-blue-600 ml-1 text-sm font-bold" />
+        ) : (
+            <FiChevronDown className="text-blue-600 ml-1 text-sm font-bold" />
+        )
+    }
+
     const formatCurrency = (value: number | undefined): string => {
         return value !== undefined ? `${value.toLocaleString()} UZS` : "-"
     }
 
-      const handleRowClick = (record: Log) => {
-    if (record.id) {
-      navigate(`/super-admin-panel/students/${record.studentId}`)
+    const handleRowClick = (record: Log) => {
+        if (record.id) {
+            navigate(`/super-admin-panel/students/${record.studentId}`)
+        }
     }
-  }
 
     const columns = [
         {
-            title: <span className="font-semibold text-gray-700">ID</span>,
+            title: (
+                <div
+                    className="flex items-center cursor-pointer hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-md transition-all duration-200 select-none"
+                    onClick={() => handleSort("id")}
+                >
+                    <span className="font-semibold text-gray-700">ID</span>
+                    {getSortIcon("id")}
+                </div>
+            ),
             dataIndex: "id",
             render: (value?: number) => <span className="font-medium text-gray-600">#{value ?? "-"}</span>,
         },
         {
-            title: <span className="font-semibold text-gray-700">To'liq ism</span>,
+            title: (
+                <div
+                    className="flex items-center cursor-pointer hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-md transition-all duration-200 select-none"
+                    onClick={() => handleSort("fullName")}
+                >
+                    <span className="font-semibold text-gray-700">To'liq ism</span>
+                    {getSortIcon("fullName")}
+                </div>
+            ),
             dataIndex: "fullName",
             render: (value?: string) => <span className="font-medium text-gray-800">{value ?? "-"}</span>,
         },
         {
-            title: <span className="font-semibold text-gray-700">PINFL</span>,
+            title: (
+                <div
+                    className="flex items-center cursor-pointer hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-md transition-all duration-200 select-none"
+                    onClick={() => handleSort("pinfl")}
+                >
+                    <span className="font-semibold text-gray-700">PINFL</span>
+                    {getSortIcon("pinfl")}
+                </div>
+            ),
             dataIndex: "pinfl",
             render: (value?: string) => <span className="font-mono text-sm text-gray-600">{value ?? "-"}</span>,
         },
         {
-            title: <span className="font-semibold text-gray-700">Type</span>,
+            title: (
+                <div
+                    className="flex items-center cursor-pointer hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-md transition-all duration-200 select-none"
+                    onClick={() => handleSort("type")}
+                >
+                    <span className="font-semibold text-gray-700">Type</span>
+                    {getSortIcon("type")}
+                </div>
+            ),
             dataIndex: "type",
             render: (value?: string) => (
-                <span className="text-blue-600 font-medium px-2 py-1 rounded-lg bg-blue-50">
-                    {value ?? "-"}
-                </span>
+                <span className="text-blue-600 font-medium px-2 py-1 rounded-lg bg-blue-50">{value ?? "-"}</span>
             ),
         },
         {
-            title: <span className="font-semibold text-gray-700">Shartnoma summasi</span>,
+            title: (
+                <div
+                    className="flex items-center cursor-pointer hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-md transition-all duration-200 select-none"
+                    onClick={() => handleSort("contractAmount")}
+                >
+                    <span className="font-semibold text-gray-700">Shartnoma summasi</span>
+                    {getSortIcon("contractAmount")}
+                </div>
+            ),
             dataIndex: ["paymentDetails", "contractAmount"],
-            render: (value?: number) => (
-                <span className="text-gray-800 text-sm">{formatCurrency(value)}</span>
-            ),
+            render: (value?: number) => <span className="text-gray-800 text-sm">{formatCurrency(value)}</span>,
         },
         {
-            title: <span className="font-semibold text-gray-700">Chegirma</span>,
+            title: (
+                <div
+                    className="flex items-center cursor-pointer hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-md transition-all duration-200 select-none"
+                    onClick={() => handleSort("discount")}
+                >
+                    <span className="font-semibold text-gray-700">Chegirma</span>
+                    {getSortIcon("discount")}
+                </div>
+            ),
             dataIndex: ["paymentDetails", "discountAmount"],
-            render: (value?: number) => (
-                <span className="text-gray-800 text-sm">{formatCurrency(value)}</span>
-            ),
+            render: (value?: number) => <span className="text-gray-800 text-sm">{formatCurrency(value)}</span>,
         },
         {
-            title: <span className="font-semibold text-gray-700">Qo'shimcha qarz</span>,
+            title: (
+                <div
+                    className="flex items-center cursor-pointer hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-md transition-all duration-200 select-none"
+                    onClick={() => handleSort("additionalDebt")}
+                >
+                    <span className="font-semibold text-gray-700">Qo'shimcha qarz</span>
+                    {getSortIcon("additionalDebt")}
+                </div>
+            ),
             dataIndex: ["paymentDetails", "additionalDebtAmount"],
-            render: (value?: number) => (
-                <span className="text-gray-800 text-sm">{formatCurrency(value)}</span>
-            ),
+            render: (value?: number) => <span className="text-gray-800 text-sm">{formatCurrency(value)}</span>,
         },
         {
-            title: <span className="font-semibold text-gray-700">To'langan</span>,
+            title: (
+                <div
+                    className="flex items-center cursor-pointer hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-md transition-all duration-200 select-none"
+                    onClick={() => handleSort("paid")}
+                >
+                    <span className="font-semibold text-gray-700">To'langan</span>
+                    {getSortIcon("paid")}
+                </div>
+            ),
             dataIndex: ["paymentDetails", "paidAmount"],
-            render: (value?: number) => (
-                <span className="text-green-600 text-sm">{formatCurrency(value)}</span>
-            ),
+            render: (value?: number) => <span className="text-green-600 text-sm">{formatCurrency(value)}</span>,
         },
-        {
-            title: <span className="font-semibold text-gray-700">Qarzdorlik</span>,
-            dataIndex: ["paymentDetails", "calculatedDebt"],
-            render: (value?: number) => (
-                <span
-                    className={`px-3 py-1 rounded-lg text-sm font-semibold  text-red-600 bg-red-50 ` }
-                >
-                    {formatCurrency(value)}
-                </span>
-            ),
-        },
-        {
-            title: <span className="font-semibold text-gray-700">Oldindan to'lov</span>,
-            dataIndex: ["extraPayment"],
-            render: (value?: number) => (
-                <span
-                    className={`px-3 py-1 rounded-lg text-sm font-semibold  text-green-600 bg-green-50 ` }
-                >
-                    {formatCurrency(value)}
-                </span>
-            ),
-        },
+ {
+  title: (
+    <div
+      className="flex items-center cursor-pointer hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-md transition-all duration-200 select-none group"
+      onClick={() => handleSort("calculatedDebt")}
+    >
+      <span className="font-semibold text-gray-700 group-hover:text-blue-600 transition-colors duration-200">
+        Qarzdorlik
+      </span>
+      {getSortIcon("calculatedDebt")}
+    </div>
+  ),
+  dataIndex: ["paymentDetails", "calculatedDebt"],
+  render: (value?: number) => (
+    <span                     className="flex items-center cursor-pointer  hover:bg-blue-50 px-2 py-1 text-red-500  rounded-md transition-all duration-200 select-none"
+>
+      {formatCurrency(value)}
+    </span>
+  ),
+},
+{
+  title: <span                     className="flex items-center cursor-pointer hover:text-blue-600 hover:bg-blue-50 px-2 py-1 rounded-md transition-all duration-200 select-none"
+ onClick={() => handleSort("extraPayment")}>
+    Oldindan to'lov
+  </span>,
+  dataIndex: ["paymentDetails", "extraPayment"],
+  render: (value?: number) => (
+    <span className="px-3 py-1 rounded-lg text-sm font-medium text-green-600 bg-green-50/80 shadow-sm hover:shadow-md transition-all duration-200">
+      {formatCurrency(value)}
+    </span>
+  ),
+},
     ]
 
     if (isLoading) {
@@ -215,7 +328,7 @@ const Index: React.FC = () => {
                         placeholder="PINFL"
                         value={pinfl}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setSearchParams({
+                            updateSearchParams({
                                 page: "1",
                                 size: size.toString(),
                                 pinfl: e.target.value,
@@ -232,7 +345,7 @@ const Index: React.FC = () => {
                         placeholder="Type"
                         value={type || undefined}
                         onChange={(value) =>
-                            setSearchParams({
+                            updateSearchParams({
                                 page: "1",
                                 size: size.toString(),
                                 pinfl,
@@ -253,7 +366,7 @@ const Index: React.FC = () => {
                         placeholder="Ism"
                         value={name}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setSearchParams({
+                            updateSearchParams({
                                 page: "1",
                                 size: size.toString(),
                                 pinfl,
@@ -266,26 +379,6 @@ const Index: React.FC = () => {
                         className="h-10 rounded-xl border-gray-200 focus:border-teal-400 focus:shadow-lg transition-all duration-200"
                         prefix={<FiSearch className="text-gray-400" />}
                     />
-                    <Select
-                        placeholder="Sort Direction"
-                        value={direction}
-                        onChange={(value) =>
-                            setSearchParams({
-                                page: "1",
-                                size: size.toString(),
-                                pinfl,
-                                type,
-                                name,
-                                sortBy,
-                                direction: value,
-                            })
-                        }
-                        className="h-10 rounded-xl"
-                        size="large"
-                    >
-                        <Option value="ASC">ASC</Option>
-                        <Option value="DESC">DESC</Option>
-                    </Select>
                     <Button
                         type="primary"
                         onClick={handleSearch}
@@ -313,10 +406,10 @@ const Index: React.FC = () => {
                         showQuickJumper: true,
                         showTotal: (total: number, range: [number, number]) => `${range[0]}-${range[1]} dan ${total} ta natija`,
                     }}
-                           onRow={(record: Log) => ({
-            onClick: () => handleRowClick(record),
-            className: "cursor-pointer hover:bg-gray-50",
-          })}
+                    onRow={(record: Log) => ({
+                        onClick: () => handleRowClick(record),
+                        className: "cursor-pointer hover:bg-gray-50",
+                    })}
                     className="rounded-2xl"
                 />
             </div>
