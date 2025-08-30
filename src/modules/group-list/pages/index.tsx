@@ -275,10 +275,14 @@ const GroupList: React.FC = () => {
     { value: "UZB", label: "O'zbek" },
   ]
 
-  const educationFormOptions: { value: string; label: string }[] = [
+   const educationFormOptions = [
     { value: "", label: "Barchasi" },
+    { value: "KUNDUZGI", label: "Kunduzgi" },
     { value: "SIRTQI", label: "Sirtqi" },
+    { value: "MASOFAVIY", label: "Masofaviy" },
+    { value: "KECHKI", label: "Kechki" },
   ]
+
 
   const educationTypeOptions: { value: string; label: string }[] = [
     { value: "", label: "Barchasi" },

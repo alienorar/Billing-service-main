@@ -74,6 +74,9 @@ const Abiturient = loadable(() => import('./abiturient/pages'), {
 const Log = loadable(() => import('./log/pages'), {
   fallback: <Loading />
 });
+const SpecialityForm = loadable(() => import('./speciality-form/pages'), {
+  fallback: <Loading />
+});
 
 const NotFound = loadable(() => import('./not-found'), {
   fallback: <Loading />
@@ -107,6 +110,7 @@ export {
   Xazna,
   Abiturient,
   Log,
+  SpecialityForm,
   NotFound,
   AccessDenied
 }

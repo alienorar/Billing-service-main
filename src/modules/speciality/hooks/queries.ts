@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getSpeciality } from "../service";
+import { getSpeciality,  } from "../service";
 import { ParamsType } from "@types";
 
 // ============ GET SPECIALITY ===========

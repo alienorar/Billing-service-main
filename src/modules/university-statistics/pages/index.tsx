@@ -7,7 +7,6 @@ import { TeamOutlined, DollarOutlined, FileTextOutlined, PercentageOutlined, Ban
 import { Line } from "@ant-design/charts"
 import { useGetUniversityStatistics, useGetDebtRate } from "../hooks/queries"
 
-
 const { Title, Text } = Typography
 const { useBreakpoint } = Grid
 const { Option } = Select
@@ -22,13 +21,21 @@ interface UniversityStatistics {
   debtRate: number
 }
 
+interface DebtRateItem {
+  type: string
+  totalContract: number
+  totalAdditionalDebt: number
+  totalDiscount: number
+  totalPaidAmount: number
+  totalCalculatedDebt: number
+  averageDebtRate: number
+}
+
 interface DebtRate {
   from: string
   to: string
-  debtRates: number[] // Assuming debtRates could contain numbers for charting
+  debtRates: DebtRateItem[]
 }
-
-
 
 const Index: React.FC = () => {
   const screens = useBreakpoint()
@@ -130,8 +137,8 @@ const Index: React.FC = () => {
 
     return filteredData.map((item) => {
       const formattedDate = formatDate(item.from)
-      // Assuming debtRates is an array with at least one number; using first value or 0 if empty
-      const debtRateValue = item.debtRates.length > 0 ? item.debtRates[0] : 0
+      const universityRate = item.debtRates.find(rate => rate.type === "UNIVERSITY")
+      const debtRateValue = universityRate ? universityRate.averageDebtRate : 0
       return {
         date: formattedDate,
         debtRate: Number(debtRateValue.toFixed(2)),
@@ -219,8 +226,12 @@ const Index: React.FC = () => {
     {
       title: <span className="font-semibold text-gray-700">Qarz foizlari</span>,
       dataIndex: "debtRates",
-      render: (value?: number[]) => (
-        <span className="text-gray-800">{value && value.length > 0 ? value.join(", ") : "-"}</span>
+      render: (value?: DebtRateItem[]) => (
+        <span className="text-gray-800">
+          {value && value.length > 0
+            ? value.map((rate) => formatPercentage(rate.averageDebtRate)).join(", ")
+            : "-"}
+        </span>
       ),
     },
   ]

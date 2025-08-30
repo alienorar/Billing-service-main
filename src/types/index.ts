@@ -28,6 +28,7 @@ export interface ParamsType {
   direction?: string,
   timeUnit?:string,
   count?:number|string
+  specialityId?:string
 }
 
 export interface PagingType {

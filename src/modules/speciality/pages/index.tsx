@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Switch } from "antd"
+import { Switch, Tag } from "antd" // Added Tag for better display of forms
 import { CheckOutlined, CloseOutlined, BookOutlined } from "@ant-design/icons"
 import { useLocation, useNavigate } from "react-router-dom"
 import { GlobalTable } from "@components"
@@ -11,7 +11,7 @@ import type { AnyObject } from "antd/es/_util/type"
 
 const Index = () => {
   const [tableData, setTableData] = useState([])
-  const [total, setTotal] = useState<number>(0)
+  const [total, setTotal] = useState(0)
   const navigate = useNavigate()
   const { search } = useLocation()
   const blockSpeciality = useBlockSpeciality()
@@ -55,6 +55,10 @@ const Index = () => {
     }
   }
 
+  const handleRowClick = (id: string) => {
+    navigate(`/super-admin-panel/speciality/${id}`)
+  }
+
   const columns = [
     {
       title: <span className="font-semibold text-gray-700">ID</span>,
@@ -78,6 +82,29 @@ const Index = () => {
       title: <span className="font-semibold text-gray-700">Ta'lim shakli</span>,
       dataIndex: "educationType",
       render: (text: any) => <span className="text-gray-800">{text}</span>,
+    },
+    {
+      title: <span className="font-semibold text-gray-700">Ta'lim turlari</span>,
+      dataIndex: "specialityFormList",
+      render: (specialityFormList: any[]) => (
+        <div className="flex gap-2">
+          {specialityFormList?.map((form) => (
+            <Tag
+              key={form.id}
+              color={
+                form.educationForm === "KUNDUZGI"
+                  ? "blue"
+                  : form.educationForm === "SIRTQI"
+                  ? "green"
+                  : "orange"
+              }
+              className="font-medium"
+            >
+              {form.educationForm}
+            </Tag>
+          ))}
+        </div>
+      ),
     },
     {
       title: <span className="font-semibold text-gray-700">Holat</span>,
@@ -125,6 +152,10 @@ const Index = () => {
             showQuickJumper: true,
             showTotal: (total, range) => `${range[0]}-${range[1]} dan ${total} ta natija`,
           }}
+          onRow={(record: AnyObject) => ({
+            onClick: () => handleRowClick(record.id.toString()),
+            className: "cursor-pointer",
+          })}
           className="rounded-2xl"
         />
       </div>

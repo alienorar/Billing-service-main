@@ -38,6 +38,7 @@ import {
   Xazna,
   Abiturient,
   Log,
+  SpecialityForm,
 } from "@modules"
 import { FiSlack } from "react-icons/fi"
 
@@ -105,6 +106,12 @@ export const routesConfig = [
         showInSidebar: true,
       },
       {
+        path: "speciality/:id",
+        element: <SpecialityForm />,
+        permissions: ["SPECIALITY_MENU"],
+        showInSidebar: false,
+      },
+      {
         path: "group-list",
         label: "Guruhlar",
         icon: <FaUsers style={{ fontSize: "22px" }} />,
@@ -114,45 +121,6 @@ export const routesConfig = [
       },
     ],
   },
-
-  // {
-  //   path: "students",
-  //   label: "Studentlar",
-  //   icon: <FaUserGraduate style={{ fontSize: "22px" }} />,
-  //   element: <Students />,
-  //   permissions: ["STUDENT_MENU"],
-  //   showInSidebar: true,
-  // },
-  // {
-  //   path: "abiturients",
-  //   label: "Abiturientlar",
-  //   icon: <FaUserClock style={{ fontSize: "22px" }} />,
-  //   element: <Abiturient />,
-  //   permissions: ["STUDENT_HEMIS_LIST"],
-  //   showInSidebar: true,
-  // },
-  // {
-  //   path: "students/:id",
-  //   element: <OneStudent />,
-  //   permissions: ["STUDENT_MENU"],
-  //   showInSidebar: false,
-  // },
-  // {
-  //   path: "speciality",
-  //   label: "Yo'nalishlar",
-  //   icon: <FaSlack style={{ fontSize: "22px" }} />,
-  //   element: <Speciality />,
-  //   permissions: ["SPECIALITY_MENU"],
-  //   showInSidebar: true,
-  // },
-  // {
-  //   path: "group-list",
-  //   label: "Guruhlar ro'yxati",
-  //   icon: <FaUsers style={{ fontSize: "22px" }} />,
-  //   element: <GroupList />,
-  //   permissions: ["GROUP_MENU"],
-  //   showInSidebar: true,
-  // },
   {
     label: "To'lovlar",
     icon: <FaRegCreditCard style={{ fontSize: "22px" }} />,
