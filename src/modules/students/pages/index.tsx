@@ -31,6 +31,7 @@ const Index = () => {
   const lastName = searchParams.get("lastName") || ""
   const educationForm = searchParams.get("educationForm") || ""
   const educationType = searchParams.get("educationType") || ""
+  const studentStatus = searchParams.get("studentStatus") || ""
   const showDebt = searchParams.get("showDebt") || ""
   const pinfl = searchParams.get("pinfl") ?? ""
   const passport = searchParams.get("passport") ?? ""
@@ -54,6 +55,15 @@ const Index = () => {
     { value: "BAKALAVR", label: "Bakalavr" },
     { value: "MAGISTR", label: "Magistr" },
   ]
+const studentStatusOptions: { value: string; label: string }[] = [
+{ value: "", label: "Barchasi" },
+{ value: "STUDYING", label: "O'qimoqda" },
+{ value: "EXCLUDED", label: "Chiqarib yuborilgan" },
+{ value: "ACADEMIC_VOCATION", label: "Akademik ta'tilda" },
+{ value: "GRADUATED", label: "Bitirgan" },
+{ value: "CANCELLED", label: "Bekor qilingan" },
+{ value: "UNKNOWN", label: "Noma'lum" }
+];
 
   const { data: students } = useGetStudents({
     size,
@@ -64,6 +74,7 @@ const Index = () => {
     educationForm,
     showDebt,
     educationType,
+    studentStatus,
     pinfl: pinfl || undefined,
     passport,
   })
@@ -437,6 +448,27 @@ const Index = () => {
                 lastName,
                 educationForm,
                 educationType: value || "",
+                showDebt,
+                pinfl,
+                passport,
+              })
+            }
+          />
+          <Select
+            placeholder="Student statusi"
+            options={studentStatusOptions}
+            value={educationType || undefined}
+            className="h-10"
+            onChange={(value: string | undefined) =>
+              setSearchParams({
+                page: "1",
+                size: size.toString(),
+                phone,
+                firstName,
+                lastName,
+                educationForm,
+                educationType,
+                studentStatus : value ||"",
                 showDebt,
                 pinfl,
                 passport,

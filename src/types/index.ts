@@ -28,7 +28,8 @@ export interface ParamsType {
   direction?: string,
   timeUnit?:string,
   count?:number|string
-  specialityId?:string
+  specialityId?:string,
+  studentStatus?:string,
 }
 
 export interface PagingType {
