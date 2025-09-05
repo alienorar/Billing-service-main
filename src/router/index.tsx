@@ -31,7 +31,8 @@ const AuthenticatedRedirect = ({ children }: { children: React.ReactNode }) => {
 
 const Index = () => {
   const [permissions, setPermissions] = useState<string[]>(getUserPermissions())
-  const [ accessToken, setAccessToken] = useState<string | null>(getAccessToken())
+  const [accessToken, setAccessToken] = useState<string | null>(getAccessToken())
+  console.log(accessToken)
 
   useEffect(() => {
     const updatePermissions = () => {
