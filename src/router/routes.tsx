@@ -43,7 +43,6 @@ import {
 import { FiSlack } from "react-icons/fi"
 
 export const routesConfig = [
-
   {
     label: "Admin va ruxsatlar",
     icon: <FaUser style={{ fontSize: "22px" }} />,
@@ -186,7 +185,6 @@ export const routesConfig = [
     ],
   },
 
-
   {
     path: "pmgroup-controller/:id",
     element: <OnePaymentGroup />,
@@ -201,7 +199,6 @@ export const routesConfig = [
     permissions: ["PAYMENT_MENU"],
     showInSidebar: true,
   },
-
 
   {
     path: "transaction-history/:id",
@@ -264,5 +261,4 @@ export const routesConfig = [
     permissions: ["GROUP_STATISTICS_MENU"],
     showInSidebar: false,
   },
-
 ]
